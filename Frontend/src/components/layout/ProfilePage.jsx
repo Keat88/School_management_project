@@ -33,7 +33,6 @@ export default function ProfilePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Connect this to your Laravel API endpoint using Axios or Fetch (FormData object)
     console.log("Updated Profile Data:", formData);
     alert("Profile updated successfully!");
   };

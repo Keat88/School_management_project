@@ -39,12 +39,6 @@ function HostelPage() {
     console.log("Delete resident", occupant.id);
   };
 
-  // Admin-only guard. For multiple admin-only pages, consider lifting
-  // this into a shared <ProtectedRoute allowedRoles={["admin"]} />.
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <div className="space-y-6">
       <h1 className="text-xl md:text-2xl font-semibold text-gray-800">

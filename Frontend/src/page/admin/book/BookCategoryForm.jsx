@@ -5,7 +5,6 @@ import { BookCategoryApi } from "../../../data/library";
 export default function BookCategoryForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const isEditMode = Boolean(id);
 
   const [formData, setFormData] = useState({
@@ -17,23 +16,24 @@ export default function BookCategoryForm() {
   const [feedback, setFeedback] = useState(null);
 
   useEffect(() => {
-    if (isEditMode) {
-      BookCategoryApi
-        .getShow(id)
+    if (isEditMode && id) {
+      setFetching(true);
+      BookCategoryApi.getShow(id)
         .then((response) => {
-          const data = response?.data || response;
+          const payload = response?.data?.data || response?.data || response;
           setFormData({
-            book_category: data.book_category || "",
+            book_category: payload.book_category || payload.name || "",
           });
-          setFetching(false);
         })
         .catch((error) => {
           console.error("Failed to load category details", error);
-          setFetching(false);
           setFeedback({
             type: "error",
             text: "Failed to load category details for editing.",
           });
+        })
+        .finally(() => {
+          setFetching(false);
         });
     }
   }, [id, isEditMode]);
@@ -50,14 +50,21 @@ export default function BookCategoryForm() {
 
     try {
       if (isEditMode) {
-        await BookCategoryApi.update(id, formData);
-        setFeedback({ type: "success", text: "Category updated successfully!" });
+        // Ensure id is passed first to match BookCategoryApi.upDate(id, data)
+        await BookCategoryApi.upDate(id, formData);
+        setFeedback({
+          type: "success",
+          text: "Category updated successfully!",
+        });
       } else {
         await BookCategoryApi.addNew(formData);
-        setFeedback({ type: "success", text: "Category added successfully!" });
+        setFeedback({
+          type: "success",
+          text: "Category added successfully!",
+        });
       }
 
-      setTimeout(() => navigate("/book-categories"), 1000);
+      setTimeout(() => navigate("/admin/library/category"), 1000);
     } catch (error) {
       setFeedback({
         type: "error",
@@ -140,7 +147,11 @@ export default function BookCategoryForm() {
             disabled={loading}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
-            {loading ? "Saving..." : isEditMode ? "Update Category" : "Save Category"}
+            {loading
+              ? "Saving..."
+              : isEditMode
+                ? "Update Category"
+                : "Save Category"}
           </button>
         </div>
       </form>

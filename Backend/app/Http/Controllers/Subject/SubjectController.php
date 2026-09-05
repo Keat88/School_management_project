@@ -5,22 +5,33 @@ namespace App\Http\Controllers\Subject;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Subject\SubjectResource;
 use App\Models\Subjects;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class SubjectController extends Controller
 {
-    public function index()
+    public function index(Request $request): JsonResponse
     {
         try {
-            $subjects = Subjects::all();
-            if ($subjects->isEmpty()) {
-                return $this->success('Subject not found', [], 200);
+            $perPage = $request->input('per_page', 10);
+            $search = $request->input('search');
+            $query = Subjects::query();
+            if (!empty($search)) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('subject_name', 'like', "%{$search}%")
+                        ->orWhere('code', 'like', "%{$search}%");
+                });
             }
-            return $this->success('Subject have been access successfully', SubjectResource::collection($subjects));
-        } catch (\Exception $e) {
-            return $this->error('Something went wrong while retrieving subjects', $e->getMessage(), 500);
+            $subjects = $query->paginate($perPage);
+
+            return $this->success(
+                'Subjects have been accessed successfully',
+                SubjectResource::collection($subjects)->response()->getData(true)
+            );
+        } catch (\Throwable $e) {
+            return $this->error('Something went wrong', $e->getMessage(), 500);
         }
     }
 
@@ -78,7 +89,6 @@ class SubjectController extends Controller
                 'code' => 'required|unique:subjects,code,' . $id,
                 'image'        => 'nullable|image|mimes:jpeg,png,jpg|max:4096'
             ]);
-
             if ($validator->fails()) {
                 return $this->error('Invalid data', $validator->errors(), 422);
             }

@@ -28,7 +28,6 @@ function StudentFilters({
             transition-colors"
         />
       </div>
-
       {/* Class filter */}
       <select
         value={classFilter}
@@ -60,7 +59,7 @@ function StudentFilters({
 
       {/* Add student */}
       <NavLink
-        to={"/students/add"}
+        to={"/admin/students/add"}
         type="button"
         className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm
           font-medium px-4 py-2 hover:bg-blue-700 active:bg-blue-800 transition-colors shrink-0"

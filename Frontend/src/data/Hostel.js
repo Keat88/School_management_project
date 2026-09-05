@@ -4,10 +4,10 @@ export const hostelRoomApi = {
   getAll: async (params = {}) => {
     try {
       const response = await api.get("/hostels/hostel-room/index", { params });
-      return response.data;
+      return response.data; 
     } catch (error) {
-      console.log("Error", error);
-      return { data: [] };
+      console.error("Error fetching rooms:", error);
+      throw error;
     }
   },
   getShow: async (id) => {
@@ -100,9 +100,11 @@ export const HotelCagegoryApi = {
   },
 };
 export const AddStudentHostelApi = {
-  getAll: async () => {
+  getAll: async (param) => {
     try {
-      const response = await api.get("/hostels/hostel-assignment/store");
+      const response = await api.get("/hostels/hostel-assignment/index", {
+        param,
+      });
       return response.data;
     } catch (error) {
       console.log("Error", error);
@@ -140,7 +142,9 @@ export const AddStudentHostelApi = {
   },
   delete: async (id) => {
     try {
-      const response = await api.post(`/hostels/hostel-assignment/destroy/${id}`);
+      const response = await api.post(
+        `/hostels/hostel-assignment/destroy/${id}`,
+      );
       return response.data;
     } catch (error) {
       console.log("Error", error);

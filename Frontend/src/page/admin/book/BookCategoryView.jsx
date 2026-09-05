@@ -163,7 +163,7 @@ export default function BookCategoryView() {
                     </td>
                     <td className="py-3 px-4 text-right">
                       <button
-                        onClick={() => navigate(`/books/view/${book.id}`)}
+                        onClick={() => navigate(`/admin/books/view/${book.id}`)}
                         className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors inline-block"
                         title="View Book"
                       >

@@ -75,7 +75,7 @@ export default function SubjectForm() {
           : "Subject created successfully!",
       });
       setTimeout(() => {
-        navigate("/subjects");
+        navigate("/admin/subjects");
       }, 1000);
     } catch (error) {
       setFeedback({
@@ -192,7 +192,7 @@ export default function SubjectForm() {
 
         <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
           <Link
-            to="/subjects"
+            to="/admin/subjects"
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
           >
             Cancel

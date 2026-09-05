@@ -17,35 +17,55 @@ class HostelsRoomController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Hostel_rooms::with('hostel');
+            $perPage = (int) $request->input('per_page', 10);
 
-            if ($request->has('status') && !empty($request->status)) {
-                $query->where('status', 'like', "%{$request->status}%");
-            }
+            $rooms = Hostel_rooms::with('hostel')
+                // Flexible global search across multiple fields
+                ->when($request->filled('search'), function ($query) use ($request) {
+                    $search = "%{$request->search}%";
+                    $query->where(function ($q) use ($search) {
+                        $q->where('room_number', 'like', $search)
+                            ->orWhere('block_name', 'like', $search)
+                            ->orWhere('type', 'like', $search)
+                            ->orWhereHas('hostel', function ($hq) use ($search) {
+                                $hq->where('name', 'like', $search);
+                            });
+                    });
+                })
+                // Filter by Status
+                ->when($request->filled('status'), function ($query) use ($request) {
+                    $query->where('status', $request->status);
+                })
+                // Filter by Gender
+                ->when($request->filled('gender'), function ($query) use ($request) {
+                    $query->where('gender', $request->gender);
+                })
+                // Filter by Room Type
+                ->when($request->filled('type'), function ($query) use ($request) {
+                    $query->where('type', 'like', "%{$request->type}%");
+                })
+                // Filter by Hostel ID or Name
+                ->when($request->filled('hostel_id'), function ($query) use ($request) {
+                    $query->where('hostel_id', $request->hostel_id);
+                })
+                ->when($request->filled('name'), function ($query) use ($request) {
+                    $query->whereHas('hostel', function ($q) use ($request) {
+                        $q->where('name', 'like', "%{$request->name}%");
+                    });
+                })
+                ->latest('id')
+                ->paginate($perPage);
 
-            if ($request->has('gender') && !empty($request->gender)) {
-                $query->where('gender', 'like', "%{$request->gender}%");
-            }
-
-            if ($request->has('type') && !empty($request->type)) {
-                $query->where('type', 'like', "%{$request->type}%");
-            }
-
-            if ($request->has('name') && !empty($request->name)) {
-                $query->whereHas('hostel', function ($q) use ($request) {
-                    $q->where('name', 'like', "%{$request->name}%");
-                });
-            }
-
-            $rooms = $query->orderBy('id', 'desc')->get();
-
-            if ($rooms->isEmpty()) {
-                return $this->error('Rooms don\'t have data', null, 404);
-            }
-
-            return $this->success('Rooms retrieved successfully', HostelRoomResource::collection($rooms));
+            return $this->success(
+                'Rooms retrieved successfully',
+                HostelRoomResource::collection($rooms)->response()->getData(true)
+            );
         } catch (\Exception $e) {
-            return $this->error('Something went wrong while retrieving rooms', $e->getMessage(), 500);
+            return $this->error(
+                'Something went wrong while retrieving rooms',
+                $e->getMessage(),
+                500
+            );
         }
     }
 

@@ -83,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/store', 'store')->name('notice.store');
             Route::get('/index', 'index')->name('notice.index');
             Route::get('/show/{id}', 'show')->name('notice.show');
-            Route::put('/update/{id}', 'update')->name('notice.update');
+            Route::match(['post', 'put'], '/notice/update/{id}')->name('notice.update');
             Route::delete('/destroy/{id}', 'destroy')->name('notice.destroy');
             Route::get('/dashboard', 'dashboard')->name('notice.dashboard');
         });

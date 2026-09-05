@@ -1,15 +1,13 @@
 import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Search, Bell, Settings, LogOut } from "lucide-react";
+import {  Bell, Settings, LogOut } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
 import { FaCircleUser } from "react-icons/fa6";
 import { AuthApi } from "../../data/AuthApi";
 import { NavLink } from "react-router-dom";
 const roleBadgeStyles = {
   admin: "bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200",
-  teacher: "bg-green-50 text-green-600 ring-1 ring-inset ring-green-200",
-  student: "bg-orange-50 text-orange-600 ring-1 ring-inset ring-orange-200",
-  parent: "bg-purple-50 text-purple-600 ring-1 ring-inset ring-purple-200",
+  teacher: "bg-green-50 text-green-600 ring-1 ring-inset ring-green-200"
 };
 
 const roleLabels = {
@@ -27,8 +25,6 @@ function Navbar({ title, notificationCount = 0 }) {
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
-  const [searchValue, setSearchValue] = useState("");
-
   const pageTitle = title || deriveTitleFromPath(location.pathname);
   const role = currentUser?.role;
   const badgeStyle =
@@ -51,43 +47,11 @@ function Navbar({ title, notificationCount = 0 }) {
   return (
     <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-20">
       <div className="flex items-center gap-4 px-4 md:px-6 h-16">
-        {/* Page title */}
         <h1 className="text-lg md:text-xl font-semibold text-gray-800 shrink-0">
           {pageTitle}
         </h1>
-
-        {/* Search input */}
-        <div className="flex-1 max-w-md ml-2 hidden sm:block">
-          <div className="relative">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="text"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              placeholder="Search..."
-              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pl-9 pr-3 text-sm
-                text-gray-700 placeholder-gray-400 outline-none
-                focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100
-                transition-colors"
-            />
-          </div>
-        </div>
-
-        {/* Right side actions */}
         <div className="flex items-center gap-3 md:gap-4 ml-auto">
-          {/* Mobile search trigger */}
-          <button
-            type="button"
-            className="sm:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100"
-            aria-label="Search"
-          >
-            <Search size={18} />
-          </button>
 
-          {/* Notification icon */}
           <button
             type="button"
             className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
@@ -98,17 +62,13 @@ function Navbar({ title, notificationCount = 0 }) {
               <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
             )}
           </button>
-
-          {/* Divider */}
           <div className="hidden md:block h-8 w-px bg-gray-200" />
-
-          {/* User avatar, name, role badge */}
           <div className="flex items-center gap-2.5 relative">
             <button type="button" onMouseEnter={() => isOpen(true)}>
               <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold uppercase shrink-0">
-                {currentUser?.avatarUrl || currentUser.avatar ? (
+                {currentUser?.avatarUrl || currentUser?.avatar ? (
                   <img
-                    src={currentUser.avatarUrl || currentUser.avatar}
+                    src={currentUser?.avatarUrl || currentUser?.avatar}
                     alt={currentUser?.name || "User avatar"}
                     className="h-9 w-9 rounded-full object-cover"
                   />
@@ -125,7 +85,7 @@ function Navbar({ title, notificationCount = 0 }) {
               >
                 <ul className="flex flex-col gap-px">
                   <NavLink
-                    to={"/profile"}
+                    to={"/admin/profile"}
                     className="flex items-center justify-between gap-2 cursor-pointer px-3 py-2 rounded hover:bg-gray-500/20 transition"
                   >
                     <h1>Profile</h1>

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
-    
+
     /**
      * Display a listing of the resource.
      */
@@ -21,17 +21,19 @@ class StudentController extends Controller
     {
         try {
             $query = Students::with('parent', 'classRoom');
+
             if ($request->has('search') && !empty($request->search)) {
                 $search = $request->search;
-
                 $query->where(function ($q) use ($search) {
                     $q->where('student_name', 'like', "%{$search}%")
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             }
+
             if ($request->has('gender') && !empty($request->gender)) {
                 $query->where('gender', $request->gender);
             }
+
             if ($request->has('grade') && !empty($request->grade)) {
                 $grade = $request->grade;
                 $query->whereHas('classRoom', function ($q) use ($grade) {
@@ -45,12 +47,16 @@ class StudentController extends Controller
                     $q->where('section', 'like', "%{$section}%");
                 });
             }
-            $students = $query->orderBy('id', 'desc')->get();
+
+            $perPage = $request->get('per_page', 10);
+            $students = $query->orderBy('id', 'desc')->paginate($perPage);
+            $studentsData = StudentResource::collection($students)->response()->getData(true);
 
             if ($students->isEmpty()) {
-                return $this->success('No students found.', StudentResource::collection($students), 200);
+                return $this->success('No students found.', $studentsData, 200);
             }
-            return $this->success('Students have been accessed successfully!', StudentResource::collection($students));
+
+            return $this->success('Students have been accessed successfully!', $studentsData);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving students', $e->getMessage(), 500);
         }

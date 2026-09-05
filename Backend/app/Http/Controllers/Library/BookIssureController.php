@@ -77,7 +77,6 @@ class BookIssureController extends Controller
                         });
                 });
             }
-
             $issues = $query->orderBy('created_at', 'desc')->get();
 
             if ($issues->isEmpty()) {

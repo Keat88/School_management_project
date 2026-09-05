@@ -33,13 +33,12 @@ export default function NoticeForm({ notice: propNotice = null }) {
     publish_date: getTodayDate(),
     attachment: null,
   });
-
-  // Fetch notice data if editing (Fixed loading state to wait until data is fetched)
   useEffect(() => {
     if (!propNotice && id) {
+      setLoading(true);
       NoticeApi.getShow(id)
         .then((response) =>
-          setFetchedNotice(response.data.data || response.data),
+          setFetchedNotice(response.data?.data || response.data),
         )
         .catch((error) => console.log("Failed to load notice data", error))
         .finally(() => setLoading(false));
@@ -51,7 +50,7 @@ export default function NoticeForm({ notice: propNotice = null }) {
     if (currentNotice) {
       setFormData({
         title: currentNotice.title || "",
-        content: currentNotice.content || "",
+        content: currentNotice.content || currentNotice.description || "",
         target_audience: currentNotice.target_audience || "all",
         target_id: currentNotice.target_id || "",
         publish_date: currentNotice.publish_date
@@ -59,23 +58,27 @@ export default function NoticeForm({ notice: propNotice = null }) {
           : getTodayDate(),
         attachment: null,
       });
-      if (currentNotice.attachment) {
-        const parts = currentNotice.attachment.split("/");
+      if (currentNotice.attachment || currentNotice.file) {
+        const filePath = currentNotice.attachment || currentNotice.file;
+        const parts = filePath.split("/");
         setFileName(parts[parts.length - 1]);
       }
     }
   }, [currentNotice]);
 
+  // Fetch teachers safely handling nested array responses
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        setLoading(true);
         const response = await teacherApi.getAll();
-        setTeachers(response.data);
+        const teacherData = Array.isArray(response.data)
+          ? response.data
+          : response.data?.data || [];
+        setTeachers(teacherData);
       } catch (error) {
         console.log("Failed to fetch teachers", error);
+        setTeachers([]);
       }
-      setLoading(false);
     };
     fetchTeachers();
   }, []);
@@ -141,7 +144,8 @@ export default function NoticeForm({ notice: propNotice = null }) {
     try {
       let response;
       if (isEdit) {
-        response = await NoticeApi.update(activeId, data);
+        // Fixed argument order from (data, activeId) to (activeId, data)
+        response = await NoticeApi.update(data, activeId);
       } else {
         response = await NoticeApi.addNew(data);
       }
@@ -154,7 +158,7 @@ export default function NoticeForm({ notice: propNotice = null }) {
             ? "Notice updated successfully!"
             : "Notice created successfully!"),
       });
-      setTimeout(() => navigate("/notices"), 1000);
+      setTimeout(() => navigate("/admin/notices"), 1000);
     } catch (error) {
       if (error.response?.status === 422 && error.response.data?.errors) {
         setErrors(error.response.data.errors);
@@ -178,8 +182,9 @@ export default function NoticeForm({ notice: propNotice = null }) {
   return (
     <>
       {loading ? (
-        <div className="flex text-center justify-center items-center min-h-screen bg-white w-full">
-          <h1>Loading...</h1>
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading {id ? "update..." : "create..."}</span>
         </div>
       ) : (
         <div className="min-w-160 mx-auto p-6 rounded-xl border border-gray-200 space-y-6">
@@ -340,11 +345,12 @@ export default function NoticeForm({ notice: propNotice = null }) {
                   }`}
                 >
                   <option value="">-- Choose a Teacher --</option>
-                  {teachers?.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name}
-                    </option>
-                  ))}
+                  {Array.isArray(teachers) &&
+                    teachers.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}
+                      </option>
+                    ))}
                 </select>
                 {errors.target_id && (
                   <p className="text-red-500 text-xs mt-1">

@@ -5,7 +5,8 @@ import { useAuth } from "../../context/AuthContext";
 import StatsGrid from "./StatsGrid";
 import PaymentFilters from "./Paymentfilter";
 import PaymentTable from "./Paymenttable";
-import Pagination from "./Pagination";
+import Pagination from "../../hooks/Pagination";
+
 
 const PAGE_SIZE = 5;
 

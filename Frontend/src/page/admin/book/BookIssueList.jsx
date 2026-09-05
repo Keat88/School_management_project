@@ -4,7 +4,6 @@ import { Plus, CheckCircle, Trash2 } from "lucide-react";
 import { api } from "../../../data/api";
 import { BookIssureApi } from "../../../data/library";
 
-
 export default function BookIssueList() {
   const navigate = useNavigate();
   const [issues, setIssues] = useState([]);
@@ -22,15 +21,17 @@ export default function BookIssueList() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchIssues();
   }, []);
 
   const handleReturn = async (id) => {
     try {
-     const response= await BookIssureApi.ReturnIssurce(id)
-      setFeedback({ type: "success", text: response?.message || response?.data || response});
+      const response = await BookIssureApi.ReturnIssurce(id);
+      setFeedback({
+        type: "success",
+        text: response?.message || response?.data || response,
+      });
       fetchIssues();
     } catch (error) {
       setFeedback({
@@ -41,7 +42,8 @@ export default function BookIssueList() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this issue record?")) return;
+    if (!window.confirm("Are you sure you want to delete this issue record?"))
+      return;
     try {
       await api.delete(`/library/issues/${id}`);
       setFeedback({ type: "success", text: "Record deleted successfully!" });
@@ -57,10 +59,12 @@ export default function BookIssueList() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Issued Books Management</h2>
+        <h2 className="text-xl font-semibold text-gray-600">
+          STudent Kjey Books Management
+        </h2>
         <button
           type="button"
-          onClick={() => navigate("/library/bookissue/add")}
+          onClick={() => navigate("/admin/library/bookissue/add")}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5"
         >
           <Plus size={16} />
@@ -97,19 +101,28 @@ export default function BookIssueList() {
             <tbody className="divide-y divide-gray-100 text-sm">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
+                  <td
+                    colSpan={7}
+                    className="px-4 py-10 text-center text-gray-400"
+                  >
                     Loading issued books...
                   </td>
                 </tr>
               ) : issues.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
+                  <td
+                    colSpan={7}
+                    className="px-4 py-10 text-center text-gray-400"
+                  >
                     No issued book records found.
                   </td>
                 </tr>
               ) : (
                 issues.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50/60 transition-colors">
+                  <tr
+                    key={item.id}
+                    className="hover:bg-gray-50/60 transition-colors"
+                  >
                     <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">
                       {item.student?.name || `Student ID: ${item.student_id}`}
                     </td>
@@ -127,10 +140,10 @@ export default function BookIssueList() {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-lg ${
                           item.status === "returned"
                             ? "bg-green-50 text-green-600"
-                            : "bg-amber-50 text-amber-600"
+                            : "bg-red-50 text-red-500"
                         }`}
                       >
                         {item.status || "issued"}
@@ -143,18 +156,18 @@ export default function BookIssueList() {
                             type="button"
                             onClick={() => handleReturn(item.id)}
                             title="Mark as Returned"
-                            className="p-1 text-green-600 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+                            className="p-1 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
                           >
-                            <CheckCircle size={16} />
+                            Return
                           </button>
                         )}
                         <button
                           type="button"
                           onClick={() => handleDelete(item.id)}
                           title="Delete Record"
-                          className="p-1 text-red-500 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+                          className="p-1 text-red-500 border bg-red-50 border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
                         >
-                          <Trash2 size={16} />
+                          Delete
                         </button>
                       </div>
                     </td>

@@ -123,11 +123,11 @@ class NoticeController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'user_id'         => 'sometimes|required|exists:users,id',
-                'title'           => 'sometimes|required|string|max:255',
-                'content'         => 'sometimes|required|string',
-                'target_audience' => 'sometimes|required|in:all,all_teachers,single_teacher,single_class',
+                'title'           => 'required|string|max:255',
+                'content'         => 'required|string',
+                'target_audience' => 'required|in:all,all_teachers,single_teacher,single_class',
                 'target_id'       => 'required_if:target_audience,single_teacher,single_class|nullable|integer',
-                'publish_date'    => 'sometimes|required|date',
+                'publish_date'    => 'required|date',
                 'attachment'      => 'nullable|mimes:pdf,jpeg,png,jpg|max:2048',
             ]);
 
@@ -143,18 +143,18 @@ class NoticeController extends Controller
                 $filePath = $request->file('attachment')->store('announcements', 'public');
             }
 
-            $targetAudience = $request->input('target_audience', $announcement->target_audience);
+            $targetAudience = $request->target_audience;
             $targetId = in_array($targetAudience, ['single_teacher', 'single_class'])
-                ? $request->input('target_id', $announcement->target_id)
+                ? $request->target_id
                 : null;
 
             $announcement->update([
                 'user_id'         => $request->input('user_id', $announcement->user_id),
-                'title'           => $request->input('title', $announcement->title),
-                'content'         => $request->input('content', $announcement->content),
+                'title'           => $request->title,
+                'content'         => $request->content,
                 'target_audience' => $targetAudience,
                 'target_id'       => $targetId,
-                'publish_date'    => $request->input('publish_date', $announcement->publish_date),
+                'publish_date'    => $request->publish_date,
                 'attachment'      => $filePath,
             ]);
 
@@ -166,9 +166,6 @@ class NoticeController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         try {

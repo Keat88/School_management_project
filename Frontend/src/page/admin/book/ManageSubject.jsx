@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Plus,
@@ -9,42 +9,71 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { subjectApi } from "../../../data/classrooms";
+import Pagination from "../../../hooks/Pagination";
 
 export default function ManageSubject() {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
   const [search, setSearch] = useState("");
-
-  const fetchSubjects = async () => {
+  const [activeSearch, setActiveSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const fetchSubjects = useCallback(async (page, searchQuery) => {
     setLoading(true);
     try {
-      const response = await subjectApi.getAll({ search: search || undefined });
-      const result = response.data || response.data || [];
-      setSubjects(Array.isArray(result) ? result : []);
+      const response = await subjectApi.getAll({
+        per_page: 10,
+        page: page,
+        search: searchQuery || undefined,
+      });
+
+      const outerData = response?.data || response;
+      const paginatedPayload = outerData?.data || outerData;
+
+      const items = Array.isArray(paginatedPayload)
+        ? paginatedPayload
+        : paginatedPayload?.data || [];
+
+      const meta = paginatedPayload?.meta || outerData?.meta || {};
+
+      setSubjects(items);
+      setTotalPages(meta?.last_page || 1);
+      setTotalItems(meta?.total || 0);
     } catch (error) {
-      if (error.response?.status === 404) {
-        setSubjects([]);
-      } else {
-        console.log("Error fetching subjects:", error);
-      }
+      console.error("Error fetching subjects:", error);
+      setSubjects([]);
+      setTotalPages(1);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchSubjects();
   }, []);
 
+  useEffect(() => {
+    fetchSubjects(currentPage, activeSearch);
+  }, [currentPage, activeSearch, fetchSubjects]);
+
+  // Search Submit
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    fetchSubjects();
+    setActiveSearch(search);
+    setCurrentPage(1);
   };
 
+  // Reset Search
   const handleResetSearch = () => {
     setSearch("");
-    setTimeout(fetchSubjects, 50);
+    setActiveSearch("");
+    setCurrentPage(1);
+  };
+
+  // Change Page
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -53,7 +82,7 @@ export default function ManageSubject() {
     try {
       await subjectApi.delete(id);
       setFeedback({ type: "success", text: "Subject deleted successfully!" });
-      setSubjects(subjects.filter((s) => s.id !== id));
+      fetchSubjects(currentPage, activeSearch);
     } catch (error) {
       setFeedback({
         type: "error",
@@ -67,7 +96,7 @@ export default function ManageSubject() {
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-800">Manage Subjects</h2>
         <Link
-          to="/subjects/add"
+          to="/admin/subjects/add"
           className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5"
         >
           <Plus size={16} />
@@ -90,7 +119,7 @@ export default function ManageSubject() {
       {/* Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className=" p-4 rounded-xl border border-gray-200  flex gap-3"
+        className="p-4 rounded-xl border border-gray-200 flex gap-3"
       >
         <div className="relative flex-1">
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -121,7 +150,7 @@ export default function ManageSubject() {
       </form>
 
       {/* Subject List Table */}
-      <div className=" rounded-xl border border-gray-200 overflow-hidden">
+      <div className="rounded-xl border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -135,13 +164,14 @@ export default function ManageSubject() {
             <tbody className="divide-y divide-gray-100 text-sm">
               {loading ? (
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="px-4 py-10 text-center text-gray-400"
-                  >
-                    Loading subjects...
-                  </td>
-                </tr>
+
+                <td colSpan="6" className="py-12 text-center text-gray-400">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+                    <span>Loading cagetegory...</span>
+                  </div>
+                </td>
+              </tr>
               ) : subjects.length === 0 ? (
                 <tr>
                   <td
@@ -181,7 +211,7 @@ export default function ManageSubject() {
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <Link
-                          to={`/subjects/add/${sub.id}`}
+                          to={`/admin/subjects/add/${sub.id}`}
                           className="p-1 text-blue-600 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
                           title="Edit"
                         >
@@ -204,6 +234,14 @@ export default function ManageSubject() {
           </table>
         </div>
       </div>
+
+      {/* Pagination Component */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

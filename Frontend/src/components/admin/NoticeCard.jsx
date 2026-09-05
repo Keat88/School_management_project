@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Calendar, User, Paperclip } from "lucide-react";
 import AudienceBadge from "./AudienceBadge";
 
 function formatDate(dateString) {
@@ -6,30 +6,61 @@ function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
-    day: "numeric"
+    day: "numeric",
   });
 }
 
 function NoticeCard({ notice, onEdit, onDelete }) {
+  const authorName = notice.user?.name || notice.author_name || "System";
+  const attachmentUrl = notice.file || notice.attachment_url;
+
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 flex flex-col justify-between duration-200 transition-all hover:-translate-y-0.5 hover:shadow-md">
       <div>
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base font-semibold text-gray-800">
+          <h3 className="text-base font-semibold text-gray-800 line-clamp-1">
             {notice.title}
           </h3>
-          <AudienceBadge audience={notice.audience} />
+          {notice.audience && <AudienceBadge audience={notice.audience} />}
         </div>
 
+        {/* Notice Body / Description */}
         <p className="mt-2 text-sm text-gray-500 line-clamp-2">
-          {notice.content}
+          {notice.description || "No description provided."}
         </p>
 
-        <p className="mt-3 text-xs text-gray-400">
-          Publish date: {formatDate(notice.publishDate)}
-        </p>
+        {/* Metadata Section */}
+        <div className="mt-4 space-y-1.5 border-t border-gray-100 pt-3 text-xs text-gray-500">
+          {/* Author */}
+          <div className="flex items-center gap-1.5">
+            <User size={13} className="text-gray-400" />
+            <span>Author: <strong className="font-medium text-gray-700">{authorName}</strong></span>
+          </div>
+
+          {/* Publish Date */}
+          <div className="flex items-center gap-1.5">
+            <Calendar size={13} className="text-gray-400" />
+            <span>Publish date: {formatDate(notice.publish_date)}</span>
+          </div>
+
+          {/* Attachment */}
+          {attachmentUrl && (
+            <div className="flex items-center gap-1.5 pt-0.5">
+              <Paperclip size={13} className="text-gray-400" />
+              <a
+                href={attachmentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline font-medium"
+              >
+                View Attachment
+              </a>
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Actions */}
       <div className="mt-5 flex items-center gap-2">
         <button
           type="button"

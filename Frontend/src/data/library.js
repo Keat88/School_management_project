@@ -23,9 +23,6 @@ export const BookCategoryApi = {
       const response = await api.post(
         "/library/bookcategory/store",
         newBookCategory,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
       );
       return response.data;
     } catch (error) {
@@ -37,9 +34,6 @@ export const BookCategoryApi = {
       const response = await api.put(
         `/library/bookcategory/update/${id}`,
         newBookCategory,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
       );
       return response.data;
     } catch (error) {
@@ -56,7 +50,7 @@ export const BookCategoryApi = {
   },
 };
 export const BookApi = {
-  getAll: async (params = {}) => {
+  getAll: async (params) => {
     try {
       const response = await api.get("/library/books/index", { params });
       return response.data;
@@ -85,7 +79,7 @@ export const BookApi = {
   },
   upDate: async (id, updateBook) => {
     try {
-      const response = await api.put(
+      const response = await api.post(
         `/library/books/update/${id}`,
         updateBook,
         {
@@ -107,7 +101,7 @@ export const BookApi = {
   },
 };
 export const BookIssureApi = {
-  getAll: async (params = {}) => {
+  getAll: async (params) => {
     try {
       const response = await api.get("/library/book-issure/index", { params });
       return response.data;

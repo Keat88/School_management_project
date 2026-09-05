@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { api } from "../../../data/api";
 import { studentData } from "../../../data/StudentsApi";
 import { BookApi, BookIssureApi } from "../../../data/library";
 
@@ -23,20 +22,29 @@ export default function IssueBookForm() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const student = await studentData.getAll();
-        const books = await BookApi.getAll();
-        setBooks(books?.data || books);
-        setStudents(student?.data || student);
+        const studentResponse = await studentData.getAll();
+        const booksResponse = await BookApi.getAll();
+
+        // Safely extract array data regardless of Axios/Laravel pagination response structures
+        const rawStudents =
+          studentResponse?.data?.data ||
+          studentResponse?.data ||
+          studentResponse;
+        const rawBooks =
+          booksResponse?.data?.data || booksResponse?.data || booksResponse;
+
+        setStudents(Array.isArray(rawStudents) ? rawStudents : []);
+        setBooks(Array.isArray(rawBooks) ? rawBooks : []);
       } catch (error) {
-        console.log("Error fetching dropdown data:", error);
+        console.error("Error fetching dropdown data:", error);
       }
     };
     fetchData();
   }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear validation error for field when user updates it
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: null }));
     }
@@ -49,12 +57,14 @@ export default function IssueBookForm() {
     setErrors({});
 
     try {
-     const response = await BookIssureApi.addNew(formData)
-      setFeedback({ type: "success", text: response?.message });
-      setTimeout(() => navigate("/library/bookissue"), 1000);
+      const response = await BookIssureApi.addNew(formData);
+      setFeedback({
+        type: "success",
+        text: response?.message || "Book issued successfully!",
+      });
+      setTimeout(() => navigate("/admin/library/bookissue"), 1000);
     } catch (error) {
       if (error.response?.status === 422) {
-        // Handle Laravel 422 validation errors map
         setErrors(error.response.data.errors || {});
       }
       setFeedback({
@@ -69,7 +79,7 @@ export default function IssueBookForm() {
   };
 
   return (
-    <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200  space-y-6">
+    <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 space-y-6">
       <div className="flex justify-between items-center pb-4 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-800">Issue Book</h2>
         <button
@@ -142,7 +152,7 @@ export default function IssueBookForm() {
             <option value="">-- Choose a Student --</option>
             {students.map((student) => (
               <option key={student.id} value={student.id}>
-                {student.student_name}
+                {student.student_name || student.name || `Student #${student.id}`}
               </option>
             ))}
           </select>

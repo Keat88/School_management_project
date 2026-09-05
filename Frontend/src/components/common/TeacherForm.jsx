@@ -6,7 +6,6 @@ import { teacherApi } from "../../data/TeacherApi";
 export default function TeacherForm({ teacher: propTeacher = null, onSuccess }) {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const isEditMode = Boolean(propTeacher || id);
 
   const [formData, setFormData] = useState({
@@ -22,7 +21,6 @@ export default function TeacherForm({ teacher: propTeacher = null, onSuccess }) 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(!propTeacher && Boolean(id));
   const [feedback, setFeedback] = useState(null);
-
   const teacherId = propTeacher?.id || id;
 
   useEffect(() => {
@@ -100,7 +98,7 @@ export default function TeacherForm({ teacher: propTeacher = null, onSuccess }) 
       if (onSuccess) {
         onSuccess();
       } else {
-        setTimeout(() => navigate("/teachers"), 1000);
+        setTimeout(() => navigate("/admin/teachers"), 1000);
       }
     } catch (error) {
       setFeedback({

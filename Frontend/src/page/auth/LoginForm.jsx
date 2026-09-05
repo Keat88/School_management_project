@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AuthApi } from "../../data/AuthApi";
 
 export default function LoginForm() {
@@ -7,10 +7,8 @@ export default function LoginForm() {
     email: "",
     password: "",
   });
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -30,11 +28,15 @@ export default function LoginForm() {
         if (user) {
           localStorage.setItem("user", JSON.stringify(user));
         }
+        setFeedback({ type: "success", text: "Login successful!" });
+        setTimeout(() => {
+          if (user?.role === "admin") {
+            window.location.href = "/admin/dashboard";
+          } else {
+            window.location.href = "/";
+          }
+        }, 500);
       }
-      setFeedback({ type: "success", text: "Login successful!" });
-      setTimeout(() => {
-        navigate("/admin/dashboard", { replace: true });
-      }, 800);
     } catch (error) {
       console.log("Login error:", error);
       setFeedback({

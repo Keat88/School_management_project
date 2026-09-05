@@ -6,7 +6,7 @@ import {
   attendanceTrend,
   performanceBySubject,
   feeCollectionByMonth,
-  activityLogs
+  activityLogs,
 } from "../../../data/Reportsmock";
 
 import StatsGrid from "../../../components/admin/StatsGrid";
@@ -35,13 +35,6 @@ function ReportPage() {
     // reporting API exists.
     console.log("Export Excel clicked", { startDate, endDate });
   };
-
-  // Admin-only guard. For multiple admin-only pages, consider lifting
-  // this into a shared <ProtectedRoute allowedRoles={["admin"]} />.
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <div className="space-y-6">
       <ReportHeader />

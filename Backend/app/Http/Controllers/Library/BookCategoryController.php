@@ -17,19 +17,22 @@ class BookCategoryController extends Controller
     {
         try {
             $query = BookCategory::query();
-
             if ($request->filled('search')) {
                 $search = $request->input('search');
                 $query->where('book_category', 'like', "%{$search}%");
             }
+            $perPage = $request->input('per_page', 10);
+            $categories = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
-            $categories = $query->orderBy('created_at', 'desc')->get();
-
+            // Check if the paginated collection is empty
             if ($categories->isEmpty()) {
                 return $this->error('Book categories don\'t have data', null, 404);
             }
 
-            return $this->success('Book categories retrieved successfully!', BookCategoryResource::collection($categories));
+            return $this->success(
+                'Book categories retrieved successfully!',
+                BookCategoryResource::collection($categories)->response()->getData(true)
+            );
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving book categories', $e->getMessage(), 500);
         }

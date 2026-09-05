@@ -12,6 +12,7 @@ class Controller extends BaseController
     protected function success($message, $data = null, int $code = 200)
     {
         return response()->json([
+            'status' => true,
             'message' => $message,
             'data' => $data
         ], $code);
@@ -19,6 +20,7 @@ class Controller extends BaseController
     protected  function error($message, $errors = null, int $code = 422)
     {
         return response()->json([
+            'status' => false,
             'message' => $message,
             'errors' => $errors
         ], $code);

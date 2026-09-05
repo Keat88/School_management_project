@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, ChevronDown } from "lucide-react";
 import sidebarMenu from "../../data/sideBar";
@@ -8,24 +8,31 @@ import { AuthApi } from "../../data/AuthApi";
 function Sidebar() {
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
+
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const visibleMenu = sidebarMenu.filter((menu) =>
-    menu.roles.includes(currentUser?.role)
+    menu.roles?.includes(currentUser?.role)
   );
 
   const closeMobile = () => setIsMobileOpen(false);
 
+  const toggleDropdown = (id) => {
+    setOpenDropdown((prev) => (prev === id ? null : id));
+  };
+
   const handleLogout = async () => {
     try {
-      await AuthApi.Logout();
+      if (AuthApi.Logout) {
+        await AuthApi.Logout();
+      }
     } catch (error) {
-      console.log("Logout API error, clearing local session anyway:", error);
+      console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem("user");
       localStorage.removeItem("token");
-      navigate("/");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
     }
   };
 
@@ -85,20 +92,20 @@ function Sidebar() {
             {visibleMenu.map((menu) => {
               const Icon = menu.icon || (() => null);
               const hasChildren = menu.child && menu.child.length > 0;
-              // FIX: Use menu.id instead of menu.path since Library and Hostel don't have paths
               const isDropdownOpen = openDropdown === menu.id;
 
               if (hasChildren) {
                 return (
-                  <li
-                    key={menu.id}
-                    className="space-y-1 relative"
-                    onMouseEnter={() => setOpenDropdown(menu.id)}
-                    onMouseLeave={() => setOpenDropdown(null)}
-                  >
-                    <div className="w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors cursor-pointer">
+                  <li key={menu.id} className="space-y-1 relative">
+                    <div
+                      onClick={() => toggleDropdown(menu.id)}
+                      className="w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors cursor-pointer"
+                    >
                       <div className="flex items-center gap-3">
-                        <Icon size={18} className="text-gray-400 group-hover:text-gray-600" />
+                        <Icon
+                          size={18}
+                          className="text-gray-400 group-hover:text-gray-600"
+                        />
                         <span>{menu.title}</span>
                       </div>
                       <ChevronDown
@@ -115,9 +122,7 @@ function Sidebar() {
                           <li key={childItem.path}>
                             <NavLink
                               to={childItem.path}
-                              onClick={() => {
-                                closeMobile();
-                              }}
+                              onClick={closeMobile}
                               className={({ isActive }) =>
                                 `block px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                                   isActive
@@ -140,7 +145,10 @@ function Sidebar() {
                 <li key={menu.id}>
                   <NavLink
                     to={menu.path || ""}
-                    onClick={closeMobile}
+                    onClick={() => {
+                      closeMobile();
+                      setOpenDropdown(null);
+                    }}
                     className={({ isActive }) =>
                       `group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                         isActive

@@ -40,13 +40,6 @@ const mockActivity = [
 function AdminDashboard() {
   const { currentUser } = useAuth();
 
-  // Page-level guard: only admins can view this page. For multiple
-  // admin-only pages, consider lifting this into a shared
-  // <ProtectedRoute allowedRoles={["admin"]} /> wrapper instead.
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <div className="space-y-6">
       <WelcomeBanner name={currentUser?.name} />

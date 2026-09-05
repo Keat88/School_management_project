@@ -58,13 +58,8 @@ function SchedulePage() {
   }, [schedules]);
 
   const handleAddSchedule = () => {
-    navigate("/schedule-form");
+    navigate("/admin/schedule-form");
   };
-
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

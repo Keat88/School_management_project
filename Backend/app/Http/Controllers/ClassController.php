@@ -13,16 +13,21 @@ class ClassController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $classes = ClassRoom::with('academicYear')->get();
-
-            if ($classes->isEmpty()) {
-                return $this->success('Classes don\'t have data', null, 404);
+            $perPage = $request->get('per_page', 10);
+            $search = $request->get('search');
+            $query = ClassRoom::with('academicYear');
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('grade', 'like', "%{$search}%")
+                        ->orWhere('section', 'like', "%{$search}%");
+                });
             }
-
-            return $this->success('Classes have been retrieved successfully!', ClassRoomResource::collection($classes));
+            $classes = $query->latest()->paginate($perPage);
+            $data = ClassRoomResource::collection($classes)->response()->getData(true);
+            return $this->success('Classes have been retrieved successfully!', $data);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving classes', $e->getMessage(), 500);
         }

@@ -87,13 +87,13 @@ class DatabaseSeeder extends Seeder
 
 
         // for student 
-        // Students::factory()->count(10)->create();
+        Students::factory()->count(10)->create();
 
 
         // for book category 
         // BookCategory::factory()->count(5)->create();
 
         // for books 
-        Books::factory()->count(15)->create();
+        // Books::factory()->count(15)->create();
     }
 }

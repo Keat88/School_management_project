@@ -15,12 +15,10 @@ class HostelAssignmentsController extends Controller
     {
         try {
             $query = Hostel_assignments::with(['student.parent', 'student.classRoom', 'room']);
-
-            if ($request->has('status') && !empty($request->status)) {
-                $query->where('status', 'like', "%{$request->status}%");
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
             }
-
-            if ($request->has('search') && !empty($request->search)) {
+            if ($request->filled('search')) {
                 $search = $request->search;
                 $query->whereHas('student', function ($q) use ($search) {
                     $q->where('student_name', 'like', "%{$search}%")
@@ -28,23 +26,33 @@ class HostelAssignmentsController extends Controller
                         ->orWhere('student_phone', 'like', "%{$search}%");
                 });
             }
-
-            if ($request->has('room') && !empty($request->room)) {
+            if ($request->filled('room')) {
                 $room = $request->room;
                 $query->whereHas('room', function ($q) use ($room) {
                     $q->where('room_number', 'like', "%{$room}%");
                 });
             }
+            $perPage = $request->input('per_page', 10);
 
-            $assignments = $query->orderBy('id', 'desc')->get();
-
+            $assignments = $query->orderBy('id', 'desc')->paginate($perPage);
             if ($assignments->isEmpty()) {
-                return $this->success('Hostel assignments don\'t have data', HostelAssignmentResource::collection($assignments), 200);
+                return $this->success(
+                    'Hostel assignments don\'t have data',
+                    HostelAssignmentResource::collection($assignments)->response()->getData(true),
+                    200
+                );
             }
 
-            return $this->success('Hostel assignments retrieved successfully', HostelAssignmentResource::collection($assignments));
+            return $this->success(
+                'Hostel assignments retrieved successfully',
+                HostelAssignmentResource::collection($assignments)->response()->getData(true)
+            );
         } catch (\Exception $e) {
-            return $this->error('Something went wrong while retrieving hostel assignments', $e->getMessage(), 500);
+            return $this->error(
+                'Something went wrong while retrieving hostel assignments',
+                $e->getMessage(),
+                500
+            );
         }
     }
 

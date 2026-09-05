@@ -2,9 +2,9 @@ import { api } from "./api";
 
 // Replace with real API data once available.
 export const classRoomApi = {
-  getAll: async () => {
+  getAll: async (param) => {
     try {
-      const response = await api.get("/classroom/index");
+      const response = await api.get("/classroom/index",{param});
       return response.data;
     } catch (error) {
       console.log("Error", error);
@@ -52,9 +52,9 @@ export const classRoomApi = {
   // },
 };
 export const Year = {
-  getAll: async (paramt = {}) => {
+  getAll: async (paramt) => {
     try {
-      const response = await api.get("/academic-years/index", paramt);
+      const response = await api.get("/academic-years/index",{ paramt});
       return response.data;
     } catch (error) {
       console.log("Error", error);
@@ -70,9 +70,9 @@ export const Year = {
   },
 };
 export const subjectApi = {
-  getAll: async (paramt = {}) => {
+  getAll: async (param) => {
     try {
-      const response = await api.get("/subject/index", paramt);
+      const response = await api.get("/subject/index", param);
       return response.data;
     } catch (error) {
       console.log("Error", error);
@@ -112,7 +112,7 @@ export const subjectApi = {
   },
   delete: async (id) => {
     try {
-      const response = await api.post(`/subject/destroy/${id}`);
+      const response = await api.delete(`/subject/destroy/${id}`);
       return response.data;
     } catch (error) {
       console.log("Error", error);
@@ -120,7 +120,7 @@ export const subjectApi = {
   },
 };
 export const SchedultTimeApi = {
-  getAll: async (params = {}) => {
+  getAll: async (params) => {
     try {
       const response = await api.get("/timetable/index", { params });
       return response.data;

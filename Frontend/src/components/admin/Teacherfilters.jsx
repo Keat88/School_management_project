@@ -22,7 +22,7 @@ function TeacherFilters({ searchValue, onSearchChange }) {
 
       <NavLink
         type="button"
-        to={'/teacher/add'}
+        to={'/admin/teacher/add'}
         className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm
           font-medium px-4 py-2 hover:bg-blue-700 active:bg-blue-800 transition-colors shrink-0"
       >

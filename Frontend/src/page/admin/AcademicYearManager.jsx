@@ -82,7 +82,7 @@ export default function AcademicYearManager() {
           text: "Academic year updated successfully!",
         });
         setTimeout(() => {
-          navigate("/academic-year");
+          navigate("/admin/academic-year");
         }, 2000);
       } else {
         await academicYearApi.create(formData);

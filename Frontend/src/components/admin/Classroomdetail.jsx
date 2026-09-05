@@ -20,18 +20,11 @@ function ClassroomDetail() {
     const fullClassName = `${classroom.name} - ${classroom.section}`;
     return students.filter((s) => s.class === fullClassName);
   }, [classroom]);
-
-  // Admin-only guard. For multiple admin-only pages, consider lifting
-  // this into a shared <ProtectedRoute allowedRoles={["admin"]} />.
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   if (!classroom) {
     return (
       <div className="space-y-4">
         <Link
-          to="/classes"
+          to="/admin/classes"
           className="inline-flex items-center gap-2 text-sm text-blue-600 hover:underline"
         >
           <ArrowLeft size={15} />
@@ -49,7 +42,7 @@ function ClassroomDetail() {
       {/* Back link + header */}
       <div className="space-y-3">
         <Link
-          to="/classes"
+          to="/admin/classes"
           className="inline-flex items-center gap-2 text-sm text-blue-600 hover:underline"
         >
           <ArrowLeft size={15} />

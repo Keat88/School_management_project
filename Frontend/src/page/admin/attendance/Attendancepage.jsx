@@ -138,10 +138,6 @@ function AttendancePage() {
 
   // Admin-only guard. For multiple admin-only pages, consider lifting
   // this into a shared <ProtectedRoute allowedRoles={["admin"]} />.
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-semibold text-gray-800">Attendance</h2>

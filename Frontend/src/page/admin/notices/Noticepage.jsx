@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
+
 import notices, { NoticeApi } from "../../../data/notices";
 import NoticeStats from "../../../components/admin/NoticeStats";
 import NoticeFilters from "../../../components/admin/NoticeFilters";
@@ -8,7 +8,7 @@ import NoticeList from "../../../components/admin/NoticeList";
 
 function NoticePage() {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+
   const [searchValue, setSearchValue] = useState("");
   const [audienceFilter, setAudienceFilter] = useState("all");
   const [notice, SetNotice] = useState([]);
@@ -28,15 +28,14 @@ function NoticePage() {
     fetchAllNotice();
   }, []);
   console.log(notice);
-  const filteredNotices = useMemo(() => {}, [searchValue, audienceFilter]);
 
   const handleCreateNotice = () => {
-    navigate("/notice/add");
+    navigate("/admin/notice/add");
   };
 
   const handleEdit = async (notice) => {
     try {
-      navigate(`/notice/add/${notice.id}`);
+      navigate(`/admin/notice/add/${notice.id}`);
     } catch (error) {
       console.log("Error", error);
     }
@@ -46,15 +45,13 @@ function NoticePage() {
     await NoticeApi.delete(notice.id);
     fetchAllNotice();
   };
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <>
       {loading ? (
-        <div className="flex text-center justify-center items-center min-h-screen bg-white w-full">
-          <h1>Loading...</h1>
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading Notice...</span>
         </div>
       ) : (
         <div className="space-y-6">

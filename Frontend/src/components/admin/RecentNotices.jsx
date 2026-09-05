@@ -7,7 +7,7 @@ function RecentNotices({ notices = [] }) {
         <h3 className="text-base font-semibold text-gray-800">
           Recent Notices
         </h3>
-        <a href="/notices" className="text-sm text-blue-600 hover:underline">
+        <a href="/admin/notices" className="text-sm text-blue-600 hover:underline">
           View all
         </a>
       </div>

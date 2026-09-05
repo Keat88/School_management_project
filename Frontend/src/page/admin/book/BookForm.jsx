@@ -7,6 +7,7 @@ export default function BookForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = Boolean(id);
+
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -26,13 +27,17 @@ export default function BookForm() {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        if (isEditMode) {
-          const bookRes = (await BookApi.getShow)
+        if (isEditMode && id) {
+          const bookRes = BookApi.getShow
             ? await BookApi.getShow(id)
-            : await BookApi.getAll().then((res) =>
-                (res.data || res).find((b) => b.id == id),
-              );
-          const bookData = bookRes?.data || bookRes;
+            : await BookApi.getAll().then((res) => {
+                const list = res?.data?.data || res?.data || res;
+                return Array.isArray(list)
+                  ? list.find((b) => b.id == id)
+                  : null;
+              });
+
+          const bookData = bookRes?.data?.data || bookRes?.data || bookRes;
 
           if (bookData) {
             setFormData({
@@ -44,12 +49,13 @@ export default function BookForm() {
               available_copies: bookData.available_copies || "",
               book_image: null,
             });
-            if (bookData.book_image) {
-              setImagePreview(bookData.book_image);
+            if (bookData.book_image || bookData.image) {
+              setImagePreview(bookData.book_image || bookData.image);
             }
           }
         }
       } catch (error) {
+        console.error("Failed to load initial data:", error);
         setFeedback({
           type: "error",
           text: "Failed to load form data.",
@@ -62,13 +68,20 @@ export default function BookForm() {
     loadInitialData();
   }, [id, isEditMode]);
 
-  const fetchCategories = async () => {
-    const response = await BookCategoryApi.getAll();
-    setCategories(response?.data || response || response?.data.data);
-  };
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await BookCategoryApi.getAll();
+        const categoryData = response?.data?.data || response?.data || response;
+        setCategories(Array.isArray(categoryData) ? categoryData : []);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
     fetchCategories();
   }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -81,6 +94,7 @@ export default function BookForm() {
       setImagePreview(URL.createObjectURL(file));
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -89,7 +103,7 @@ export default function BookForm() {
     const data = new FormData();
     data.append("title", formData.title);
     data.append("author", formData.author);
-    data.append("isbn", formData.isbn);
+    data.append("isbn", formData.isbn || "");
     data.append("book_category_id", formData.book_category_id);
     data.append("total_copies", formData.total_copies);
     data.append("available_copies", formData.available_copies);
@@ -99,22 +113,26 @@ export default function BookForm() {
     }
 
     if (isEditMode) {
+      // Method spoofing for Laravel multipart Form Data
       data.append("_method", "PUT");
     }
 
     try {
       if (isEditMode) {
-        (await BookApi.update)
-          ? await BookApi.update(id, data)
-          : await BookApi.addNew(data); // Adjust based on your API setup for multipart updates
+        if (typeof BookApi.update === "function") {
+          await BookApi.update(id, data);
+        } else {
+          await BookApi.upDate(id, data);
+        }
         setFeedback({ type: "success", text: "Book updated successfully!" });
       } else {
         await BookApi.addNew(data);
         setFeedback({ type: "success", text: "Book added successfully!" });
       }
 
-      setTimeout(() => navigate("/books"), 1000);
+      setTimeout(() => navigate("/admin/library/books"), 1000);
     } catch (error) {
+      console.error("Submission error:", error);
       setFeedback({
         type: "error",
         text:
@@ -135,7 +153,7 @@ export default function BookForm() {
   }
 
   return (
-    <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200  space-y-6">
+    <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 space-y-6">
       <div className="flex justify-between items-center pb-4 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-800">
           {isEditMode ? "Edit Book" : "Add New Book"}
@@ -222,7 +240,7 @@ export default function BookForm() {
               <option value="">Select Category</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.book_category}
+                  {cat.book_category || cat.name}
                 </option>
               ))}
             </select>

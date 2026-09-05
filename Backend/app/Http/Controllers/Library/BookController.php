@@ -38,14 +38,19 @@ class BookController extends Controller
                     $q->where('book_category', 'like', "%{$category}%");
                 });
             }
+            $perPage = $request->input('per_page', 10);
 
-            $books = $query->orderBy('created_at', 'desc')->get();
+            // Paginate results sorted by latest created date
+            $books = $query->orderBy('created_at', 'desc')->paginate($perPage);
 
             if ($books->isEmpty()) {
                 return $this->error('No books found', null, 404);
             }
 
-            return $this->success('Books retrieved successfully', BookResource::collection($books));
+            return $this->success(
+                'Books retrieved successfully',
+                BookResource::collection($books)->response()->getData(true)
+            );
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving books', $e->getMessage(), 500);
         }

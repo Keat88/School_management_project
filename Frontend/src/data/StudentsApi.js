@@ -2,7 +2,7 @@ import { api } from "./api";
 
 // Replace with real API data once available.
 export const studentData = {
-  getAll: async (params = {}) => {
+  getAll: async (params) => {
     try {
       const response = await api.get("/student/index", { params });
       return response.data;
@@ -49,7 +49,7 @@ export const studentData = {
   },
 };
 export const AttendanceStudentApi = {
-  getAll: async (params = {}) => {
+  getAll: async (params) => {
     try {
       const response = await api.get("/attendance/index", { params });
       return response.data;

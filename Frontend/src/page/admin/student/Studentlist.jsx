@@ -1,77 +1,140 @@
-import { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import StudentFilters from "../../../components/admin/Studentfilters";
 import StudentTable from "../../../components/admin/Studenttable";
 import { studentData } from "../../../data/StudentsApi";
 import { classRoomApi } from "../../../data/classrooms";
-
-
+import Pagination from "../../../hooks/Pagination";
 
 function StudentList() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+
+  // Filter States
   const [searchValue, setSearchValue] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [classFilter, setClassFilter] = useState("");
   const [genderFilter, setGenderFilter] = useState("");
+
+  // Data & Pagination States
   const [students, setStudents] = useState([]);
   const [classes, setClasses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const [filters, setFilters] = useState({
-    search: "",
-    gender: "",
-    grade: "",
-    section: "",
-  });
-
-  // Automatically sync individual filter states into the `filters` object
+  // 1. Debounce Search Value (300ms)
   useEffect(() => {
-    setFilters((prev) => ({
-      ...prev,
-      search: searchValue,
-      gender: genderFilter === "all" ? "" : genderFilter,
-      grade: classFilter === "all" ? "" : classFilter,
-    }));
-  }, [searchValue, genderFilter, classFilter]);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchValue);
+      setCurrentPage(1); // Reset ទៅ Page 1 ពេល Search ពាក្យថ្មី
+    }, 300);
 
-  const fetchStudent = async () => {
+    return () => clearTimeout(timer);
+  }, [searchValue]);
+
+  // 2. Fetch Students Data ជាមួយ useCallback
+  const fetchStudent = useCallback(async () => {
     try {
-      const response = await studentData.getAll(filters);
-      setStudents(response.data || []);
+      setLoading(true);
+      const queryParams = {
+        search: debouncedSearch,
+        gender: genderFilter === "all" ? "" : genderFilter,
+        grade: classFilter === "all" ? "" : classFilter,
+        per_page: 10,
+        page: currentPage,
+      };
+
+      const response = await studentData.getAll(queryParams);
+      const result = response?.data;
+
+      if (result) {
+        setStudents(result?.data || []);
+
+        // Update Pagination Metadata
+        if (result.meta) {
+          setCurrentPage(result.meta.current_page || 1);
+          setTotalPages(result.meta.last_page || 1);
+          setTotalItems(result.meta.total || 0);
+        }
+      } else {
+        setStudents([]);
+      }
     } catch (error) {
       console.error("Error fetching students:", error);
+      setStudents([]);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [debouncedSearch, genderFilter, classFilter, currentPage]);
 
-  const fetchClass = async () => {
+  // 3. Fetch Classes សម្រាប់ Dropdown
+  const fetchClass = useCallback(async () => {
     try {
       const response = await classRoomApi.getAll();
-      setClasses(response.data || []);
+      const classData =
+        response?.data?.data?.data ||
+        response?.data?.data ||
+        response?.data ||
+        [];
+      setClasses(Array.isArray(classData) ? classData : []);
     } catch (error) {
       console.error("Error fetching classes:", error);
+      setClasses([]);
     }
-  };
-
-  useEffect(() => {
-    fetchClass();
   }, []);
 
+  // Fetch Classes តែម្ដងគត់ពេល Mount
+  useEffect(() => {
+    fetchClass();
+  }, [fetchClass]);
+
+  // Fetch Students រាល់ពេល [debouncedSearch, genderFilter, classFilter, currentPage] ផ្លាស់ប្តូរ
   useEffect(() => {
     fetchStudent();
-  }, [filters]);
+  }, [fetchStudent]);
 
+  // Option Dropdown សម្រាប់ Class Filter
   const classOptions = useMemo(() => {
-    return [...new Set(classes.map((c) => c.grade || c.name))].sort();
+    if (!Array.isArray(classes)) return [];
+    return [
+      ...new Set(
+        classes.map((c) =>
+          c.grade && c.section ? `${c.grade}-${c.section}` : c.name,
+        ),
+      ),
+    ].sort();
   }, [classes]);
 
-  // Rename 'delete' to a valid identifier like 'handleDelete' (since 'delete' is a JS reserved keyword)
+  // Handlers សម្រាប់ Filter & Actions
+  const handleSearchChange = (val) => {
+    setSearchValue(val);
+  };
+
+  const handleClassChange = (val) => {
+    setClassFilter(val);
+    setCurrentPage(1);
+  };
+
+  const handleGenderChange = (val) => {
+    setGenderFilter(val);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleView = (id) => {
-     try {
-      navigate(`/students/view/${id}`);
-    } catch (error) {
-      console.error("Error deleting student:", error);
-    }
-  } 
+    navigate(`/admin/students/view/${id}`);
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/admin/students/add/${id}`);
+  };
+
   const handleDelete = async (id) => {
     try {
       await studentData.delete(id);
@@ -80,42 +143,53 @@ function StudentList() {
       console.error("Error deleting student:", error);
     }
   };
-  const handleEdit = async (id) => {
-    try {
-      navigate(`/students/add/${id}`);
-    } catch (error) {
-      console.error("Error deleting student:", error);
-    }
-  };
-
-  if (currentUser?.role !== "admin") {
-    return <Navigate to="/dashboard" replace />;
-  }
 
   return (
     <div className="space-y-6">
+      {/* Header Section */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-800">Students</h2>
         <span className="text-sm text-gray-500">
-          {students.length} students found
+          {totalItems} students found
         </span>
       </div>
 
+      {/* Filters Component */}
       <StudentFilters
         searchValue={searchValue}
-        onSearchChange={setSearchValue}
+        onSearchChange={handleSearchChange}
         classFilter={classFilter}
-        onClassChange={setClassFilter}
+        onClassChange={handleClassChange}
         genderFilter={genderFilter}
-        onGenderChange={setGenderFilter}
+        onGenderChange={handleGenderChange}
         classOptions={classOptions}
       />
 
-      <StudentTable
-        students={students}
-        onDelete={handleDelete}
-        onEdit={handleEdit}
-        onView={handleView}
+      {/* Table Component */}
+      {loading && students.length === 0 ? (
+        <div className="py-12 text-center text-gray-500">
+          <div className="flex flex-col items-center justify-center gap-2">
+            <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+            <span>Loading student...</span>
+          </div>
+        </div>
+      ) : (
+        <StudentTable
+          students={students}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          onView={handleView}
+          loading={loading}
+        />
+      )}
+
+      {/* Pagination Component */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        perPage={10}
+        onPageChange={handlePageChange}
       />
     </div>
   );

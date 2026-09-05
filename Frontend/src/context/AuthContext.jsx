@@ -1,27 +1,33 @@
-import { createContext, useContext } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 
-// Named export kept for compatibility with components that do:
-//   import { AuthContext } from "../../context/AuthContext";
-//   const { currentUser } = useContext(AuthContext);
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
-const currentUser = JSON.parse(localStorage.getItem("user"));
+export const AuthProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const login = (userData, token) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", token);
+    setCurrentUser(userData);
+  };
+  const logout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setCurrentUser(null);
+  };
 
-export function AuthProvider({ children }) {
   return (
-    <AuthContext.Provider value={{ currentUser }}>
+    <AuthContext.Provider
+      value={{ currentUser, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-// Convenience hook — components can use either:
-//   const { currentUser } = useAuth();
-// or the raw context via useContext(AuthContext) directly.
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}
+// Custom Hook សម្រាប់ហៅប្រើ
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

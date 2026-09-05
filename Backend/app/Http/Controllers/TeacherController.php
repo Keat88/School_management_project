@@ -20,7 +20,6 @@ class TeacherController extends Controller
         try {
             $user = $request->user();
             $teacherProfile = $user->teacher;
-
             if (!$teacherProfile) {
                 return $this->error('Teacher profile not found for this user', null, 404);
             }
@@ -104,14 +103,13 @@ class TeacherController extends Controller
                         });
                 });
             }
-
-            $teachers = $query->orderBy('created_at', 'desc')->get();
-
+            $perPage = $request->get('per_page', 10);
+            $teachers = $query->orderBy('created_at', 'desc')->paginate($perPage);
+            $teacher = TeacherResource::collection($teachers)->response()->getData(true);
             if ($teachers->isEmpty()) {
                 return $this->success('No teachers found', [], 200);
             }
-
-            return $this->success('Teacher have been accessed succesfully!', TeacherResource::collection($teachers));
+            return $this->success('Teacher have been accessed succesfully!', $teacher, 200);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving teachers', $e->getMessage(), 500);
         }

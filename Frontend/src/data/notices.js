@@ -8,7 +8,7 @@ const TODAY = new Date().toISOString().slice(0, 10);
 export const NoticeApi = {
   getAll: async (param) => {
     try {
-      const response = await api.get("/notice/index",param );
+      const response = await api.get("/notice/index", { param });
       return response.data;
     } catch (error) {
       console.log("Error", error);
@@ -24,15 +24,11 @@ export const NoticeApi = {
   },
   addNew: async (param) => {
     try {
-      const response = await api.post(
-        "/notice/store",
-         param ,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+      const response = await api.post("/notice/store", param, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-      );
+      });
       return response.data;
     } catch (error) {
       console.log("Error", error);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { studentData } from "../../data/StudentsApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { ImageIcon } from "lucide-react";
@@ -17,8 +17,6 @@ export default function StudentForm({
   const [imagePreviewParent, setImagePreviewParent] = useState(null);
 
   const [fetchedStudent, setFetchedStudent] = useState(null);
-
-  // Support both component prop and route params (`/students/edit/:id`)
   const currentStudent = propStudent || fetchedStudent;
   const activeId = propStudent?.id || id;
   const isEdit = Boolean(activeId);
@@ -38,27 +36,38 @@ export default function StudentForm({
     roll_number: "",
     student_phone: "",
   });
-
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [classRoomm, setClassRoom] = useState([]);
-  useEffect(() => {
-    const fetchClass = async () => {
+  const fetchClass = useCallback(async () => {
+    try {
       const response = await classRoomApi.getAll();
-      setClassRoom(response?.data);
-    };
-    fetchClass();
+      const classData =
+        response?.data?.data?.data ||
+        response?.data?.data ||
+        response?.data ||
+        [];
+      setClassRoom(Array.isArray(classData) ? classData : []);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setClassRoom([]);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchClass();
+  }, [fetchClass]);
   useEffect(() => {
     if (!propStudent && id) {
       studentData
         .getShow(id)
-        .then((response) => setFetchedStudent(response.data))
+        .then((response) => {
+          const studentRes = response?.data?.data || response?.data;
+          setFetchedStudent(studentRes);
+        })
         .catch((error) => console.error("Failed to load student data", error));
     }
   }, [propStudent, id]);
-
-  // Populate form fields when student data becomes available
   useEffect(() => {
     if (currentStudent) {
       setFormData({
@@ -88,6 +97,16 @@ export default function StudentForm({
         roll_number: currentStudent.roll_number || "",
         student_phone: currentStudent.student_phone || "",
       });
+
+      // បង្ហាញរូបភាពចាស់ប្រសិនបើមានស្រាប់ក្នុង Database
+      if (currentStudent.student_image) {
+        setImagePreviewStudent(currentStudent.student_image);
+      }
+      if (currentStudent.parent?.parent_image || currentStudent.parent_image) {
+        setImagePreviewParent(
+          currentStudent.parent?.parent_image || currentStudent.parent_image,
+        );
+      }
     }
   }, [currentStudent]);
 
@@ -112,6 +131,7 @@ export default function StudentForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 4. Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -123,7 +143,6 @@ export default function StudentForm({
         data.append(key, formData[key]);
       }
     });
-
     if (parentImage instanceof File) {
       data.append("parent_image", parentImage);
     }
@@ -147,7 +166,7 @@ export default function StudentForm({
       if (onSuccess) {
         onSuccess();
       } else {
-        setTimeout(() => navigate("/students"), 1000);
+        setTimeout(() => navigate("/admin/students"), 1000);
       }
     } catch (error) {
       setFeedback({
@@ -256,15 +275,17 @@ export default function StudentForm({
                 name="class_id"
                 value={formData.class_id}
                 onChange={handleChange}
+                required
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option >--Select class--</option>
-                {classRoomm &&
-                  classRoomm?.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.grade}-{item.section}
-                    </option>
-                  ))}
+                <option value="">--Select class--</option>
+                {(Array.isArray(classRoomm) ? classRoomm : []).map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.grade && item.section
+                      ? `${item.grade}-${item.section}`
+                      : item.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -280,6 +301,7 @@ export default function StudentForm({
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Student Email
@@ -378,7 +400,6 @@ export default function StudentForm({
                 name="email_parent"
                 value={formData.email_parent}
                 onChange={handleChange}
-              
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -443,7 +464,7 @@ export default function StudentForm({
             onClick={() => navigate(-1)}
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
           >
-            Cancel Data
+            Cancel
           </button>
           <button
             type="submit"

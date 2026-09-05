@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Plus, Search, Eye, Edit2, Trash2 } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { BookCategoryApi } from "../../../data/library";
+import Pagination from "../../../hooks/Pagination";
 
 export default function ManageCategories() {
   const navigate = useNavigate();
@@ -10,15 +11,33 @@ export default function ManageCategories() {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
 
-  const fetchCategories = async (searchTerm = "") => {
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchCategories = async (page = 1, searchTerm = search) => {
     setLoading(true);
     try {
       const res = await BookCategoryApi.getAll({
         search: searchTerm,
+        page: page,
       });
-      setCategories(res.data || res);
+
+      // Extract paginated array and pagination metadata
+      const rawData = res?.data || res;
+
+      // Check if data is wrapped inside Laravel response format
+      const items = rawData?.data || (Array.isArray(rawData) ? rawData : []);
+      const lastPage = rawData?.meta?.last_page || rawData?.last_page || 1;
+      const activePage =
+        rawData?.meta?.current_page || rawData?.current_page || page;
+
+      setCategories(items);
+      setTotalPages(lastPage);
+      setCurrentPage(activePage);
     } catch (error) {
       setCategories([]);
+      setTotalPages(1);
       setFeedback({
         type: "error",
         text: error.response?.data?.message || "Failed to load categories.",
@@ -29,12 +48,24 @@ export default function ManageCategories() {
   };
 
   useEffect(() => {
-    fetchCategories();
-  }, []);
+    fetchCategories(currentPage, search);
+  }, [currentPage]);
+
+  const handleReset = (e) => {
+    e.preventDefault();
+    setSearch("");
+    setCurrentPage(1);
+    fetchCategories(1, "");
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    fetchCategories(search);
+    setCurrentPage(1);
+    fetchCategories(1, search);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const handleDelete = async (id) => {
@@ -43,7 +74,7 @@ export default function ManageCategories() {
     try {
       await BookCategoryApi.delete(id);
       setFeedback({ type: "success", text: "Category deleted successfully!" });
-      fetchCategories(search);
+      fetchCategories(currentPage, search);
     } catch (error) {
       setFeedback({
         type: "error",
@@ -59,7 +90,7 @@ export default function ManageCategories() {
           Manage Book Categories
         </h2>
         <NavLink
-          to="/library/category/add"
+          to="/admin/library/category/add"
           className="flex items-center gap-2 rounded-lg bg-blue-600 text-white text-sm font-medium px-4 py-2 hover:bg-blue-700 transition-colors"
         >
           <Plus size={16} />
@@ -91,6 +122,13 @@ export default function ManageCategories() {
           />
         </div>
         <button
+          type="button"
+          onClick={handleReset}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-400 transition-colors"
+        >
+          Reset
+        </button>
+        <button
           type="submit"
           className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
         >
@@ -110,8 +148,11 @@ export default function ManageCategories() {
           <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
             {loading ? (
               <tr>
-                <td colSpan="3" className="py-6 text-center text-gray-400">
-                  Loading categories...
+                <td colSpan="6" className="py-12 text-center text-gray-400">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+                    <span>Loading books...</span>
+                  </div>
                 </td>
               </tr>
             ) : categories.length === 0 ? (
@@ -134,28 +175,28 @@ export default function ManageCategories() {
                   <td className="py-3 px-4 text-right space-x-1">
                     <button
                       onClick={() =>
-                        navigate(`/library/category/view/:${cat.id}`)
+                        navigate(`/admin/library/category/view/${cat.id}`)
                       }
-                      className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors inline-block"
+                      className="p-1.5 bg-blue-100 text-blue-600 hover:bg-blue-200 duration-200 transition-colors rounded-lg inline-block"
                       title="View"
                     >
-                      <Eye size={16} />
+                      View
                     </button>
                     <button
                       onClick={() =>
-                        navigate(`/library/category/add/${cat.id}`)
+                        navigate(`/admin/library/category/add/${cat.id}`)
                       }
-                      className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors inline-block"
+                      className="p-1.5 text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors inline-block"
                       title="Update"
                     >
-                      <Edit2 size={16} />
+                      Edit
                     </button>
                     <button
                       onClick={() => handleDelete(cat.id)}
-                      className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-block"
+                      className="p-1.5 text-red-600 rounded-lg bg-red-100 duration-200 transition-colors hover:bg-red-200 inline-block"
                       title="Delete"
                     >
-                      <Trash2 size={16} />
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -163,6 +204,14 @@ export default function ManageCategories() {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

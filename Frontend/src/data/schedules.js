@@ -19,7 +19,7 @@ const periods = [
 ];
 export const SchedultApi = {
   getAll: async (param) => {
-    const response = await api.get("/timetable/index", param);
+    const response = await api.get("/timetable/index", {param});
     return response.data;
   },
   getShow: async (id) => {

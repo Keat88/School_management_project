@@ -1,17 +1,8 @@
-import { useState } from "react";
-import { IoMdMore } from "react-icons/io";
-
 function initials(name = "") {
   return name.charAt(0).toUpperCase();
 }
 
 function TeacherTable({ teachers = [], onEditId, onDeleteId }) {
-  const [openRowId, setOpenRowId] = useState(null);
-
-  const toggleMenu = (id) => {
-    setOpenRowId(openRowId === id ? null : id);
-  };
-
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
       <div className="overflow-x-auto">
@@ -87,41 +78,24 @@ function TeacherTable({ teachers = [], onEditId, onDeleteId }) {
                 <td className="px-4 py-3 text-right whitespace-nowrap">
                   <div className="flex items-center justify-end gap-3 relative">
                     <button
+                      onClick={() => {
+                        onEditId(teacher.id);
+                      }}
                       type="button"
-                      onClick={() => toggleMenu(teacher.id)}
-                      className="p-1 rounded-full hover:bg-gray-100 transition-colors focus:outline-none"
+                      className="text-sm px-3 py-1.5 text-left bg-slate-100 text-gray-700 hover:bg-gray-100 transition-colors rounded-md font-medium"
                     >
-                      <IoMdMore
-                        size={20}
-                        className="cursor-pointer text-gray-500 hover:text-gray-700"
-                      />
+                      Edit
                     </button>
 
-                    {openRowId === teacher.id && (
-                      <div className="absolute right-0 bottom-full mb-1 w-28 flex flex-col rounded-md bg-white p-1 border border-gray-200 shadow-md z-20">
-                        <button
-                          onClick={() => {
-                            onEditId(teacher.id);
-                            setOpenRowId(null);
-                          }}
-                          type="button"
-                          className="text-sm px-3 py-1.5 text-left text-gray-700 hover:bg-gray-100 transition-colors rounded-md font-medium"
-                        >
-                          Edit
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onDeleteId(teacher.id);
-                            setOpenRowId(null);
-                          }}
-                          className="text-sm px-3 py-1.5 text-left text-red-500 hover:bg-red-50 transition-colors rounded-md font-medium"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onDeleteId(teacher.id);
+                      }}
+                      className="text-sm px-3 py-1.5 text-left bg-red-100 text-red-500 hover:bg-red-50 transition-colors rounded-md font-medium"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
