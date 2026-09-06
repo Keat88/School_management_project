@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class Teachers extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'teacher_code', 'qualification', 'phone', 'profile_image'];
-  
+    protected $fillable = ['user_id', 'gender', 'teacher_code', 'qualification', 'phone', 'profile_image'];
+
 
     // protected function profileImageUrl(): Attribute
     // {
@@ -28,5 +28,9 @@ class Teachers extends Model
     public function timeTables()
     {
         return $this->hasMany(TimeTables::class);
+    }
+    public function classRooms()
+    {
+        return $this->hasMany(ClassRoom::class, 'teacher_id');
     }
 }

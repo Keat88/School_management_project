@@ -27,8 +27,11 @@ export default function StudentView({ student: propStudent = null }) {
 
   if (loading) {
     return (
-      <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-center text-gray-500">
-        Loading student details...
+      <div className="py-12 text-center text-gray-500">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading student...</span>
+        </div>
       </div>
     );
   }
@@ -89,7 +92,9 @@ export default function StudentView({ student: propStudent = null }) {
             )}
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-gray-700">Student Photo</h4>
+            <h4 className="text-sm font-semibold text-gray-700">
+              Student Photo
+            </h4>
             <p className="text-xs text-gray-500 mt-0.5">Profile snapshot</p>
           </div>
         </div>
@@ -109,7 +114,9 @@ export default function StudentView({ student: propStudent = null }) {
             )}
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-gray-700">Parent Photo</h4>
+            <h4 className="text-sm font-semibold text-gray-700">
+              Parent Photo
+            </h4>
             <p className="text-xs text-gray-500 mt-0.5">Guardian snapshot</p>
           </div>
         </div>
@@ -125,7 +132,9 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium text-gray-400 uppercase tracking-wide">
               Student Name
             </span>
-            <p className="text-gray-800 font-medium mt-1">{data.student_name}</p>
+            <p className="text-gray-800 font-medium mt-1">
+              {data.student_name}
+            </p>
           </div>
 
           <div>
@@ -139,7 +148,9 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium text-gray-400 uppercase tracking-wide">
               Date of Birth
             </span>
-            <p className="text-gray-800 font-medium mt-1">{data.date_of_birth}</p>
+            <p className="text-gray-800 font-medium mt-1">
+              {data.date_of_birth}
+            </p>
           </div>
 
           <div>
@@ -209,14 +220,18 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium text-gray-400 uppercase tracking-wide">
               Parent Email
             </span>
-            <p className="text-gray-800 font-medium mt-1">{data.email_parent}</p>
+            <p className="text-gray-800 font-medium mt-1">
+              {data.email_parent}
+            </p>
           </div>
 
           <div>
             <span className="block text-xs font-medium text-gray-400 uppercase tracking-wide">
               Parent Phone
             </span>
-            <p className="text-gray-800 font-medium mt-1">{data.parent_phone}</p>
+            <p className="text-gray-800 font-medium mt-1">
+              {data.parent_phone}
+            </p>
           </div>
 
           <div className="md:col-span-2">

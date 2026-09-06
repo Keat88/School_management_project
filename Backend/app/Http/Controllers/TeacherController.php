@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class TeacherController extends Controller
 {
@@ -23,9 +24,7 @@ class TeacherController extends Controller
             if (!$teacherProfile) {
                 return $this->error('Teacher profile not found for this user', null, 404);
             }
-
             $classes = $teacherProfile->classes()->withCount('students')->get();
-
             return $this->success('Teacher dashboard summary retrieved successfully', [
                 'teacher_name' => $user->name,
                 'total_classes' => $classes->count(),
@@ -100,6 +99,9 @@ class TeacherController extends Controller
                     $q->where('name', 'like', "%{$search}%")
                         ->orWhereHas('teacher', function ($teacherQuery) use ($search) {
                             $teacherQuery->where('teacher_code', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('teacher', function ($teacherQuery) use ($search) {
+                            $teacherQuery->where('gender', 'like', "%{$search}%");
                         });
                 });
             }
@@ -124,9 +126,9 @@ class TeacherController extends Controller
             'name'          => 'required|string|max:255',
             'email'         => 'required|string|email|unique:users,email',
             'password'      => 'required|string|min:8',
-            'teacher_code'  => 'required|string|unique:teachers,teacher_code',
             'qualification' => 'required|string|max:255',
             'phone'         => 'required|string|max:20',
+            'gender'        => 'nullable|string|max:20',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:4096'
         ]);
         if ($validator->fails()) {
@@ -140,6 +142,11 @@ class TeacherController extends Controller
                     $image_name = $request->file('profile_image')->store('teacher', 'public');
                 }
 
+                // Auto-generate unique random teacher_code
+                do {
+                    $teacher_code = 'TCH-' . mt_rand(100000, 999999);
+                } while (Teachers::where('teacher_code', $teacher_code)->exists());
+
                 $user = User::create([
                     'name'     => $request->name,
                     'email'    => $request->email,
@@ -149,9 +156,10 @@ class TeacherController extends Controller
 
                 Teachers::create([
                     'user_id'       => $user->id,
-                    'teacher_code'  => $request->teacher_code,
+                    'teacher_code'  => $teacher_code,
                     'qualification' => $request->qualification,
                     'phone'         => $request->phone,
+                    'gender'        => $request->gender,
                     'profile_image' => $image_name
                 ]);
 
@@ -204,6 +212,7 @@ class TeacherController extends Controller
                 'teacher_code'  => 'nullable|string|unique:teachers,teacher_code,' . optional($teacherUser->teacher)->id,
                 'qualification' => 'nullable|string|max:255',
                 'phone'         => 'nullable|string|max:20',
+                'gender'        => 'nullable|string|max:20',
                 'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
             ]);
 
@@ -230,9 +239,9 @@ class TeacherController extends Controller
                 'teacher_code'  => $request->teacher_code ? $request->teacher_code : optional($teacherUser->teacher)->teacher_code,
                 'qualification' => $request->qualification ? $request->qualification : optional($teacherUser->teacher)->qualification,
                 'phone'         => $request->phone ? $request->phone : optional($teacherUser->teacher)->phone,
+                'gender'        => $request->gender ? $request->gender : optional($teacherUser->teacher)->gender,
                 'profile_image' => $request->hasFile('profile_image') ? $image_name : optional($teacherUser->teacher)->profile_image
             ];
-
             if ($teacherUser->teacher) {
                 $teacherUser->teacher->update($teacherData);
             } else {

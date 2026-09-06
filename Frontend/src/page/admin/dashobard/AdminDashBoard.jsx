@@ -1,59 +1,86 @@
-import { Navigate } from "react-router-dom";
-import { Users, GraduationCap, School, Wallet } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Users,
+  GraduationCap,
+  DoorOpen,
+  Hotel,
+  CalendarCheck,
+  BookMarked,
+  BookOpen,
+  FileCheck2,
+} from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
-
+import { AdminDashboardApi } from "../../../data/Dashboard";
 import WelcomeBanner from "../../../components/admin/WelcomeBanner";
-import StatCard from "../../../components/admin/Statscard";
 import StatsGrid from "../../../components/admin/StatsGrid";
 import FeeOverview from "../../../components/admin/FeeOverview";
 import AttendanceOverview from "../../../components/admin/AttendanceOverview";
 import RecentActivity from "../../../components/admin/RecentActivity";
 import RecentNotices from "../../../components/admin/RecentNotices";
 
-// Replace with real API data once available.
-const mockStats = [
-  { label: "Total Students", value: "1,284", icon: Users, accent: "blue", trend: "+3.2%" },
-  { label: "Total Teachers", value: "76", icon: GraduationCap, accent: "green", trend: "+1" },
-  { label: "Active Classes", value: "42", icon: School, accent: "orange" },
-  { label: "Fees Collected", value: "$48,200", icon: Wallet, accent: "purple", trend: "+8.4%" }
-];
-
-const mockAttendanceByClass = [
-  { className: "Grade 9 - A", rate: 96 },
-  { className: "Grade 9 - B", rate: 91 },
-  { className: "Grade 10 - A", rate: 88 },
-  { className: "Grade 11 - A", rate: 94 }
-];
-
-const mockNotices = [
-  { id: 1, title: "Mid-term exam schedule released", date: "Aug 28, 2026" },
-  { id: 2, title: "Parent-teacher meeting on Sep 5", date: "Aug 26, 2026" },
-  { id: 3, title: "Library closed for maintenance", date: "Aug 24, 2026" }
-];
-
-const mockActivity = [
-  { id: 1, actor: "Mr. Chan", action: "marked attendance for Grade 10 - A", time: "10 minutes ago" },
-  { id: 2, actor: "Admin", action: "added a new teacher, Ms. Reth", time: "1 hour ago" },
-  { id: 3, actor: "System", action: "generated the monthly fee report", time: "3 hours ago" }
+const STAT_SCHEMA = [
+  { key: "total_students", label: "Total Students", icon: Users, accent: "blue" },
+  { key: "total_teachers", label: "Total Teachers", icon: GraduationCap, accent: "indigo" },
+  { key: "total_class", label: "Total Classes", icon: DoorOpen, accent: "purple" },
+  { key: "total_attendance", label: "Attendance Rate", icon: CalendarCheck, accent: "green", format: (v) => `${v}%` },
+  { key: "total_books", label: "Total Books", icon: BookOpen, accent: "orange" },
+  { key: "total_book_category", label: "Book Categories", icon: BookMarked, accent: "cyan" },
+  { key: "total_studentassignments", label: "Assignments", icon: FileCheck2, accent: "teal" },
+  { key: "total_hotelroom", label: "Hotel Rooms", icon: Hotel, accent: "rose" },
 ];
 
 function AdminDashboard() {
   const { currentUser } = useAuth();
+  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await AdminDashboardApi.getCardData();
+      const result = response?.data?.data ?? response?.data ?? response ?? {};
+      setData(result);
+    } catch (error) {
+      console.error("Failed to fetch dashboard card data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Map API object to array for StatsGrid
+  const formattedStats = STAT_SCHEMA.map((item) => {
+    const rawVal = data?.[item.key] ?? 0;
+    return {
+      key: item.key,
+      label: item.label,
+      value: loading ? "..." : item.format ? item.format(rawVal) : rawVal,
+      icon: item.icon,
+      accent: item.accent,
+    };
+  });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       <WelcomeBanner name={currentUser?.name} />
 
-      <StatsGrid stats={mockStats} />
+      {/* Render converted array */}
+      <StatsGrid stats={formattedStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AttendanceOverview overallRate={92} byClass={mockAttendanceByClass} />
+        <AttendanceOverview
+          overallRate={data?.total_attendance ?? 92}
+          byClass={[]}
+        />
         <FeeOverview collected={48200} pending={9800} total={58000} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentNotices notices={mockNotices} />
-        <RecentActivity activities={mockActivity} />
+        <RecentNotices notices={[]} />
+        <RecentActivity activities={[]} />
       </div>
     </div>
   );

@@ -1,8 +1,15 @@
 import { Search, Plus } from "lucide-react";
 import { NavLink } from "react-router-dom";
-function TeacherFilters({ searchValue, onSearchChange }) {
+
+function TeacherFilters({
+  searchValue,
+  genderValue = "",
+  onSearchChange,
+  onGenderChange,
+}) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+      {/* Search Input */}
       <div className="relative flex-1 min-w-0">
         <Search
           size={16}
@@ -20,9 +27,21 @@ function TeacherFilters({ searchValue, onSearchChange }) {
         />
       </div>
 
+      {/* Gender Filter Dropdown */}
+      <select
+        value={genderValue}
+        onChange={(e) => onGenderChange(e.target.value)}
+        className="rounded-lg border border-gray-200 bg-gray-50 py-2 px-3 text-sm text-gray-700 outline-none focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-colors"
+      >
+        <option value="">All Genders</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+
+      {/* Add Teacher Button */}
       <NavLink
-        type="button"
-        to={'/admin/teacher/add'}
+        to="/admin/teacher/add"
         className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm
           font-medium px-4 py-2 hover:bg-blue-700 active:bg-blue-800 transition-colors shrink-0"
       >

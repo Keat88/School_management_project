@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { api } from "../../data/api";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../../hooks/Pagination";
 
 export const academicYearApi = {
   getAll: () => api.get("/academic-years/index"),
@@ -15,6 +16,11 @@ export default function AcademicYearManager() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const navigate = useNavigate();
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const [formData, setFormData] = useState({
     name: "",
     start_date: "",
@@ -28,26 +34,53 @@ export default function AcademicYearManager() {
     fetchAcademicYears();
   }, []);
 
+  // Helper to extract YYYY-MM-DD for <input type="date" />
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return "";
+    return dateString.split("T")[0];
+  };
+
   const fetchAcademicYears = async () => {
     try {
       setLoading(true);
       const response = await academicYearApi.getAll();
-      setAcademicYears(response.data.data || response.data);
+
+      const data =
+        response?.data?.data?.data ||
+        response.data?.data ||
+        response.data ||
+        [];
+      setAcademicYears(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Failed to load academic years", error);
+      setAcademicYears([]); // Fallback to an empty array on error
       setFeedback({ type: "error", text: "Failed to load academic years." });
     } finally {
       setLoading(false);
     }
   };
 
+  // Safe client-side pagination calculation
+  const safeAcademicYears = Array.isArray(academicYears) ? academicYears : [];
+
+  const totalPages = Math.ceil(safeAcademicYears.length / itemsPerPage) || 1;
+
+  const currentAcademicYears = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return safeAcademicYears.slice(start, start + itemsPerPage);
+  }, [safeAcademicYears, currentPage, itemsPerPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleOpenModal = (year = null) => {
     if (year) {
       setEditingId(year.id);
       setFormData({
-        name: year.name,
-        start_date: year.start_date,
-        end_date: year.end_date,
+        name: year.name || "",
+        start_date: formatDateForInput(year.start_date),
+        end_date: formatDateForInput(year.end_date),
         is_current: Boolean(year.is_current),
       });
     } else {
@@ -76,34 +109,25 @@ export default function AcademicYearManager() {
     try {
       if (editingId) {
         await academicYearApi.update(editingId, formData);
-
         setFeedback({
           type: "success",
           text: "Academic year updated successfully!",
         });
-        setTimeout(() => {
-          navigate("/admin/academic-year");
-        }, 2000);
       } else {
         await academicYearApi.create(formData);
-        setTimeout(() => {
-          setFeedback({
-            type: "success",
-            text: "Academic year created successfully!",
-          });
-        }, 2000);
+        setFeedback({
+          type: "success",
+          text: "Academic year created successfully!",
+        });
       }
       setIsModalOpen(false);
       fetchAcademicYears();
     } catch (error) {
-      setTimeout(() => {
-        setFeedback({
-          type: "error",
-          text:
-            error.response?.data?.message ||
-            "Operation failed. Check your data.",
-        });
-      }, 2000);
+      setFeedback({
+        type: "error",
+        text:
+          error.response?.data?.message || "Operation failed. Check your data.",
+      });
     }
   };
 
@@ -112,21 +136,21 @@ export default function AcademicYearManager() {
       return;
     try {
       await academicYearApi.delete(id);
-      setTimeout(() => {
-        setFeedback({
-          type: "success",
-          text: "Academic year deleted successfully!",
-        });
-      }, 2000);
+      setFeedback({
+        type: "success",
+        text: "Academic year deleted successfully!",
+      });
       fetchAcademicYears();
     } catch (error) {
       setFeedback({ type: "error", text: "Failed to delete academic year." });
     }
   };
 
+  console.log(academicYears);
   return (
-    <div className="min-w-160 mx-auto p-6  rounded-xl border border-gray-200">
-      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
+    <div className="w-full lg:min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center pb-4 border-b border-gray-100">
         <div>
           <h2 className="text-xl font-bold text-gray-800">
             Academic Years Management
@@ -143,21 +167,26 @@ export default function AcademicYearManager() {
         </button>
       </div>
 
+      {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-lg text-sm font-medium ${
+          className={`p-4 rounded-lg text-sm font-medium transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-green-50 text-green-700 border border-green-200"
+              : "bg-red-50 text-red-700 border border-red-200"
           }`}
         >
           {feedback.text}
         </div>
       )}
 
+      {/* Table */}
       {loading ? (
-        <div className="text-center py-10 text-gray-500">
-          Loading academic years...
+        <div className="py-12 text-center text-gray-500">
+          <div className="flex flex-col items-center justify-center gap-2">
+            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span>Loading Academic years...</span>
+          </div>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -172,27 +201,34 @@ export default function AcademicYearManager() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-sm">
-              {academicYears.length === 0 ? (
+              {currentAcademicYears.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-6 text-gray-400">
+                  <td colSpan="5" className="text-center py-8 text-gray-400">
                     No academic years found.
                   </td>
                 </tr>
               ) : (
-                academicYears.map((year) => (
-                  <tr key={year.id} className="hover:bg-gray-50">
+                currentAcademicYears.map((year) => (
+                  <tr
+                    key={year.id}
+                    className="hover:bg-gray-50/80 transition-colors"
+                  >
                     <td className="p-3 font-medium text-gray-800">
                       {year.name}
                     </td>
-                    <td className="p-3 text-gray-600">{year.start_date}</td>
-                    <td className="p-3 text-gray-600">{year.end_date}</td>
+                    <td className="p-3 text-gray-600">
+                      {formatDateForInput(year.start_date)}
+                    </td>
+                    <td className="p-3 text-gray-600">
+                      {formatDateForInput(year.end_date)}
+                    </td>
                     <td className="p-3">
                       {year.is_current ? (
-                        <span className="px-2.5 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
+                        <span className="px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">
                           Current Active
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-600 rounded-full">
+                        <span className="px-2.5 py-1 text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200 rounded-full">
                           Inactive
                         </span>
                       )}
@@ -200,13 +236,13 @@ export default function AcademicYearManager() {
                     <td className="p-3 text-right space-x-2">
                       <button
                         onClick={() => handleOpenModal(year)}
-                        className="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-700 rounded hover:bg-gray-200 cursor-pointer"
+                        className="px-3 py-1 text-md font-medium bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer transition-colors"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(year.id)}
-                        className="px-3 py-1 text-xs font-medium bg-red-50 text-red-600 rounded hover:bg-red-100 cursor-pointer"
+                        className="px-3 py-1 text-md font-medium bg-red-50 text-rose-600 border rounded-lg border-rose-200 hover:bg-red-100 cursor-pointer transition-colors"
                       >
                         Delete
                       </button>
@@ -219,8 +255,20 @@ export default function AcademicYearManager() {
         </div>
       )}
 
+      {/* Pagination Hook Integration */}
+      {!loading && academicYears.length > 0 && (
+        <div className="pt-4 border-t border-gray-100 flex justify-end">
+          <Pagination
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      )}
+
+      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gray-100">
             <h3 className="text-lg font-bold text-gray-800 mb-4">
               {editingId ? "Edit Academic Year" : "Add New Academic Year"}

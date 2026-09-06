@@ -79,8 +79,11 @@ export default function BookCategoryForm() {
 
   if (fetching) {
     return (
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-center text-gray-500">
-        Loading category details...
+      <div className="py-12 text-center text-gray-500">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading books categories...</span>
+        </div>
       </div>
     );
   }

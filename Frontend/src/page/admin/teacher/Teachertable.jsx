@@ -19,7 +19,7 @@ function TeacherTable({ teachers = [], onEditId, onDeleteId }) {
                 Qualification
               </th>
               <th className="px-4 py-3 font-medium text-gray-500">Phone</th>
-              <th className="px-4 py-3 font-medium text-gray-500">Subject</th>
+              <th className="px-4 py-3 font-medium text-gray-500">Gender</th>
               <th className="px-4 py-3 font-medium text-gray-500 text-right">
                 Actions
               </th>
@@ -71,8 +71,8 @@ function TeacherTable({ teachers = [], onEditId, onDeleteId }) {
                   {teacher.teacher?.phone}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600">
-                    {teacher.subject}
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-md font-medium bg-blue-50 text-blue-600">
+                    {teacher.teacher?.gender}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right whitespace-nowrap">

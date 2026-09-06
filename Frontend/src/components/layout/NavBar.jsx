@@ -1,13 +1,14 @@
 import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {  Bell, Settings, LogOut } from "lucide-react";
+import { Bell, Settings, LogOut } from "lucide-react";
 import { AuthContext } from "../../context/AuthContext";
 import { FaCircleUser } from "react-icons/fa6";
 import { AuthApi } from "../../data/AuthApi";
 import { NavLink } from "react-router-dom";
+import LoadingModal from "../../hooks/LoadingModal";
 const roleBadgeStyles = {
   admin: "bg-blue-50 text-blue-600 ring-1 ring-inset ring-blue-200",
-  teacher: "bg-green-50 text-green-600 ring-1 ring-inset ring-green-200"
+  teacher: "bg-green-50 text-green-600 ring-1 ring-inset ring-green-200",
 };
 
 const roleLabels = {
@@ -22,6 +23,7 @@ function deriveTitleFromPath(pathname) {
 }
 
 function Navbar({ title, notificationCount = 0 }) {
+  const [loading, setloading] = useState(false);
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
@@ -34,6 +36,7 @@ function Navbar({ title, notificationCount = 0 }) {
   const [open, isOpen] = useState(false);
   const handleLogout = async () => {
     try {
+      setloading(true);
       const response = await AuthApi.Logout();
       if (response.status === "success") {
         localStorage.removeItem("user");
@@ -42,86 +45,96 @@ function Navbar({ title, notificationCount = 0 }) {
       }
     } catch (error) {
       console.log("Error", error);
+    } finally {
+      setloading(false);
     }
   };
   return (
-    <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-20">
-      <div className="flex items-center gap-4 px-4 md:px-6 h-16">
-        <h1 className="text-lg md:text-xl font-semibold text-gray-800 shrink-0">
-          {pageTitle}
-        </h1>
-        <div className="flex items-center gap-3 md:gap-4 ml-auto">
-
-          <button
-            type="button"
-            className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
-            aria-label="Notifications"
-          >
-            <Bell size={18} />
-            {notificationCount > 0 && (
-              <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
-            )}
-          </button>
-          <div className="hidden md:block h-8 w-px bg-gray-200" />
-          <div className="flex items-center gap-2.5 relative">
-            <button type="button" onMouseEnter={() => isOpen(true)}>
-              <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold uppercase shrink-0">
-                {currentUser?.avatarUrl || currentUser?.avatar ? (
-                  <img
-                    src={currentUser?.avatarUrl || currentUser?.avatar}
-                    alt={currentUser?.name || "User avatar"}
-                    className="h-9 w-9 rounded-full object-cover"
-                  />
-                ) : (
-                  currentUser?.name?.charAt(0) || "U"
-                )}
-              </div>
+    <>
+      {
+        <LoadingModal
+          isOpen={loading}
+          title="Completing Logout..."
+          subtitle="Finalizing your request"
+        />
+      }
+      <header className="w-full bg-white border-b border-gray-200 sticky top-0 z-20">
+        <div className="flex items-center gap-4 px-4 md:px-6 h-16">
+          <h1 className="text-lg md:text-xl font-semibold text-gray-800 shrink-0">
+            {pageTitle}
+          </h1>
+          <div className="flex items-center gap-3 md:gap-4 ml-auto">
+            <button
+              type="button"
+              className="relative p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+              aria-label="Notifications"
+            >
+              <Bell size={18} />
+              {notificationCount > 0 && (
+                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+              )}
             </button>
-            {open && (
-              <div
-                onMouseEnter={() => isOpen(true)}
-                onMouseLeave={() => isOpen(false)}
-                className="text-sm absolute -right-5 w-40 p-3 top-13 bg-white border border-gray-500/30 text-gray-800/80 rounded-md font-medium"
-              >
-                <ul className="flex flex-col gap-px">
-                  <NavLink
-                    to={"/admin/profile"}
-                    className="flex items-center justify-between gap-2 cursor-pointer px-3 py-2 rounded hover:bg-gray-500/20 transition"
-                  >
-                    <h1>Profile</h1>
-                    <FaCircleUser size={20} />
-                  </NavLink>
-                  <div className="w-full h-px bg-gray-300/70 my-2"></div>
-                  <li className="flex items-center justify-between gap-3 cursor-pointer px-3 py-2 rounded hover:bg-gray-500/20 transition">
-                    <a href="#">Settings</a>
-                    <Settings size={20} />
-                  </li>
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="flex items-center justify-between gap-3 cursor-pointer px-3 py-2 rounded hover:bg-gray-500/20 transition"
-                  >
-                    <h1>Logout</h1>
-                    <LogOut size={20} />
-                  </button>
-                  <div className="w-full h-px bg-gray-300/50 my-2"></div>
-                </ul>
+            <div className="hidden md:block h-8 w-px bg-gray-200" />
+            <div className="flex items-center gap-2.5 relative">
+              <button type="button" onMouseEnter={() => isOpen(true)}>
+                <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold uppercase shrink-0">
+                  {currentUser?.avatarUrl || currentUser?.avatar ? (
+                    <img
+                      src={currentUser?.avatarUrl || currentUser?.avatar}
+                      alt={currentUser?.name || "User avatar"}
+                      className="h-9 w-9 rounded-full object-cover"
+                    />
+                  ) : (
+                    currentUser?.name?.charAt(0) || "U"
+                  )}
+                </div>
+              </button>
+              {open && (
+                <div
+                  onMouseEnter={() => isOpen(true)}
+                  onMouseLeave={() => isOpen(false)}
+                  className="text-sm absolute -right-5 w-40 p-3 top-13 bg-white border border-gray-500/30 text-gray-800/80 rounded-md font-medium"
+                >
+                  <ul className="flex flex-col gap-px">
+                    <NavLink
+                      to={"/admin/profile"}
+                      className="flex items-center justify-between gap-2 cursor-pointer px-3 py-2 rounded hover:bg-gray-500/20 transition"
+                    >
+                      <h1>Profile</h1>
+                      <FaCircleUser size={20} />
+                    </NavLink>
+                    <div className="w-full h-px bg-gray-300/70 my-2"></div>
+                    <li className="flex items-center justify-between gap-3 cursor-pointer px-3 py-2 rounded hover:bg-gray-500/20 transition">
+                      <a href="#">Settings</a>
+                      <Settings size={20} />
+                    </li>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="flex items-center justify-between gap-3 cursor-pointer px-3 py-2 rounded hover:bg-gray-500/20 transition"
+                    >
+                      <h1>Logout</h1>
+                      <LogOut size={20} />
+                    </button>
+                    <div className="w-full h-px bg-gray-300/50 my-2"></div>
+                  </ul>
+                </div>
+              )}
+              <div className="hidden md:flex flex-col leading-tight">
+                <span className="text-sm font-medium text-gray-800 truncate max-w-35">
+                  {currentUser?.name || "User"}
+                </span>
+                <span
+                  className={`mt-0.5 inline-flex w-fit items-center px-2 py-0.5 rounded-full text-[11px] font-medium ${badgeStyle}`}
+                >
+                  {badgeLabel}
+                </span>
               </div>
-            )}
-            <div className="hidden md:flex flex-col leading-tight">
-              <span className="text-sm font-medium text-gray-800 truncate max-w-35">
-                {currentUser?.name || "User"}
-              </span>
-              <span
-                className={`mt-0.5 inline-flex w-fit items-center px-2 py-0.5 rounded-full text-[11px] font-medium ${badgeStyle}`}
-              >
-                {badgeLabel}
-              </span>
             </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
 

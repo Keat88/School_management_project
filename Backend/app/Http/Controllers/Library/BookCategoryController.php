@@ -26,7 +26,13 @@ class BookCategoryController extends Controller
 
             // Check if the paginated collection is empty
             if ($categories->isEmpty()) {
-                return $this->error('Book categories don\'t have data', null, 404);
+                // Instead of 404 when empty:
+                return $this->success('Book categories retrieved successfully!', [
+                    'data' => [],
+                    'current_page' => $categories->currentPage(),
+                    'per_page' => $categories->perPage(),
+                    'total' => $categories->total(),
+                ]);
             }
 
             return $this->success(
@@ -121,7 +127,9 @@ class BookCategoryController extends Controller
             if (!$bookCategory) {
                 return $this->error('Book category not found!', null, 404);
             }
-
+            if ($bookCategory->books()->exists()) {
+                return $this->error('Cannot delete category because it contains active books.', null, 400);
+            }
             $bookCategory->delete();
 
             return $this->success('Book category deleted successfully!', null, 200);

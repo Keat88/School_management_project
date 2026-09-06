@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { classRoomApi, Year } from "../../data/classrooms";
-
 export default function ClassForm({ classItem: propClass = null, onSuccess }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [years, setYears] = useState([]);
   const isEditMode = Boolean(propClass || id);
   const classId = propClass?.id || id;
-
+  const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     academic_year_id: "",
@@ -27,11 +26,9 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
       console.error("Failed to fetch academic years", error);
     }
   };
-
   useEffect(() => {
     fetchYears();
   }, []);
-
   useEffect(() => {
     if (propClass) {
       populateForm(propClass);
@@ -39,7 +36,7 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
       classRoomApi
         .getShow(id)
         .then((response) => {
-          const classDataObj = response?.data || response;
+          const classDataObj = response?.data || response; 
           populateForm(classDataObj);
           setFetching(false);
         })
@@ -62,7 +59,6 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
       section: data.section || "",
     });
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -70,7 +66,6 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
       [name]: value,
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -81,12 +76,15 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
         setFeedback({ type: "success", text: "Class updated successfully!" });
       } else {
         const response = await classRoomApi.addNew(formData);
-        setFeedback({ type: "success", text: response?.message || "Class created successfully!" });
+        setFeedback({
+          type: "success",
+          text: response?.message || "Class created successfully!",
+        });
       }
       if (onSuccess) {
         onSuccess();
       } else {
-        setTimeout(() => navigate("/classes"), 1000);
+        setTimeout(() => navigate("/admin/classes"), 1000);
       }
     } catch (error) {
       setFeedback({
@@ -99,11 +97,13 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
       setLoading(false);
     }
   };
-
   if (fetching) {
     return (
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-center text-gray-500">
-        Loading class details...
+      <div className="py-12 text-center text-gray-500">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading to detail...</span>
+        </div>
       </div>
     );
   }

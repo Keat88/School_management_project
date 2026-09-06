@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class StudentController extends Controller
 {
@@ -26,7 +27,8 @@ class StudentController extends Controller
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
                     $q->where('student_name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('roll_number', 'like', "%{$search}%");
                 });
             }
 
@@ -74,17 +76,16 @@ class StudentController extends Controller
             'parent_image'  => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'occupation'    => 'nullable|string|max:255',
             'parent_phone'  => 'required|string|max:20',
-            'email_parent'         => 'nullable|email|unique:parents,email',
+            'email_parent'  => 'nullable|email|unique:parents,email',
 
             // Students
             'class_id'      => 'nullable|exists:class_rooms,id',
             'address'       => 'required|string|max:500',
             'gender'        => 'required|string|in:male,female,other',
-            'email_student'         => 'required|email|unique:students,email',
+            'email_student' => 'required|email|unique:students,email',
             'student_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'student_name'  => 'required|string|max:255',
             'date_of_birth' => 'required|date',
-            'roll_number'   => 'required|string|unique:students,roll_number',
             'student_phone' => 'nullable|string|max:20',
         ]);
 
@@ -110,6 +111,10 @@ class StudentController extends Controller
                     'parent_image' => $parentImageName,
                     'email'        => $request->email_parent ?? null,
                 ]);
+
+                // Auto-generate random unique roll number credential
+                $rollNumber = $this->generateUniqueRollNumber();
+
                 $student = Students::create([
                     'parent_id'     => $parent->id,
                     'class_id'      => $request->class_id,
@@ -118,7 +123,7 @@ class StudentController extends Controller
                     'gender'        => $request->gender,
                     'address'       => $request->address,
                     'date_of_birth' => $request->date_of_birth,
-                    'roll_number'   => $request->roll_number,
+                    'roll_number'   => $rollNumber,
                     'student_phone' => $request->student_phone ?? null,
                     'student_image' => $studentImageName
                 ]);
@@ -172,11 +177,10 @@ class StudentController extends Controller
                 'address'       => 'nullable|string|max:500',
                 'gender'        => 'nullable|string|in:male,female,other',
                 'email_parent'  => 'nullable|email|unique:parents,email,' . $student->parent_id,
-                'email_student' => 'nullable|email|unique:students,email,' . $student->id, // Fixed table name and ID
+                'email_student' => 'nullable|email|unique:students,email,' . $student->id,
                 'student_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
                 'student_name'  => 'nullable|string|max:255',
                 'date_of_birth' => 'nullable|date',
-                'roll_number'   => 'nullable|string|unique:students,roll_number,' . $student->id,
                 'student_phone' => 'nullable|string|max:20',
                 'class_id'      => 'nullable|exists:class_rooms,id',
             ]);
@@ -219,7 +223,6 @@ class StudentController extends Controller
                     'gender'        => $request->gender ?? $student->gender,
                     'address'       => $request->address ?? $student->address,
                     'date_of_birth' => $request->date_of_birth ?? $student->date_of_birth,
-                    'roll_number'   => $request->roll_number ?? $student->roll_number,
                     'student_phone' => $request->student_phone ?? $student->student_phone,
                     'student_image' => $studentImageName,
                 ]);
@@ -261,5 +264,18 @@ class StudentController extends Controller
         } catch (\Exception $e) {
             return $this->error('Something went wrong while deleting the student', $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Helper to generate a random unique roll number credential
+     */
+    private function generateUniqueRollNumber(): string
+    {
+        do {
+            // Generates a string like STU-8X2K9P
+            $rollNumber = 'STU-' . strtoupper(Str::random(6));
+        } while (Students::where('roll_number', $rollNumber)->exists());
+
+        return $rollNumber;
     }
 }

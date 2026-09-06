@@ -51,8 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // 🔒 1. ADMIN ONLY ROUTES (ការិយាល័យរដ្ឋបាល/នាយកសាលា)
     // ==========================================
     Route::middleware('role:admin')->group(function () {
-
-        Route::get('/form-schedult', [DashboardController::class, 'getDataForSchedult']);
+        // controll all dashborad 
+        Route::get('/admin-dashboard', [DashboardController::class, 'Adminsdashboard'])->name('admin-dashboard');
+        Route::get('/form-schedult', [DashboardController::class, 'getDataForSchedult'])->name('form-schedult');
         // គ្រប់គ្រងបុគ្គលិកសិក្សា / គ្រូបង្រៀន (Teacher Management)
         Route::prefix('teacher')->controller(TeacherController::class)->group(function () {
             Route::post('/store', 'store')->name('teacher.store');
@@ -61,7 +62,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/update/{id}', 'update')->name('teacher.update');
             Route::delete('/destroy/{id}', 'destroy')->name('teacher.destroy');
         });
-
         // គ្រប់គ្រងមុខវិជ្ជាសិក្សា (Subject Management)
         Route::prefix('academic-years')->controller(AcademicYearController::class)->group(function () {
             Route::get('/index', 'index')->name('academic-years.index');
@@ -106,7 +106,14 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/update/{id}', 'update')->name('student.update');
             Route::delete('/destroy/{id}', 'destroy')->name('student.destroy');
         });
-
+        // ថ្នាក់រៀន (Classroom/Classes)
+        Route::prefix('classroom')->controller(ClassController::class)->group(function () {
+            Route::get('/index', 'index')->name('classroom.index');
+            Route::post('/store', 'store')->name('classroom.store');
+            Route::put('/update/{id}', 'update')->name('classroom.update');
+            Route::get('/show/{id}', 'show')->name('classroom.show');
+            Route::delete('/destroy/{id}', 'destroy')->name('classroom.destroy');
+        });
         // គ្រប់គ្រងអន្តេវាសិកដ្ឋាន/ហូស្តែលសាលា (Hostels, Rooms & Assignments)
         Route::prefix('hostels')->group(function () {
             Route::prefix('hostel')->controller(HostelsController::class)->group(function () {
@@ -152,13 +159,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/store', 'store')->name('attendance.store');
             Route::get('/show/{id}', 'show')->name('attendance.show');
         });
-        // ថ្នាក់រៀន (Classroom/Classes)
-        Route::prefix('classroom')->controller(ClassController::class)->group(function () {
-            Route::get('/index', 'index')->name('classroom.index');
-            Route::post('/store', 'store')->name('classroom.store');
-            Route::get('/show/{id}', 'show')->name('classroom.show');
-        });
-
         // ព័ត៌មាន និងការគ្រប់គ្រងសិស្ស (Student Info)
         Route::prefix('student')->controller(StudentController::class)->group(function () {
             Route::get('/index', 'index')->name('student.index');
@@ -211,6 +211,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::put('/update/{id}', 'update')->name('book-issure.update');
                 Route::delete('/destroy/{id}', 'destroy')->name('book-issure.destroy');
                 Route::put('/returnBook/{id}', 'returnBook')->name('book-issure.returnBook');
+                Route::get('/student-stats', [BookIssureController::class, 'getStudentStats']);
             });
         });
     });

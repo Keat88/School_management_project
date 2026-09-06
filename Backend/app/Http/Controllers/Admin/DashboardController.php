@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function dashboard()
+    public function Adminsdashboard()
     {
         $totalStudents = Students::count();
         $totalTeachers = Teachers::count();
@@ -36,7 +36,7 @@ class DashboardController extends Controller
                 'total_hotelroom' => $totalHostelRooms,
                 'total_attendance' => $totalAttendance,
                 'total_books' => $totalBooks,
-                'total_category' => $totalBookCategories,
+                'total_book_category' => $totalBookCategories,
                 'total_studentassignments' => $totalStudentAssignment,
             ]
         ], 200);

@@ -26,7 +26,7 @@ import SchedulePage from "./page/admin/schedules/SchedulePage";
 import HostelPage from "./page/admin/hostel_school/HostelPage";
 import NoticeForm from "./page/admin/notices/NoticeForm";
 import BookIssueList from "./page/admin/book/BookIssueList";
-import BookReturnManagement from "./page/admin/book/BookReturnManagement";
+
 import IssueBookForm from "./page/admin/book/IssueBookForm";
 import ManageSubject from "./page/admin/book/ManageSubject";
 import SubjectForm from "./page/admin/book/SubjectForm";
@@ -41,6 +41,7 @@ import ForgotPasswordForm from "./page/auth/ForgotPasswordForm";
 import VerifyOtp from "./page/auth/VerifyOtp";
 import ResetPassword from "./page/auth/ResetPassword";
 import LoginSuccess from "./page/auth/LoginSuccess";
+import StudentLibraryActivity from "./page/admin/book/StudentLibraryActivity";
 
 function App() {
   return (
@@ -74,6 +75,7 @@ function App() {
             <Route path="teacher/add/:id" element={<TeacherForm />} />
             <Route path="classes" element={<ClassroomList />} />
             <Route path="classes/add" element={<ClassForm />} />
+            <Route path="classes/add/:id" element={<ClassForm />} />
             <Route path="classes/:id" element={<ClassroomDetail />} />
             <Route path="academic-year" element={<AcademicYearManager/>}/>
 
@@ -97,7 +99,7 @@ function App() {
             <Route path="library/bookissue" element={<BookIssueList />} />
             <Route path="library/bookissue/add" element={<IssueBookForm />} />
             <Route path="library/bookissue/add/:id" element={<IssueBookForm />} />
-            <Route path="library/bookreturn" element={<BookReturnManagement />} />
+            <Route path="library/bookreturn" element={<StudentLibraryActivity/>} />
 
             {/* Hostel Routes */}
             <Route path="hostel-rooms" element={<ManageHostelRooms />} />

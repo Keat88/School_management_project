@@ -6,31 +6,62 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\ClassRoomResource;
 use App\Models\ClassRoom;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class ClassController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        try {
-            $perPage = $request->get('per_page', 10);
-            $search = $request->get('search');
-            $query = ClassRoom::with('academicYear');
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('grade', 'like', "%{$search}%")
-                        ->orWhere('section', 'like', "%{$search}%");
-                });
-            }
-            $classes = $query->latest()->paginate($perPage);
-            $data = ClassRoomResource::collection($classes)->response()->getData(true);
-            return $this->success('Classes have been retrieved successfully!', $data);
-        } catch (\Exception $e) {
-            return $this->error('Something went wrong while retrieving classes', $e->getMessage(), 500);
+        $query = ClassRoom::query()
+            ->with(['academicYear', 'teacher.user'])
+            ->withCount([
+                'students',
+                'timeTables as subjects_count' => function ($q) {
+                    $q->select(\DB::raw('count(distinct(subject_id))'));
+                }
+            ]);
+
+        // Search Filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('section', 'like', "%{$search}%")
+                    ->orWhere('grade', 'like', "%{$search}%")
+                    ->orWhereHas('teacher.user', function ($t) use ($search) {
+                        $t->where('name', 'like', "%{$search}%");
+                    });
+            });
         }
+
+        if ($request->filled('grade') && $request->grade !== 'all') {
+            $query->where('grade', $request->grade);
+        }
+
+        if ($request->filled('section') && $request->section !== 'all') {
+            $query->where('section', $request->section);
+        }
+
+        if ($request->filled('class_id') && $request->class_id !== 'all') {
+            $query->where('id', $request->class_id);
+        }
+
+        $classrooms = $query->paginate($request->get('per_page', 8));
+
+        $grades = ClassRoom::whereNotNull('grade')->distinct()->pluck('grade');
+        $sections = ClassRoom::whereNotNull('section')->distinct()->pluck('section');
+        $classes = ClassRoom::select('id', 'grade', 'section')->get()->map(function ($c) {
+            return [
+                'id'   => $c->id,
+                'name' => "Grade {$c->grade} - {$c->section}"
+            ];
+        });
+
+        return ClassRoomResource::collection($classrooms)->additional([
+            'grades'   => $grades,
+            'sections' => $sections,
+            'classes'  => $classes,
+        ]);
     }
 
     /**
@@ -42,7 +73,7 @@ class ClassController extends Controller
             'academic_year_id' => 'required|exists:academic_years,id',
             'name'             => 'required|string|max:255',
             'grade'            => 'required|numeric',
-            'section'          => 'required|string',
+            'section'          => 'required|string|max:50',
         ]);
 
         if ($validator->fails()) {
@@ -50,37 +81,31 @@ class ClassController extends Controller
         }
 
         try {
-            $classroom = ClassRoom::create([
-                'academic_year_id' => $request->academic_year_id,
-                'name'             => $request->name,
-                'grade'            => $request->grade,
-                'section'          => $request->section,
-            ]);
-
+            $classroom = ClassRoom::create($validator->validated());
             $classroom->load('academicYear');
 
             return $this->success('Class created successfully!', new ClassRoomResource($classroom), 201);
         } catch (\Exception $e) {
-            return $this->error('Something went wrong while creating the class', $e->getMessage(), 500);
+            Log::error("ClassController@store: " . $e->getMessage());
+            return $this->error('Something went wrong while creating the class', null, 500);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        try {
-            $class = ClassRoom::with(['academicYear', 'students.parent', 'students.classRoom'])->find($id);
+        $classroom = ClassRoom::with([
+            'academicYear',
+            'teacher.user',
+            'students',
+            'timeTables.subject',
+        ])
+            ->withCount(['students', 'timeTables as subjects_count'])
+            ->findOrFail($id);
 
-            if (!$class) {
-                return $this->error('Class not found!', null, 404);
-            }
-
-            return $this->success('Class has been found!', new ClassRoomResource($class));
-        } catch (\Exception $e) {
-            return $this->error('Something went wrong while fetching the class', $e->getMessage(), 500);
-        }
+        return new ClassRoomResource($classroom);
     }
 
     /**
@@ -99,25 +124,20 @@ class ClassController extends Controller
                 'academic_year_id' => 'sometimes|required|exists:academic_years,id',
                 'name'             => 'sometimes|required|string|max:255',
                 'grade'            => 'sometimes|required|numeric',
-                'section'          => 'sometimes|required|string',
+                'section'          => 'sometimes|required|string|max:50',
             ]);
 
             if ($validator->fails()) {
                 return $this->error('Invalid data', $validator->errors(), 422);
             }
 
-            $class->update([
-                'academic_year_id' => $request->input('academic_year_id', $class->academic_year_id),
-                'name'             => $request->input('name', $class->name),
-                'grade'            => $request->input('grade', $class->grade),
-                'section'          => $request->input('section', $class->section),
-            ]);
-
+            $class->update($validator->validated());
             $class->load('academicYear');
 
             return $this->success('Class updated successfully!', new ClassRoomResource($class), 200);
         } catch (\Exception $e) {
-            return $this->error('Something went wrong while updating the class', $e->getMessage(), 500);
+            Log::error("ClassController@update: " . $e->getMessage());
+            return $this->error('Something went wrong while updating the class', null, 500);
         }
     }
 
@@ -133,11 +153,16 @@ class ClassController extends Controller
                 return $this->error('Class not found!', null, 404);
             }
 
-            $class->delete();
+            // Check for related records before deleting
+            if ($class->students()->exists()) {
+                return $this->error('Cannot delete class because it has active students assigned.', null, 400);
+            }
 
+            $class->delete();
             return $this->success('Class deleted successfully!', null, 200);
         } catch (\Exception $e) {
-            return $this->error('Something went wrong while deleting the class', $e->getMessage(), 500);
+            Log::error("ClassController@destroy: " . $e->getMessage());
+            return $this->error('Something went wrong while deleting the class', null, 500);
         }
     }
 }

@@ -2,14 +2,16 @@ import { api } from "./api";
 
 // Replace with real API data once available.
 export const classRoomApi = {
-  getAll: async (param) => {
+  getAll: async (params) => {
     try {
-      const response = await api.get("/classroom/index",{param});
+      const response = await api.get("/classroom/index", { params });
       return response.data;
     } catch (error) {
-      console.log("Error", error);
+      console.error("Error fetching classrooms:", error);
+      throw error;
     }
   },
+
   addNew: async (newClass) => {
     try {
       const response = await api.post("/classroom/store", newClass, {
@@ -19,42 +21,67 @@ export const classRoomApi = {
       });
       return response.data;
     } catch (error) {
-      console.log("Error", error);
+      console.error("Error adding classroom:", error);
+      throw error;
     }
   },
-  getShow: async (id) => {
+
+  // Renamed to getById to match ClassroomDetail.jsx call
+  getById: async (id) => {
     try {
       const response = await api.get(`/classroom/show/${id}`);
       return response.data;
     } catch (error) {
-      console.log("Error", error);
+      console.error("Error fetching classroom by ID:", error);
+      throw error;
     }
   },
-  // upDate: async (upDateClass, id) => {
-  //   try {
-  //     const response = await api.put(`/classroom/update/${id}`, upDateClass, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-  //     return response.data;
-  //   } catch (error) {
-  //     console.log("Error", error);
-  //   }
-  // },
-  // delete: async (id) => {
-  //   try {
-  //     const response = await api.post(`/classroom/destroy/${id}`);
-  //     return response.data;
-  //   } catch (error) {
-  //     console.log("Error", error);
-  //   }
-  // },
+
+  // Alias for backward compatibility if used elsewhere
+  getShow: async (id) => {
+    return await classRoomApi.getById(id);
+  },
+
+  upDate: async (upDateClass, id) => {
+    try {
+      // If passing FormData with binary files, use POST + _method spoofing for Laravel
+      if (upDateClass instanceof FormData) {
+        upDateClass.append("_method", "PUT");
+        const response = await api.post(
+          `/classroom/update/${id}`,
+          upDateClass,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
+        return response.data;
+      }
+
+      // Standard JSON PUT update
+      const response = await api.put(`/classroom/update/${id}`, upDateClass);
+      return response.data;
+    } catch (error) {
+      console.error("Error updating classroom:", error);
+      throw error;
+    }
+  },
+
+  delete: async (id) => {
+    try {
+      const response = await api.delete(`/classroom/destroy/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting classroom:", error);
+      throw error;
+    }
+  },
 };
 export const Year = {
   getAll: async (paramt) => {
     try {
-      const response = await api.get("/academic-years/index",{ paramt});
+      const response = await api.get("/academic-years/index", { paramt });
       return response.data;
     } catch (error) {
       console.log("Error", error);

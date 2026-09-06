@@ -160,4 +160,12 @@ export const BookIssureApi = {
       console.log("Error", error);
     }
   },
+  getStudentStats: async (param) => {
+    try {
+      const response = await api.get("/library/book-issure/student-stats", { param });
+      return response.data;
+    } catch (error) {
+      console.log("Error", error);
+    }
+  },
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, CheckCircle, Trash2 } from "lucide-react";
+import { Plus, CheckCircle, Trash2, BookOpen } from "lucide-react";
 import { api } from "../../../data/api";
 import { BookIssureApi } from "../../../data/library";
 
@@ -9,28 +9,40 @@ export default function BookIssueList() {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
+
   const fetchIssues = async () => {
     try {
+      setLoading(true);
       const response = await BookIssureApi.getAll();
       const result = response.data?.data || response.data || response;
       setIssues(Array.isArray(result) ? result : []);
     } catch (error) {
-      console.log("Error fetching issued books:", error);
+      console.error("Error fetching issued books:", error);
       setIssues([]);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchIssues();
   }, []);
 
+  // Auto-clear feedback notification after 4 seconds
+  useEffect(() => {
+    if (feedback) {
+      const timer = setTimeout(() => setFeedback(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [feedback]);
+
   const handleReturn = async (id) => {
     try {
-      const response = await BookIssureApi.ReturnIssurce(id);
+      const today = new Date().toISOString().split("T")[0];
+      const response = await BookIssureApi.ReturnIssurce(id, { return_date: today });
       setFeedback({
         type: "success",
-        text: response?.message || response?.data || response,
+        text: response?.message || "Book successfully marked as returned!",
       });
       fetchIssues();
     } catch (error) {
@@ -42,12 +54,13 @@ export default function BookIssueList() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this issue record?"))
+    if (!window.confirm("Are you sure you want to delete this issue record?")) {
       return;
+    }
     try {
       await api.delete(`/library/issues/${id}`);
       setFeedback({ type: "success", text: "Record deleted successfully!" });
-      setIssues(issues.filter((item) => item.id !== id));
+      setIssues((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
       setFeedback({
         type: "error",
@@ -56,108 +69,138 @@ export default function BookIssueList() {
     }
   };
 
+  const getStatusBadge = (status, dueDate) => {
+    const isOverdue =
+      status !== "returned" && dueDate && new Date(dueDate) < new Date();
+
+    if (status === "returned") {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          Returned
+        </span>
+      );
+    }
+
+    if (isOverdue) {
+      return (
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+          Overdue
+        </span>
+      );
+    }
+
+    return (
+      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+        Issued
+      </span>
+    );
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-600">
-          STudent Kjey Books Management
-        </h2>
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-800">
+            Student Book Issue Management
+          </h2>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Track and manage borrowed library books and returns.
+          </p>
+        </div>
         <button
           type="button"
           onClick={() => navigate("/admin/library/bookissue/add")}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
         >
           <Plus size={16} />
-          Issue Book
+          Issue New Book
         </button>
       </div>
 
+      {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium ${
+          className={`p-4 rounded-lg text-sm font-medium border transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+              : "bg-rose-50 text-rose-700 border-rose-200"
           }`}
         >
           {feedback.text}
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200  overflow-hidden">
+      {/* Main Table Wrapper */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50/70 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                <th className="px-4 py-3">Student</th>
-                <th className="px-4 py-3">Book</th>
-                <th className="px-4 py-3">Issue Date</th>
-                <th className="px-4 py-3">Due Date</th>
-                <th className="px-4 py-3">Return Date</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+              <tr className="bg-gray-50/80 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3.5">Student</th>
+                <th className="px-4 py-3.5">Book</th>
+                <th className="px-4 py-3.5">Issue Date</th>
+                <th className="px-4 py-3.5">Due Date</th>
+                <th className="px-4 py-3.5">Return Date</th>
+                <th className="px-4 py-3.5">Status</th>
+                <th className="px-4 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 text-sm">
               {loading ? (
                 <tr>
-                  <td
-                    colSpan={7}
-                    className="px-4 py-10 text-center text-gray-400"
-                  >
-                    Loading issued books...
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-500">
+                    <div className="flex flex-col items-center justify-center gap-3">
+                      <div className="w-7 h-7 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm font-medium text-gray-600">
+                        Loading issued books...
+                      </span>
+                    </div>
                   </td>
                 </tr>
               ) : issues.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={7}
-                    className="px-4 py-10 text-center text-gray-400"
-                  >
-                    No issued book records found.
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <BookOpen size={32} className="text-gray-300" />
+                      <span>No issued book records found.</span>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 issues.map((item) => (
                   <tr
                     key={item.id}
-                    className="hover:bg-gray-50/60 transition-colors"
+                    className="hover:bg-gray-50/80 transition-colors"
                   >
-                    <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">
-                      {item.student?.name || `Student ID: ${item.student_id}`}
+                    <td className="px-4 py-3.5 font-medium text-gray-900 whitespace-nowrap">
+                      {item.student?.student_name || `Student ID: ${item.student_id}`}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
                       {item.book?.title || `Book ID: ${item.book_id}`}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                      {item.issue_date}
+                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                      {item.issue_date || "-"}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                      {item.due_date}
+                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                      {item.due_date || "-"}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
                       {item.return_date || "-"}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-lg ${
-                          item.status === "returned"
-                            ? "bg-green-50 text-green-600"
-                            : "bg-red-50 text-red-500"
-                        }`}
-                      >
-                        {item.status || "issued"}
-                      </span>
+                    <td className="px-4 py-3.5 whitespace-nowrap">
+                      {getStatusBadge(item.status, item.due_date)}
                     </td>
-                    <td className="px-4 py-3 text-right whitespace-nowrap">
+                    <td className="px-4 py-3.5 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         {item.status !== "returned" && (
                           <button
                             type="button"
                             onClick={() => handleReturn(item.id)}
                             title="Mark as Returned"
-                            className="p-1 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 border border-emerald-200 text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors text-xs font-medium"
                           >
+                            <CheckCircle size={14} />
                             Return
                           </button>
                         )}
@@ -165,8 +208,9 @@ export default function BookIssueList() {
                           type="button"
                           onClick={() => handleDelete(item.id)}
                           title="Delete Record"
-                          className="p-1 text-red-500 border bg-red-50 border-gray-200 rounded-md hover:bg-gray-200 transition-colors"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 border border-rose-200 text-rose-600 bg-rose-50 rounded-lg hover:bg-rose-100 transition-colors text-xs font-medium"
                         >
+                          <Trash2 size={14} />
                           Delete
                         </button>
                       </div>

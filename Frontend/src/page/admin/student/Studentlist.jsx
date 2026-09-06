@@ -128,6 +128,7 @@ function StudentList() {
   };
 
   const handleView = (id) => {
+   
     navigate(`/admin/students/view/${id}`);
   };
 

@@ -28,14 +28,15 @@ export const teacherApi = {
       console.log("Error", error);
     }
   },
-  upDate: async (id, teacher) => {
+  update: async (id, teacher) => {
     try {
-      const response = await api.put(`/teacher/update/${id}`, teacher, {
+      const response = await api.post(`/teacher/update/${id}`, teacher, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data;
     } catch (error) {
-      console.log("Error", error);
+      console.error("Teacher API update error:", error);
+      throw error;
     }
   },
   delete: async (id) => {

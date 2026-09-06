@@ -3,30 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\Academic_years;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AcademicYearController extends Controller
 {
-    /**
-     * Display a listing of academic years.
-     */
-    public function index()
-    {
-        $academicYears = Academic_years::orderBy('start_date', 'desc')->get();
-        
+   public function index(): JsonResponse
+{
+    try {
+        $academicYears = Academic_years::orderBy('start_date', 'desc')->paginate(10);
+
         return response()->json([
+            'status'  => 'success',
             'message' => 'Academic years retrieved successfully!',
             'data'    => $academicYears
         ], 200);
-    }
 
-    /**
-     * Store a newly created academic year.
-     */
+    } catch (Exception $e) {
+        Log::error('Failed to fetch academic years: ' . $e->getMessage());
+
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Failed to retrieve academic years. Please try again later.',
+        ], 500);
+    }
+}
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'       => 'required|string|max:255', 
+            'name'       => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date'   => 'required|date|after:start_date',
             'is_current' => 'nullable|boolean',

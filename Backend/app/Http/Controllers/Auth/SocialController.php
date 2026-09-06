@@ -36,15 +36,12 @@ class SocialController extends Controller
                 ->redirectUrl($redirectUrl)
                 ->user();
             $email = $socialUser->getEmail();
-
             // Fallback for GitHub users who keep their email private
             if (!$email && $provider === 'github') {
                 $email = $socialUser->getId() . '@github.local';
             }
-
             $providerIdField = $provider . '_id';
             $user = User::where('email', $email)->first();
-
             if (!$user) {
                 $user = User::create([
                     'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'User',
@@ -59,7 +56,6 @@ class SocialController extends Controller
                     'avatar' => $socialUser->getAvatar() ?? $user->avatar,
                 ]);
             }
-
             $token = $user->createToken('authToken')->plainTextToken;
             $avatarUrl = urlencode($socialUser->getAvatar() ?? '');
 

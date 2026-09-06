@@ -22,6 +22,7 @@ class TeacherResource extends JsonResource
             'teacher'    => $this->whenLoaded('teacher', function () {
                 return [
                     'id'                => $this->teacher->id ?? null,
+                    'gender' => $this->teacher->gender ?? null,
                     'teacher_code'      => $this->teacher->teacher_code ?? null,
                     'qualification'     => $this->teacher->qualification ?? null,
                     'phone'             => $this->teacher->phone ?? null,

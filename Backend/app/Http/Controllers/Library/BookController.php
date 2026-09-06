@@ -68,7 +68,7 @@ class BookController extends Controller
             'isbn'             => 'nullable|string|unique:books,isbn|max:255',
             'book_image'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'total_copies'     => 'required|integer|min:1',
-            'available_copies' => 'required|integer|min:0',
+            'available_copies' => 'required|integer|min:0|lte:total_copies',
         ]);
 
         if ($validator->fails()) {
@@ -129,7 +129,7 @@ class BookController extends Controller
             'isbn'             => 'nullable|string|max:255|unique:books,isbn,' . $id,
             'book_image'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'total_copies'     => 'required|integer|min:1',
-            'available_copies' => 'required|integer|min:0',
+            'available_copies' => 'required|integer|min:0|lte:total_copies', 
         ]);
 
         if ($validator->fails()) {

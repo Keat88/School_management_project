@@ -1,48 +1,51 @@
 import {
-  LayoutDashboard,
-  Users,
-  GraduationCap,
-  School,
-  CalendarDays,
-  BookOpen,
-  Megaphone,
-  Wallet,
-  Building2,
-  BedDouble,
-  FileBarChart,
-  Settings,
-} from "lucide-react";
-import { FaBookOpen } from "react-icons/fa6";
+  LuLayoutDashboard,
+  LuUsers,
+  LuGraduationCap,
+  LuSchool,
+  LuCalendarDays,
+  LuMegaphone,
+  LuWallet,
+  LuBedDouble,
+  LuFileSpreadsheet, // <--- Replaced LuFileBarChart
+  LuSettings,
+  LuSquareCheck,
+} from "react-icons/lu";
+import { FaBookOpen, FaBookBookmark } from "react-icons/fa6";
+import { HiMiniBuildingOffice2 } from "react-icons/hi2";
+import { MdCategory, MdOutlineAssignmentReturn, MdAssignmentTurnedIn } from "react-icons/md";
 
 const sidebarMenu = [
   {
     id: 1,
     title: "Dashboard",
     path: "/admin/dashboard",
-    icon: LayoutDashboard,
+    icon: LuLayoutDashboard,
     roles: ["admin", "teacher"],
   },
   {
     id: 2,
     title: "Teachers",
     path: "/admin/teachers",
-    icon: GraduationCap,
+    icon: LuGraduationCap,
     roles: ["admin"],
   },
   {
     id: 3,
     title: "Year & Class",
-    icon: School,
+    icon: LuSchool,
     child: [
       {
         id: 1,
         title: "AcademicYear",
         path: "/admin/academic-year",
+        icon: LuCalendarDays,
       },
       {
         id: 2,
         title: "Classes",
         path: "/admin/classes",
+        icon: LuSchool,
       },
     ],
     roles: ["admin", "teacher"],
@@ -51,7 +54,7 @@ const sidebarMenu = [
     id: 4,
     title: "Students",
     path: "/admin/students",
-    icon: Users,
+    icon: LuUsers,
     roles: ["admin", "teacher"],
   },
   {
@@ -65,63 +68,70 @@ const sidebarMenu = [
     id: 6,
     title: "Schedule",
     path: "/admin/schedule",
-    icon: CalendarDays,
+    icon: LuCalendarDays,
     roles: ["admin", "teacher"],
   },
   {
     id: 7,
     title: "Attendance",
     path: "/admin/attendance",
-    icon: CalendarDays,
+    icon: LuSquareCheck,
     roles: ["admin", "teacher"],
   },
   {
     id: 8,
     title: "Library",
-    icon: BookOpen,
+    icon: FaBookOpen,
     child: [
       {
         id: 1,
         title: "Book Category",
         path: "/admin/library/category",
+        icon: MdCategory,
       },
       {
         id: 2,
         title: "Books",
         path: "/admin/library/books",
+        icon: FaBookBookmark,
       },
       {
         id: 3,
         title: "Book Issue",
         path: "/admin/library/bookissue",
+        icon: MdAssignmentTurnedIn,
       },
       {
         id: 4,
-        title: "Book Return",
+        title: "Student Activity",
         path: "/admin/library/bookreturn",
+        icon: MdOutlineAssignmentReturn,
       },
     ],
     roles: ["admin"],
   },
   {
     id: 9,
-    title: "Hostel",
-    icon: BedDouble,
+    title: "Dormitory",
+    icon: LuBedDouble,
     child: [
       {
         id: 1,
-        title: "Building",
+        title: "Manage Dormitory",
         path: "/admin/hostel",
+        icon: HiMiniBuildingOffice2,
       },
       {
         id: 2,
-        title: "Hostel Rooms",
+        title: "Dormitory Room",
         path: "/admin/hostel-rooms",
+        icon: LuBedDouble,
       },
       {
         id: 3,
-        title: "Student Stay",
+        title: "Live Dormitory",
         path: "/admin/hostel-stays",
+        icon: LuUsers,
       },
     ],
     roles: ["admin"],
@@ -130,29 +140,30 @@ const sidebarMenu = [
     id: 10,
     title: "Finance",
     path: "/admin/finance",
-    icon: Wallet,
+    icon: LuWallet,
     roles: ["admin"],
   },
   {
     id: 11,
     title: "Notices",
     path: "/admin/notices",
-    icon: Megaphone,
+    icon: LuMegaphone,
     roles: ["admin", "teacher"],
   },
   {
     id: 12,
     title: "Reports",
     path: "/admin/reports",
-    icon: FileBarChart,
+    icon: LuFileSpreadsheet, // <--- Replaced LuFileBarChart
     roles: ["admin"],
   },
   {
     id: 13,
     title: "Settings",
     path: "/admin/settings",
-    icon: Settings,
+    icon: LuSettings,
     roles: ["admin"],
   },
 ];
+
 export default sidebarMenu;

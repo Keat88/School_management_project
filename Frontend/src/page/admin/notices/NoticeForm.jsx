@@ -11,7 +11,6 @@ const getTodayDate = () => {
   const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
-
 export default function NoticeForm({ notice: propNotice = null }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -44,8 +43,6 @@ export default function NoticeForm({ notice: propNotice = null }) {
         .finally(() => setLoading(false));
     }
   }, [propNotice, id]);
-
-  // Populate form fields
   useEffect(() => {
     if (currentNotice) {
       setFormData({
@@ -65,8 +62,6 @@ export default function NoticeForm({ notice: propNotice = null }) {
       }
     }
   }, [currentNotice]);
-
-  // Fetch teachers safely handling nested array responses
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
