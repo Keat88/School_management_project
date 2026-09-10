@@ -122,7 +122,7 @@ export default function ManageBooks() {
       {/* Responsive Filter/Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200/80 shadow-xs"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200/80 shadow-sm"
       >
         <div className="relative">
           <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
@@ -174,7 +174,7 @@ export default function ManageBooks() {
       </form>
 
       {/* Desktop & Tablet Table View (Hidden on small mobile screens) */}
-      <div className="hidden md:block rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div className="hidden md:block rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">

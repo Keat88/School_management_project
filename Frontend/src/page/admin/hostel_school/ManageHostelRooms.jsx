@@ -173,7 +173,7 @@ export default function ManageHostelRooms() {
       </form>
 
       {/* Table Section */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden relative min-h-[300px]">
+      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4 relative min-h-[300px]">
         {loading && (
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center transition-all">
             <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>

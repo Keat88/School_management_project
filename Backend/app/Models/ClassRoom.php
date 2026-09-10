@@ -41,4 +41,8 @@ class ClassRoom extends Model
     {
         return $this->hasMany(Exams::class, 'class_id');
     }
+    public function scores()
+    {
+        return $this->hasMany(Scores::class, 'class_id');
+    }
 }

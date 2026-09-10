@@ -6,7 +6,7 @@ function initials(name = "") {
 
 function StudentTable({ students = [], onView, onEdit, onDelete, loading }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden shadow-xs">
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm text-left">
           <thead>

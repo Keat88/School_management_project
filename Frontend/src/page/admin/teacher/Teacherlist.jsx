@@ -123,7 +123,7 @@ function TeacherList() {
       />
 
       {/* Table Component with dynamic loading overlay/state */}
-      <div className="relative min-h-[300px]">
+      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4 min-h-[300px]">
         {loading && (
           <div className="absolute inset-0 bg-white backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-xl transition-all">
             <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>

@@ -17,22 +17,58 @@ import FeeOverview from "../../../components/admin/FeeOverview";
 import AttendanceOverview from "../../../components/admin/AttendanceOverview";
 import RecentActivity from "../../../components/admin/RecentActivity";
 import RecentNotices from "../../../components/admin/RecentNotices";
-
+import { api } from "../../../data/api";
 const STAT_SCHEMA = [
-  { key: "total_students", label: "Total Students", icon: Users, accent: "blue" },
-  { key: "total_teachers", label: "Total Teachers", icon: GraduationCap, accent: "indigo" },
-  { key: "total_class", label: "Total Classes", icon: DoorOpen, accent: "purple" },
-  { key: "total_attendance", label: "Attendance Rate", icon: CalendarCheck, accent: "green", format: (v) => `${v}%` },
-  { key: "total_books", label: "Total Books", icon: BookOpen, accent: "orange" },
-  { key: "total_book_category", label: "Book Categories", icon: BookMarked, accent: "cyan" },
-  { key: "total_studentassignments", label: "Assignments", icon: FileCheck2, accent: "teal" },
+  {
+    key: "total_students",
+    label: "Total Students",
+    icon: Users,
+    accent: "blue",
+  },
+  {
+    key: "total_teachers",
+    label: "Total Teachers",
+    icon: GraduationCap,
+    accent: "indigo",
+  },
+  {
+    key: "total_class",
+    label: "Total Classes",
+    icon: DoorOpen,
+    accent: "purple",
+  },
+  {
+    key: "total_attendance",
+    label: "Attendance Rate",
+    icon: CalendarCheck,
+    accent: "green",
+    format: (v) => `${v}%`,
+  },
+  {
+    key: "total_books",
+    label: "Total Books",
+    icon: BookOpen,
+    accent: "orange",
+  },
+  {
+    key: "total_book_category",
+    label: "Book Categories",
+    icon: BookMarked,
+    accent: "cyan",
+  },
+  {
+    key: "total_studentassignments",
+    label: "Assignments",
+    icon: FileCheck2,
+    accent: "teal",
+  },
   { key: "total_hotelroom", label: "Hotel Rooms", icon: Hotel, accent: "rose" },
 ];
-
 function AdminDashboard() {
   const { currentUser } = useAuth();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
+  const [activetyLog, setActivityLog] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -46,7 +82,14 @@ function AdminDashboard() {
       setLoading(false);
     }
   };
-
+  const getRecently = async () => {
+    const response = await api.get("/get-recently");
+    const data = response?.data || response?.data?.data || response?.data?.data?.data || response;
+    setActivityLog(data?.data?.activity_logs);
+  };
+  useEffect(() => {
+    getRecently();
+  }, []);
   useEffect(() => {
     fetchData();
   }, []);
@@ -62,7 +105,7 @@ function AdminDashboard() {
       accent: item.accent,
     };
   });
-
+  console.log(activetyLog)
   return (
     <div className="space-y-6 p-4 md:p-6">
       <WelcomeBanner name={currentUser?.name} />

@@ -1,10 +1,12 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, ChevronDown } from "lucide-react";
 import sidebarMenu from "../../data/sideBar";
 import { AuthContext } from "../../context/AuthContext";
 import { AuthApi } from "../../data/AuthApi";
 import LoadingModal from "../../hooks/LoadingModal";
+import { IoSchool } from "react-icons/io5";
+import { api } from "../../data/api";
 function Sidebar() {
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
@@ -12,17 +14,15 @@ function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [nameSchool, setNameSchool] = useState("School Portal");
   const visibleMenu = sidebarMenu.filter((menu) =>
     menu.roles?.includes(currentUser?.role),
   );
-
   const closeMobile = () => setIsMobileOpen(false);
 
   const toggleDropdown = (id) => {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
-
   const handleLogout = async () => {
     try {
       setLoading(true);
@@ -38,7 +38,20 @@ function Sidebar() {
       setLoading(false);
     }
   };
-
+  const fetchNameSchool = async () => {
+    try {
+      const response = await api.get("/settings");
+      if (response.data.status === "success" && response.data.settings) {
+        setNameSchool(response.data.settings.schoolName || "School Portal");
+      }
+    } catch (error) {
+      console.log("Fails to reload", error);
+    }
+  };
+  useEffect(() => {
+    fetchNameSchool();
+  }, []);
+  console.log(nameSchool);
   return (
     <>
       <LoadingModal
@@ -54,7 +67,7 @@ function Sidebar() {
           className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
           aria-label="Open menu"
         >
-       <Menu size={22} />
+          <Menu size={22} />
         </button>
       </div>
 
@@ -81,7 +94,12 @@ function Sidebar() {
         {/* Header */}
         <div className="flex items-center justify-between px-5 h-16 border-b border-gray-200">
           <span className="text-xl font-bold text-gray-800">
-            Edu<span className="text-blue-600">Manage</span>
+            {nameSchool && (
+              <div className="flex gap-x-1 items-center">
+                <IoSchool size={20}/>
+                <span className="text-blue-600">{nameSchool}</span>
+              </div>
+            )}
           </span>
           <button
             type="button"
@@ -138,7 +156,7 @@ function Sidebar() {
                                   }`
                                 }
                               >
-                                <IconChildren size={16}/>
+                                <IconChildren size={16} />
                                 {childItem.title || childItem.titile}
                               </NavLink>
                             </li>

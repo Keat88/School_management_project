@@ -1,10 +1,67 @@
 import { api } from "./api";
 
+export const hostelApi = {
+  getAll: async (param) => {
+    try {
+      const response = await api.get("/hostels/hostel/index", {
+        params: param,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching hostels:", error);
+      throw error;
+    }
+  },
+  addNew: async (param) => {
+    try {
+      const response = await api.post(
+        "/hostels/hostel/store",
+        param, // Pass param directly, not wrapped inside { param }
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating hostel:", error);
+      throw error;
+    }
+  },
+  getShow: async (id) => {
+    try {
+      const response = await api.get(`/hostels/hostel/show/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching hostel details:", error);
+      throw error;
+    }
+  },
+  delete: async (id) => {
+    try {
+      const response = await api.delete(`/hostels/hostel/destroy/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting hostel:", error);
+      throw error;
+    }
+  },
+  update: async (id, param) => {
+    try {
+      const response = await api.put(`/hostels/hostel/update/${id}`, param); // Pass param directly here too
+      return response.data;
+    } catch (error) {
+      console.error("Error updating hostel:", error);
+      throw error;
+    }
+  },
+};
 export const hostelRoomApi = {
   getAll: async (params = {}) => {
     try {
       const response = await api.get("/hostels/hostel-room/index", { params });
-      return response.data; 
+      return response.data;
     } catch (error) {
       console.error("Error fetching rooms:", error);
       throw error;

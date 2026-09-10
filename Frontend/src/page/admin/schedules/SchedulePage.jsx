@@ -60,6 +60,9 @@ function SchedulePage() {
   const handleAddSchedule = () => {
     navigate("/admin/schedule-form");
   };
+  const handleManySchedult = ()=>{
+    navigate('/admin/schedulte-manyform')
+  }
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -70,6 +73,7 @@ function SchedulePage() {
       </div>
 
       <ScheduleFilters
+      onManySchedule={handleManySchedult}
         classFilter={classFilter}
         onClassChange={setClassFilter}
         dayFilter={dayFilter}

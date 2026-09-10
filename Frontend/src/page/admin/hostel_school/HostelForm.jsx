@@ -1,175 +1,184 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Building2 } from "lucide-react";
-import api from "../../data/api";
-import { HotelCagegoryApi } from "../../../data/Hostel";
+import { hostelApi } from "../../../data/Hostel";
 
 export default function HostelForm() {
   const { id } = useParams();
+  const isEdit = Boolean(id);
   const navigate = useNavigate();
-  const isEditing = Boolean(id);
 
-  const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(isEditing);
+  const [formData, setFormData] = useState({
+    name: "",
+    type: "male",
+    address: "",
+  });
   const [feedback, setFeedback] = useState(null);
-
-  const [name, setName] = useState("");
-  const [type, setType] = useState("");
-  const [address, setAddress] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isEditing) {
-      const fetchHostel = async () => {
+    if (isEdit && id) {
+      const fetchData = async () => {
         try {
-          const response = await HotelCagegoryApi.getShow(id);
-          const hostel = response.data?.data || response.data;
-          setName(hostel.name || "");
-          setType(hostel.type || "");
-          setAddress(hostel.address || "");
-        } catch (error) {
-          setFeedback({
-            type: "error",
-            text: "Failed to load hostel data for editing.",
+          const data = await hostelApi.getShow(id);
+          setFormData({
+            name: data?.data?.name || data?.name || "",
+            type: data?.data?.type || data?.type || "male",
+            address: data?.data?.address || data?.address || "",
           });
-        } finally {
-          setFetching(false);
+        } catch (err) {
+          console.error("Failed to load building data", err);
+          setFeedback({ type: "error", text: "Failed to load building details." });
         }
       };
-      fetchHostel();
+      fetchData();
     }
-  }, [id, isEditing]);
+  }, [id, isEdit]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setFeedback(null);
-
-    const payload = { name, type, address };
+    setLoading(true);
 
     try {
-      if (isEditing) {
-        await HotelCagegoryApi.upDate(id, payload);
-        setFeedback({ type: "success", text: "Hostel updated successfully!" });
+      if (isEdit) {
+        const res = await hostelApi.update(id, formData);
+        setFeedback({
+          type: "success",
+          text: res.data?.message || "Dormitory building updated successfully!",
+        });
       } else {
-        HotelCagegoryApi.
-        setFeedback({ type: "success", text: "Hostel created successfully!" });
+        const res = await hostelApi.addNew(formData);
+        setFeedback({
+          type: "success",
+          text: res.data?.message || "Dormitory building created successfully!",
+        });
+        setFormData({ name: "", type: "male", address: "" });
       }
-      setTimeout(() => {
-        navigate("/admin/hostel");
-      }, 1000);
+      setTimeout(() => navigate(-1), 1200);
     } catch (error) {
+      console.error("Submission error details:", error.response?.data);
+      
+      // Extract specific validation errors from Laravel if available
+      const serverErrors = error.response?.data?.errors;
+      let errorMessage = error.response?.data?.message || "Validation error or server failure.";
+
+      if (serverErrors) {
+        const firstErrorKey = Object.keys(serverErrors)[0];
+        if (firstErrorKey && serverErrors[firstErrorKey][0]) {
+          errorMessage = serverErrors[firstErrorKey][0];
+        }
+      }
+
       setFeedback({
         type: "error",
-        text:
-          error.response?.data?.message ||
-          "Failed to save hostel. Please check inputs.",
+        text: errorMessage,
       });
     } finally {
       setLoading(false);
     }
   };
 
-  if (fetching) {
-    return (
-      <div className="max-w-2xl mx-auto py-12 text-center text-gray-400 text-sm">
-        Loading hostel details...
-      </div>
-    );
-  }
-
   return (
-    <div className="min-w-160 mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/admin/hostel"
-            className="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-            title="Back to Hostels"
+    <div className="max-w-2xl mx-auto rounded-2xl p-6 bg-white border border-gray-200 shadow-sm text-gray-800 font-sans my-6">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+        <div>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 text-xs font-semibold hover:bg-gray-100 transition-all cursor-pointer border border-gray-200 mb-2"
           >
-            <ArrowLeft size={18} />
-          </Link>
-          <h2 className="text-xl font-bold text-gray-800">
-            {isEditing ? "Edit Hostel" : "Add New Hostel"}
-          </h2>
+            <ArrowLeft size={14} /> Back
+          </button>
+          <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+            <Building2 size={20} className="text-blue-600" />
+            {isEdit ? "Edit Dormitory Building" : "Add New Dormitory Building"}
+          </h3>
         </div>
       </div>
 
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium ${
+          className={`p-4 mb-5 rounded-xl text-sm font-medium ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-emerald-50 text-emerald-600 border border-emerald-200"
+              : "bg-rose-50 text-rose-600 border border-rose-200"
           }`}
         >
           {feedback.text}
         </div>
       )}
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-5"
-      >
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Hostel Name *
+          <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+            Building Name
           </label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
+            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all"
+            placeholder="e.g. Building A - North Wing"
+            value={formData.name}
+            onChange={handleChange}
             required
-            placeholder="e.g. Alpha Boys Hostel"
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Hostel Type *
+          <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+            Building Type
           </label>
-          <input
-            type="text"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
+          <select
+            name="type"
+            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all capitalize"
+            value={formData.type}
+            onChange={handleChange}
             required
-            placeholder="e.g. Boys, Girls, Mixed"
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          >
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="others">Others</option>
+          </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Address *
+          <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">
+            Address / Location (Optional)
           </label>
           <textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-            rows={3}
-            placeholder="Enter complete address..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="address"
+            rows="3"
+            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all"
+            placeholder="Enter building address or location notes..."
+            value={formData.address}
+            onChange={handleChange}
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-          <Link
-            to="/admin/hostel"
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+          <button
+            type="button"
+            className="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-200 border border-gray-200 transition-all cursor-pointer"
+            onClick={() => navigate(-1)}
           >
             Cancel
-          </Link>
+          </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
-            <Save size={16} />
+            <Save size={14} />{" "}
             {loading
               ? "Saving..."
-              : isEditing
-                ? "Update Hostel"
-                : "Save Hostel"}
+              : isEdit
+                ? "Update Building"
+                : "Save Building"}
           </button>
         </div>
       </form>

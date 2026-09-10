@@ -1,7 +1,12 @@
 import { Users, CalendarCheck2, TrendingUp, DollarSign } from "lucide-react";
-
+import { api } from "./api";
 // Replace with real API data once available.
-
+export const repostApi = {
+  getAll: async () => {
+    const response = await api.get("/reports");
+    return response.data;
+  },
+};
 export const reportStats = [
   {
     label: "Total Students",

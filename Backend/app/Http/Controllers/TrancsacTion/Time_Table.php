@@ -12,6 +12,92 @@ use Illuminate\Support\Facades\Validator;
 
 class Time_Table extends Controller
 {
+    /**
+     * Auto-generate timetable schedule slots for multiple subjects and teachers.
+     */
+    public function autoGenerate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'class_id'    => 'required|exists:class_rooms,id',
+            'assignments' => 'required|array|min:1',
+            'assignments.*.subject_id' => 'required|exists:subjects,id',
+            'assignments.*.teacher_id' => 'required|exists:teachers,id',
+            'days'        => 'required|array|min:1',
+            'days.*'      => 'string|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'time_slots'  => 'required|array|min:1',
+            'time_slots.*.start' => 'required|date_format:H:i',
+            'time_slots.*.end'   => 'required|date_format:H:i|after:time_slots.*.start',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->error('Invalid data', $validator->errors(), 422);
+        }
+
+        try {
+            $classId = $request->class_id;
+            $assignments = $request->assignments;
+            $days = $request->days;
+            $timeSlots = $request->time_slots;
+
+            $generatedCount = 0;
+
+            // Randomize or shuffle assignments to distribute subjects uniquely across slots
+            shuffle($assignments);
+
+            $assignmentIndex = 0;
+            $totalAssignments = count($assignments);
+
+            $response = DB::transaction(function () use ($classId, $assignments, $days, $timeSlots, &$generatedCount, $totalAssignments, $assignmentIndex) {
+                foreach ($days as $day) {
+                    foreach ($timeSlots as $slot) {
+                        if ($assignmentIndex >= $totalAssignments) {
+                            break 2; // Stop if all selected subjects have been scheduled
+                        }
+
+                        $currentPair = $assignments[$assignmentIndex];
+                        $teacherId = $currentPair['teacher_id'];
+                        $startTime = $slot['start'];
+                        $endTime = $slot['end'];
+
+                        // Check if teacher has scheduling conflicts at this specific day and time range
+                        $conflict = TimeTables::where('teacher_id', $teacherId)
+                            ->where('day', $day)
+                            ->where(function ($query) use ($startTime, $endTime) {
+                                $query->whereBetween('start_time', [$startTime, $endTime])
+                                    ->orWhereBetween('end_time', [$startTime, $endTime])
+                                    ->orWhere(function ($q) use ($startTime, $endTime) {
+                                        $q->where('start_time', '<=', $startTime)
+                                            ->where('end_time', '>=', $endTime);
+                                    });
+                            })->exists();
+
+                        if (!$conflict) {
+                            TimeTables::create([
+                                'class_id'   => $classId,
+                                'subject_id' => $currentPair['subject_id'],
+                                'teacher_id' => $teacherId,
+                                'day'        => $day,
+                                'start_time' => $startTime,
+                                'end_time'   => $endTime,
+                            ]);
+                            $generatedCount++;
+                            $assignmentIndex++;
+                        }
+                    }
+                }
+
+                Cache::flush();
+
+                return $this->success("Successfully auto-generated {$generatedCount} schedule slots!", [
+                    'generated_count' => $generatedCount
+                ], 201);
+            });
+
+            return $response;
+        } catch (\Exception $e) {
+            return $this->error('Something went wrong while auto-generating timetables', $e->getMessage(), 500);
+        }
+    }
     public function dashboard(Request $request)
     {
         try {
@@ -21,7 +107,6 @@ class Time_Table extends Controller
                 $query->where('day', $request->day);
             }
             $total_by_day = $query->count();
-
             return $this->success('Dashboard data retrieved successfully', [
                 'total_tables' => $total_tables,
                 'total_by_day' => $total_by_day,
@@ -40,7 +125,7 @@ class Time_Table extends Controller
             $cacheKey = 'timetables_' . md5(json_encode($request->all()));
 
             $time = Cache::remember($cacheKey, 60, function () use ($request) {
-                $query = TimeTables::with('classRoom', 'subject','teacher');
+                $query = TimeTables::with('classRoom', 'subject', 'teacher');
 
                 if ($request->has('class') && !empty($request->class)) {
                     $class = $request->class;

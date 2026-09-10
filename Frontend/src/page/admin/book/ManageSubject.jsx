@@ -119,7 +119,7 @@ export default function ManageSubject() {
       {/* Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className="p-4 rounded-xl border border-gray-200 flex gap-3"
+        className="p-4 rounded-xl border border-gray-200 flex gap-3 shadow-md"
       >
         <div className="relative flex-1">
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -150,7 +150,7 @@ export default function ManageSubject() {
       </form>
 
       {/* Subject List Table */}
-      <div className="rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -212,18 +212,18 @@ export default function ManageSubject() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/admin/subjects/add/${sub.id}`}
-                          className="p-1 text-blue-600 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+                          className="p-1 text-blue-500 border border-gray-200 rounded-md duration-200 hover:bg-gray-200 transition-colors"
                           title="Edit"
                         >
-                          <Edit size={16} />
+                          Edit
                         </Link>
                         <button
                           type="button"
                           onClick={() => handleDelete(sub.id)}
-                          className="p-1 text-red-500 border border-gray-200 rounded-md hover:bg-gray-100 transition-colors"
+                          className="p-1 text-red-500 border bg-red-50 border-gray-200 rounded-md duration-200 hover:bg-red-100 transition-colors"
                           title="Delete"
                         >
-                          <Trash2 size={16} />
+                        Delete
                         </button>
                       </div>
                     </td>

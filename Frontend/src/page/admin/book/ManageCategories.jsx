@@ -136,7 +136,7 @@ export default function ManageCategories() {
         </button>
       </form>
 
-      <div className="overflow-x-auto border border-gray-100 rounded-lg">
+      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase">

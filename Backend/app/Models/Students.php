@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Students extends Model
 {
     use HasFactory;
-    protected $fillable = ['student_phone','student_name','email','class_id','parent_id','roll_number','date_of_birth','gender','address','student_image'];
+    protected $fillable = ['student_phone', 'student_name', 'email', 'class_id', 'parent_id', 'roll_number', 'date_of_birth', 'gender', 'address', 'student_image'];
 
     public function classRoom()
     {
@@ -32,7 +32,7 @@ class Students extends Model
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class,'student_id', 'id');
+        return $this->hasMany(Attendance::class, 'student_id', 'id');
     }
 
     public function results()
@@ -49,10 +49,16 @@ class Students extends Model
     {
         return $this->hasMany(Student_Transports::class);
     }
-    public function hostelAssignments(){
+    public function hostelAssignments()
+    {
         return $this->hasMany(Hostel_assignments::class);
     }
-    public function hostelPayments(){
+    public function hostelPayments()
+    {
         return $this->hasMany(Hostel_payments::class);
+    }
+    public function scores()
+    {
+        return $this->hasMany(Scores::class, 'student_id');
     }
 }

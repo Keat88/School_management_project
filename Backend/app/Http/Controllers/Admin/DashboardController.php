@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Attendance;
 use App\Models\BookCategory;
 use App\Models\Books;
 use App\Models\ClassRoom;
 use App\Models\Hostel_assignments;
 use App\Models\Hostel_rooms;
+use App\Models\Notice;
 use App\Models\Students;
 use App\Models\Subjects;
 use App\Models\Teachers;
@@ -46,7 +48,6 @@ class DashboardController extends Controller
         $teachers = Teachers::with('user')->get();
         $classes = ClassRoom::all();
         $subjects = Subjects::all();
-
         return response()->json([
             'message' => 'Success',
             'data' => [
@@ -69,6 +70,21 @@ class DashboardController extends Controller
                     ];
                 }),
             ]
+        ], 200);
+    }
+    public function getRecently()
+    {
+        $notice = Notice::whereDate('publish_date', today())->get();
+
+        // ទាញយក Activity Logs សម្រាប់ថ្ងៃនេះជារៀងរាល់ថ្ងៃ
+        $activityLog = ActivityLog::with(['user:id,name,email'])
+            ->whereDate('created_at', today())
+            ->latest()
+            ->get();
+
+        return $this->success('recently have been recived !', [
+            'notices' => $notice,
+            'activity_logs' => $activityLog
         ], 200);
     }
 }

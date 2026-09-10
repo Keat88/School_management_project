@@ -52,6 +52,7 @@ class SocialController extends Controller
                 ]);
             } else {
                 $user->update([
+                    'name' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'User',
                     $providerIdField => $socialUser->getId(),
                     'avatar' => $socialUser->getAvatar() ?? $user->avatar,
                 ]);

@@ -15,19 +15,15 @@ class OtpPasswordResetController extends Controller
     public function sendOtp(Request $request)
     {
         $request->validate(['email' => 'required|email|exists:users,email']);
-
         $otp = rand(100000, 999999);
-
         PasswordOtp::updateOrCreate(
             ['email' => $request->email],
             ['otp' => $otp, 'created_at' => Carbon::now()]
         );
-
         Mail::raw("Your password reset OTP is: {$otp}", function ($message) use ($request) {
             $message->to($request->email);
             $message->subject('Your Password Reset OTP');
         });
-
         return response()->json(['message' => 'OTP sent successfully to your email.'],201);
     }
 

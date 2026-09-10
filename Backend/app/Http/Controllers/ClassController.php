@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\ClassRoomResource;
+use App\Models\Attendance;
 use App\Models\ClassRoom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,60 @@ use Illuminate\Support\Facades\Validator;
 
 class ClassController extends Controller
 {
+    public function showClassData($classId, Request $request)
+    {
+        $date = $request->input('date', now()->toDateString());
+
+        $class = ClassRoom::with([
+            'students.scores' => fn($q) => $q->where('class_id', $classId),
+            'students.attendances' => fn($q) => $q->where('attendance_date', $date)
+        ])->findOrFail($classId);
+
+        return response()->json([
+            'success' => true,
+            'class' => $class
+        ]);
+    }
+
+    public function updateAttendance(Request $request, $classId)
+    {
+        $request->validate([
+            'attendance_date' => 'required|date',
+            'attendances' => 'required|array',
+            'attendances.*.student_id' => 'required|exists:students,id',
+            'attendances.*.status' => 'nullable|in:P,A,PM',
+            'attendances.*.reason' => 'nullable|string',
+        ]);
+
+        foreach ($request->attendances as $attData) {
+            $existing = Attendance::where('class_id', $classId)
+                ->where('student_id', $attData['student_id'])
+                ->where('attendance_date', $request->attendance_date)
+                ->first();
+
+            // Prevent modifications if locked by administrator
+            if ($existing && $existing->is_locked) {
+                continue;
+            }
+
+            Attendance::updateOrCreate(
+                [
+                    'class_id' => $classId,
+                    'student_id' => $attData['student_id'],
+                    'attendance_date' => $request->attendance_date,
+                ],
+                [
+                    'status' => $attData['status'] ?? null,
+                    'reason' => $attData['reason'] ?? null,
+                ]
+            );
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attendance synchronized successfully!'
+        ]);
+    }
     public function index(Request $request)
     {
         $query = ClassRoom::query()

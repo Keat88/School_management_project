@@ -148,7 +148,7 @@ export default function AcademicYearManager() {
 
   console.log(academicYears);
   return (
-    <div className="w-full lg:min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 space-y-6">
+    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
       {/* Header */}
       <div className="flex justify-between items-center pb-4 border-b border-gray-100">
         <div>

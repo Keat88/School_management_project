@@ -279,7 +279,7 @@ export default function ManageStudentStays() {
       </div>
 
       {/* Main Data Table */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

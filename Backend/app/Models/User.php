@@ -18,16 +18,26 @@ class User extends Authenticatable
         'role',
         'google_id',
         'github_id',
-        'avatar'
+        'avatar',
+        'otp_code',         // Added for 2FA
+        'otp_expires_at',   // Added for 2FA expiration
+        'last_active_at',
+        'two_factor_enabled',
+        // Added for session timeout tracking
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'otp_code'
     ];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'otp_expires_at' => 'datetime',     // Cast as date object for easy comparisons
+        'last_active_at' => 'datetime',
+        'two_factor_enabled' => 'boolean',
+
     ];
 
     public function admin()
@@ -42,5 +52,9 @@ class User extends Authenticatable
     public function notices()
     {
         return $this->hasMany(Notice::class);
+    }
+    public function activityLog()
+    {
+        return $this->hasMany(ActivityLog::class);
     }
 }
