@@ -39,7 +39,14 @@ class User extends Authenticatable
         'two_factor_enabled' => 'boolean',
 
     ];
-
+    public function orders()
+    {
+        return $this->hasMany(Orders::class); // Adjust if foreign key differs
+    }
+    public function enrollments()
+    {
+        return $this->hasMany(Inrollments::class, 'user_id'); // Matches your Inrollments controller
+    }
     public function admin()
     {
         return $this->hasOne(Admins::class);

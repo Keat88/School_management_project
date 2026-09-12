@@ -1,12 +1,13 @@
 import { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Menu, X, LogOut, ChevronDown } from "lucide-react";
+import { Menu, X, LogOut, ChevronDown, Sun, Moon } from "lucide-react";
 import sidebarMenu from "../../data/sideBar";
 import { AuthContext } from "../../context/AuthContext";
 import { AuthApi } from "../../data/AuthApi";
 import LoadingModal from "../../hooks/LoadingModal";
 import { IoSchool } from "react-icons/io5";
 import { api } from "../../data/api";
+
 function Sidebar() {
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
@@ -15,6 +16,25 @@ function Sidebar() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [loading, setLoading] = useState(false);
   const [nameSchool, setNameSchool] = useState("School Portal");
+
+  // Dark/Light mode state initialized from localStorage
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  // Apply or remove 'dark' class on root document and persist preference
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+
   const visibleMenu = sidebarMenu.filter((menu) =>
     menu.roles?.includes(currentUser?.role),
   );
@@ -23,6 +43,7 @@ function Sidebar() {
   const toggleDropdown = (id) => {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
+
   const handleLogout = async () => {
     try {
       setLoading(true);
@@ -38,6 +59,7 @@ function Sidebar() {
       setLoading(false);
     }
   };
+
   const fetchNameSchool = async () => {
     try {
       const response = await api.get("/settings");
@@ -48,10 +70,11 @@ function Sidebar() {
       console.log("Fails to reload", error);
     }
   };
+
   useEffect(() => {
     fetchNameSchool();
   }, []);
-  console.log(nameSchool);
+
   return (
     <>
       <LoadingModal
@@ -59,16 +82,35 @@ function Sidebar() {
         title="Completing Logout..."
         subtitle="Finalizing your request"
       />
-      <div className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-30">
-        <span className="text-lg font-semibold text-gray-800">EduManage</span>
-        <button
-          type="button"
-          onClick={() => setIsMobileOpen(true)}
-          className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors"
-          aria-label="Open menu"
-        >
-          <Menu size={22} />
-        </button>
+      {/* Mobile Header Bar */}
+      <div className="md:hidden flex items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-30 transition-colors">
+        <span className="text-xl font-bold text-gray-800 dark:text-white">
+          {nameSchool && (
+            <div className="flex gap-x-1 items-center">
+              <IoSchool size={20} />
+              <span className="text-blue-600 dark:text-blue-400">{nameSchool}</span>
+            </div>
+          )}
+        </span>
+        <div className="flex items-center gap-x-1">
+          {/* Mobile Theme Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsMobileOpen(true)}
+            className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Open menu"
+          >
+            <Menu size={22} />
+          </button>
+        </div>
       </div>
 
       {/* Mobile overlay */}
@@ -83,7 +125,7 @@ function Sidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          bg-white border-r border-gray-200 flex flex-col
+          bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col
           fixed md:sticky top-0 left-0 h-screen z-50
           w-64 shrink-0
           transform transition-transform duration-300 ease-in-out
@@ -92,23 +134,26 @@ function Sidebar() {
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 h-16 border-b border-gray-200">
-          <span className="text-xl font-bold text-gray-800">
+        <div className="flex items-center justify-between px-5 h-16 border-b border-gray-200 dark:border-gray-800">
+          <span className="text-xl font-bold text-gray-800 dark:text-white">
             {nameSchool && (
               <div className="flex gap-x-1 items-center">
-                <IoSchool size={20}/>
-                <span className="text-blue-600">{nameSchool}</span>
+                <IoSchool size={20} />
+                <span className="text-blue-600 dark:text-blue-400">{nameSchool}</span>
               </div>
             )}
           </span>
-          <button
-            type="button"
-            onClick={closeMobile}
-            className="md:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100"
-            aria-label="Close menu"
-          >
-            <X size={20} />
-          </button>
+          <div className="flex items-center gap-x-1">
+
+            <button
+              type="button"
+              onClick={closeMobile}
+              className="md:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+              aria-label="Close menu"
+            >
+              <X size={20} />
+            </button>
+          </div>
         </div>
 
         {/* Menu */}
@@ -123,12 +168,12 @@ function Sidebar() {
                   <li key={menu.id} className="space-y-1 relative">
                     <div
                       onClick={() => toggleDropdown(menu.id)}
-                      className="w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors cursor-pointer"
+                      className="w-full group relative flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                     >
                       <div className="flex items-center gap-3">
                         <Icon
                           size={18}
-                          className="text-gray-400 group-hover:text-gray-600"
+                          className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200"
                         />
                         <span>{menu.title}</span>
                       </div>
@@ -140,7 +185,7 @@ function Sidebar() {
                       />
                     </div>
                     {isDropdownOpen && (
-                      <ul className="pl-9 space-y-1 py-1 bg-white">
+                      <ul className="pl-9 space-y-1 py-1 bg-white dark:bg-gray-900">
                         {menu.child.map((childItem) => {
                           const IconChildren = childItem.icon;
                           return (
@@ -149,14 +194,14 @@ function Sidebar() {
                                 to={childItem.path}
                                 onClick={closeMobile}
                                 className={({ isActive }) =>
-                                  `flex gap-x-0.5 items-center px-3 py-2 rounded-md text-xs  font-medium transition-colors ${
+                                  `flex gap-x-1.5 items-center px-3 py-2 rounded-md text-xs font-medium transition-colors ${
                                     isActive
-                                      ? "bg-blue-50 text-blue-600 font-semibold"
-                                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                                      ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold"
+                                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                                   }`
                                 }
                               >
-                                <IconChildren size={16} />
+                                {IconChildren && <IconChildren size={16} />}
                                 {childItem.title || childItem.titile}
                               </NavLink>
                             </li>
@@ -178,8 +223,8 @@ function Sidebar() {
                     className={({ isActive }) =>
                       `group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                         isActive
-                          ? "bg-blue-50 text-blue-600"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                          ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
                       }`
                     }
                   >
@@ -194,8 +239,8 @@ function Sidebar() {
                           size={18}
                           className={
                             isActive
-                              ? "text-blue-600"
-                              : "text-gray-400 group-hover:text-gray-600"
+                              ? "text-blue-600 dark:text-blue-400"
+                              : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-200"
                           }
                         />
                         <span>{menu.title}</span>
@@ -207,24 +252,25 @@ function Sidebar() {
             })}
           </ul>
         </nav>
+
         {/* Footer / user info */}
-        <div className="border-t border-gray-200 px-4 py-4">
+        <div className="border-t border-gray-200 dark:border-gray-800 px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold uppercase">
+            <div className="h-9 w-9 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-semibold uppercase">
               {currentUser?.name?.charAt(0) || "U"}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-gray-800 truncate">
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                 {currentUser?.name || "User"}
               </p>
-              <p className="text-xs text-gray-500 capitalize truncate">
+              <p className="text-xs text-gray-500 dark:text-gray-400 capitalize truncate">
                 {currentUser?.role || "guest"}
               </p>
             </div>
             <button
               type="button"
               onClick={handleLogout}
-              className="ml-auto p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+              className="ml-auto p-2 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-200"
               aria-label="Log out"
             >
               <LogOut size={16} />

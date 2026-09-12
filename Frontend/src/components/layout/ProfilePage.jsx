@@ -14,9 +14,9 @@ import { useAuth } from "../../context/AuthContext";
 import LoadingModal from "../../hooks/LoadingModal";
 
 const inputClass =
-  "w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2.5 text-sm md:text-base text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all";
+  "w-full rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50/50 dark:bg-gray-800 px-3.5 py-2.5 text-sm md:text-base text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-gray-800 transition-all";
 const labelClass =
-  "block text-xs md:text-sm font-semibold text-slate-700 mb-1.5";
+  "block text-xs md:text-sm font-semibold text-slate-700 dark:text-gray-300 mb-1.5";
 
 function Field({ label, icon: Icon, className = "", ...props }) {
   return (
@@ -26,7 +26,7 @@ function Field({ label, icon: Icon, className = "", ...props }) {
         {Icon && (
           <Icon
             size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 shrink-0"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 shrink-0"
           />
         )}
         <input className={`${inputClass} ${Icon ? "pl-11" : ""}`} {...props} />
@@ -38,14 +38,14 @@ function Field({ label, icon: Icon, className = "", ...props }) {
 function InfoItem({ icon: Icon, label, value }) {
   return (
     <div className="flex items-center gap-3 min-w-0">
-      <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100/60 shrink-0 shadow-2xs">
+      <div className="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100/60 dark:border-indigo-800/60 shrink-0 shadow-2xs">
         <Icon size={16} className="md:w-4 md:h-4" />
       </div>
       <div className="min-w-0">
-        <p className="text-[10px] md:text-xs text-slate-400 uppercase tracking-wider font-semibold">
+        <p className="text-[10px] md:text-xs text-slate-400 dark:text-gray-500 uppercase tracking-wider font-semibold">
           {label}
         </p>
-        <p className="text-xs md:text-sm font-medium text-slate-700 truncate">
+        <p className="text-xs md:text-sm font-medium text-slate-700 dark:text-gray-200 truncate">
           {value || "N/A"}
         </p>
       </div>
@@ -123,22 +123,22 @@ export default function ProfilePage() {
         subtitle="Finalizing your request"
       />
 
-      <div className="min-h-screen bg-slate-100/60 flex justify-center p-4 sm:p-6 md:p-10">
+      <div className="min-h-screen bg-slate-100/60 dark:bg-gray-950 flex justify-center p-4 sm:p-6 md:p-10 transition-colors">
         <div className="w-full max-w-5xl space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                 Profile Settings
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-gray-400">
                 Manage your personal information and security preferences
               </p>
             </div>
             <button
               type="button"
               onClick={handleLogOut}
-              className="self-start sm:self-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-rose-600 transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="self-start sm:self-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-800 hover:text-rose-600 dark:hover:text-rose-400 transition-all cursor-pointer shadow-2xs active:scale-95"
             >
               <LogOut size={16} />
               <span>Sign Out</span>
@@ -146,15 +146,15 @@ export default function ProfilePage() {
           </div>
 
           {/* Banner and User Header Card */}
-          <div className="rounded-3xl bg-white shadow-xs border border-slate-200/80 overflow-hidden">
+          <div className="rounded-3xl bg-white dark:bg-gray-900 shadow-xs border border-slate-200/80 dark:border-gray-800 overflow-hidden transition-colors">
             <div className="h-28 sm:h-36 bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 relative">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/1og via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none" />
             </div>
             <div className="px-5 sm:px-8 pb-6 -mt-12 sm:-mt-14">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
                 {/* Avatar Container */}
                 <div className="relative shrink-0">
-                  <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-white p-1 shadow-md ring-1 ring-slate-900/10">
+                  <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-white dark:bg-gray-800 p-1 shadow-md ring-1 ring-slate-900/10 dark:ring-gray-700">
                     {avatar ? (
                       <img
                         src={avatar}
@@ -162,7 +162,7 @@ export default function ProfilePage() {
                         className="h-full w-full rounded-xl object-cover"
                       />
                     ) : (
-                      <div className="h-full w-full rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl sm:text-4xl font-bold">
+                      <div className="h-full w-full rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl sm:text-4xl font-bold">
                         {avatarInitial}
                       </div>
                     )}
@@ -187,14 +187,14 @@ export default function ProfilePage() {
                 {/* User Overview */}
                 <div className="w-full min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 justify-center sm:justify-start">
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">
+                    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate">
                       {profile.name}
                     </h2>
-                    <span className="self-center sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize bg-indigo-50 text-indigo-700 border border-indigo-100">
+                    <span className="self-center sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800">
                       <User size={12} /> {profile.role}
                     </span>
                   </div>
-                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-gray-800">
                     <InfoItem icon={Mail} label="Email" value={profile.email} />
                     <InfoItem
                       icon={Phone}
@@ -217,13 +217,13 @@ export default function ProfilePage() {
             {/* Main Form */}
             <form
               onSubmit={handleSave}
-              className="rounded-3xl bg-white shadow-xs border border-slate-200/80 p-5 sm:p-8 lg:col-span-2 space-y-6"
+              className="rounded-3xl bg-white dark:bg-gray-900 shadow-xs border border-slate-200/80 dark:border-gray-800 p-5 sm:p-8 lg:col-span-2 space-y-6 transition-colors"
             >
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Personal Information
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-gray-400">
                   Update your identity and demographic information.
                 </p>
               </div>
@@ -259,8 +259,8 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-slate-100">
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1">
+              <div className="pt-6 border-t border-slate-100 dark:border-gray-800">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1">
                   Contact Details
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
@@ -294,7 +294,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-end pt-4 border-t border-slate-100 dark:border-gray-800">
                 <button
                   type="submit"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700 shadow-sm transition-all cursor-pointer active:scale-95"
@@ -305,32 +305,32 @@ export default function ProfilePage() {
             </form>
 
             {/* Sidebar Account Summary */}
-            <div className="rounded-3xl bg-white shadow-xs border border-slate-200/80 p-5 sm:p-6 h-fit space-y-5">
+            <div className="rounded-3xl bg-white dark:bg-gray-900 shadow-xs border border-slate-200/80 dark:border-gray-800 p-5 sm:p-6 h-fit space-y-5 transition-colors">
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Account Overview
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-gray-400">
                   System access status and security.
                 </p>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 border border-slate-200/60">
-                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 font-medium">
-                    <Lock size={16} className="text-slate-400 shrink-0" /> Role
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-gray-800 px-4 py-3 border border-slate-200/60 dark:border-gray-700">
+                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-gray-300 font-medium">
+                    <Lock size={16} className="text-slate-400 dark:text-gray-400 shrink-0" /> Role
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 capitalize">
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-gray-100 capitalize">
                     {profile.role}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 border border-slate-200/60">
-                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 font-medium">
-                    <User size={16} className="text-slate-400 shrink-0" />{" "}
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-gray-800 px-4 py-3 border border-slate-200/60 dark:border-gray-700">
+                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-gray-300 font-medium">
+                    <User size={16} className="text-slate-400 dark:text-gray-400 shrink-0" />{" "}
                     Member since
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800">
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-gray-100">
                     {memberSince}
                   </span>
                 </div>
@@ -338,7 +338,7 @@ export default function ProfilePage() {
 
               <button
                 type="button"
-                className="w-full rounded-xl border border-slate-200 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                className="w-full rounded-xl border border-slate-200 dark:border-gray-700 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer active:scale-95 shadow-2xs"
               >
                 Change Password
               </button>

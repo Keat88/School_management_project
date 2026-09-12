@@ -8,29 +8,6 @@ use App\Models\Notice;
 use App\Models\Teachers;
 use App\Models\User;
 use Illuminate\Http\Request;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -188,7 +165,6 @@ class TeacherController extends Controller
 
                 return $user;
             });
-
             $user->load('teacher');
 
             return $this->success('Teacher added successfully!', new TeacherResource($user), 201);
@@ -227,7 +203,6 @@ class TeacherController extends Controller
             if (!$teacherUser) {
                 return $this->error('Teacher not found!', null, 404);
             }
-
             $validator = Validator::make($request->all(), [
                 'name'          => 'nullable|string|max:255',
                 'email'         => 'nullable|string|email|unique:users,email,' . $id,
@@ -238,7 +213,6 @@ class TeacherController extends Controller
                 'gender'        => 'nullable|string|max:20',
                 'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
             ]);
-
             if ($validator->fails()) {
                 return $this->error('Invalid data', $validator->errors(), 422);
             }

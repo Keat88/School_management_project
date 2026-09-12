@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import DashboardLayout from "./components/layout/DashBoardLayout";
 import { AuthProvider } from "./context/AuthContext";
 import AdminDashboard from "./page/admin/dashobard/AdminDashBoard";
@@ -49,19 +49,33 @@ import AutoScheduleForm from "./components/common/AutoScheduleForm";
 import HostelForm from "./page/admin/hostel_school/HostelForm";
 import PaymentsPage from "./page/admin/PaymentsPage";
 import PaymentForm from "./page/admin/PaymentForm";
+import Home from "./page/public/home/Home";
+import CoursesPage from "./page/public/coures/CoursesPage";
+import ContactPage from "./page/public/contact/ContactPage";
+import Navbar from "./page/public/Navbar";
+import Footer from "./page/public/Footer";
+import Layout from "./page/public/LayOut";
+import UnauthorizedPage from "./page/auth/UnauthorizedPage";
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
-        {/* Guest Routes (Only accessible when NOT logged in) */}
-        <Route element={<GuestRoute />}>
-          <Route path="/" element={<LoginForm />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/login-success" element={<LoginSuccess />} />
-          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-          <Route path="/forgot-password-verify" element={<VerifyOtp />} />
-          <Route path="/forgot-password-reset" element={<ResetPassword />} />
+        <Route element={<Layout />}>
+          {/* Public / Guest Routes */}
+          <Route element={<GuestRoute />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/courses" element={<CoursesPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/login-success" element={<LoginSuccess />} />
+            <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+            <Route path="/forgot-password-verify" element={<VerifyOtp />} />
+            <Route path="/forgot-password-reset" element={<ResetPassword />} />
+          </Route>
+
+          {/* Unauthorized page should be accessible to logged-in users who lack permissions */}
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Route>
 
         {/* Protected Routes (Only accessible when logged in) */}
@@ -89,7 +103,7 @@ function App() {
             <Route path="schedule" element={<SchedulePage />} />
             <Route path="schedule-form" element={<ScheduleForm />} />
             <Route path="schedulte-manyform" element={<AutoScheduleForm />} />
-           
+
             <Route path="attendance" element={<AttendancePage />} />
             {/* <Route path="attendance" element={<StudentAttendance/>} /> */}
             {/* <Route path="attendance" element={<ClassScoreTable />} /> */}
@@ -124,8 +138,8 @@ function App() {
             />
 
             {/* Hostel Routes */}
-             <Route path="hostel" element={<HostelPage />} />
-             <Route path="hostel/add" element={<HostelForm/>}/>
+            <Route path="hostel" element={<HostelPage />} />
+            <Route path="hostel/add" element={<HostelForm />} />
             <Route path="hostel-rooms" element={<ManageHostelRooms />} />
             <Route path="hostel-rooms/add" element={<HostelRoomForm />} />
             <Route path="hostel-rooms/add/:id" element={<HostelRoomForm />} />
@@ -134,8 +148,8 @@ function App() {
             <Route path="hostel-stays/add/:id" element={<StudentStayForm />} />
             {/* Finance & Reports */}
             {/* <Route path="finance" element={<PaymentPage />} /> */}
-            <Route path="finance" element={<PaymentsPage/>}/>
-            <Route path="payments/add" element={<PaymentForm/>}/>
+            <Route path="finance" element={<PaymentsPage />} />
+            <Route path="payments/add" element={<PaymentForm />} />
             <Route path="notices" element={<NoticePage />} />
             <Route path="notice/add" element={<NoticeForm />} />
             <Route path="notice/add/:id" element={<NoticeForm />} />

@@ -5,6 +5,7 @@ import { teacherApi } from "../../data/TeacherApi";
 export default function TeacherForm({
   teacher: propTeacher = null,
   onSuccess,
+  isDark = true,
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -144,24 +145,32 @@ export default function TeacherForm({
 
   if (fetching) {
     return (
-      <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl border border-gray-200 shadow-sm text-center text-gray-500">
+      <div className={`max-w-4xl mx-auto p-6 rounded-xl border shadow-sm text-center transition-colors ${
+        isDark ? "bg-slate-900 border-slate-800 text-slate-400" : "bg-white border-gray-200 text-gray-500"
+      }`}>
         Loading teacher details...
       </div>
     );
   }
 
   return (
-    <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">
+    <div className={`min-w-160 mx-auto p-6 rounded-xl border shadow-sm transition-colors ${
+      isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
+    }`}>
+      <h2 className={`text-xl font-bold mb-6 ${isDark ? "text-slate-100" : "text-gray-800"}`}>
         {isEditMode ? "Edit Teacher" : "Add New Teacher"}
       </h2>
 
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-lg text-sm font-medium ${
+          className={`p-4 mb-6 rounded-lg text-sm font-medium border ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? isDark
+                ? "bg-green-500/20 text-green-300 border-green-500/30"
+                : "bg-green-50 text-green-600 border-green-200"
+              : isDark
+                ? "bg-red-500/20 text-red-300 border-red-500/30"
+                : "bg-red-50 text-red-600 border-red-200"
           }`}
         >
           {feedback.text}
@@ -174,12 +183,14 @@ export default function TeacherForm({
         encType="multipart/form-data"
       >
         <div>
-          <h3 className="text-md font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
+          <h3 className={`text-md font-semibold mb-4 pb-2 border-b ${
+            isDark ? "text-slate-200 border-slate-800" : "text-gray-700 border-gray-100"
+          }`}>
             Teacher Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                 Full Name
               </label>
               <input
@@ -188,12 +199,16 @@ export default function TeacherForm({
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  isDark
+                    ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                    : "bg-white border-gray-200 text-gray-800"
+                }`}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                 Email Address
               </label>
               <input
@@ -202,15 +217,19 @@ export default function TeacherForm({
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  isDark
+                    ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                    : "bg-white border-gray-200 text-gray-800"
+                }`}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                 Password{" "}
                 {isEditMode && (
-                  <span className="text-gray-400 font-normal">
+                  <span className={`font-normal ${isDark ? "text-slate-500" : "text-gray-400"}`}>
                     (Leave blank to keep current)
                   </span>
                 )}
@@ -222,13 +241,17 @@ export default function TeacherForm({
                 onChange={handleChange}
                 required={!isEditMode}
                 placeholder={isEditMode ? "Optional" : "Min. 8 characters"}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  isDark
+                    ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                    : "bg-white border-gray-200 text-gray-800"
+                }`}
               />
             </div>
 
             {isEditMode && (
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Teacher Code
                 </label>
                 <input
@@ -236,20 +259,28 @@ export default function TeacherForm({
                   name="teacher_code"
                   value={formData.teacher_code}
                   readOnly
-                  className="w-full px-3 py-2 border border-gray-200 bg-gray-50 text-gray-500 rounded-lg text-sm cursor-not-allowed focus:outline-none"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm cursor-not-allowed focus:outline-none ${
+                    isDark
+                      ? "bg-slate-800/50 border-slate-700 text-slate-400"
+                      : "bg-gray-50 border-gray-200 text-gray-500"
+                  }`}
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                 Gender
               </label>
               <select
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  isDark
+                    ? "bg-slate-800 border-slate-700 text-slate-100"
+                    : "bg-white border-gray-200 text-gray-800"
+                }`}
               >
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
@@ -259,7 +290,7 @@ export default function TeacherForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                 Qualification
               </label>
               <input
@@ -269,12 +300,16 @@ export default function TeacherForm({
                 onChange={handleChange}
                 required
                 placeholder="e.g., M.Sc. in Mathematics"
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  isDark
+                    ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                    : "bg-white border-gray-200 text-gray-800"
+                }`}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                 Phone Number
               </label>
               <input
@@ -283,17 +318,23 @@ export default function TeacherForm({
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  isDark
+                    ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                    : "bg-white border-gray-200 text-gray-800"
+                }`}
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                 Profile Image
               </label>
               <div className="flex items-center space-x-4">
                 {(imagePreview || existingImage) && (
-                  <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200 flex-shrink-0">
+                  <div className={`w-12 h-12 rounded-full overflow-hidden border flex-shrink-0 ${
+                    isDark ? "border-slate-700" : "border-gray-200"
+                  }`}>
                     <img
                       src={imagePreview || existingImage}
                       alt="Profile preview"
@@ -305,7 +346,11 @@ export default function TeacherForm({
                   type="file"
                   accept="image/jpeg,image/png,image/jpg"
                   onChange={handleFileChange}
-                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer"
+                  className={`w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold cursor-pointer ${
+                    isDark
+                      ? "text-slate-400 file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30"
+                      : "text-gray-500 file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                  }`}
                 />
               </div>
             </div>
@@ -316,14 +361,20 @@ export default function TeacherForm({
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+              isDark
+                ? "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className={`px-6 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 cursor-pointer ${
+              isDark ? "bg-indigo-600 hover:bg-indigo-500" : "bg-blue-600 hover:bg-blue-700"
+            }`}
           >
             {loading
               ? "Saving..."

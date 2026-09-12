@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, CheckCircle, Trash2, BookOpen } from "lucide-react";
+import { Plus, CheckCircle, Trash2, BookOpen, Clock, AlertCircle } from "lucide-react";
 import { api } from "../../../data/api";
 import { BookIssureApi } from "../../../data/library";
 
@@ -75,43 +75,46 @@ export default function BookIssueList() {
 
     if (status === "returned") {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-          Returned
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+          <CheckCircle size={12} /> Returned
         </span>
       );
     }
 
     if (isOverdue) {
       return (
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-          Overdue
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+          <AlertCircle size={12} /> Overdue
         </span>
       );
     }
 
     return (
-      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-        Issued
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
+        <Clock size={12} /> Issued
       </span>
     );
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl mx-auto rounded-3xl p-6 sm:p-8 bg-slate-900 border border-slate-800 shadow-2xl text-slate-100 font-sans my-8 transition-all space-y-6">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-800">
         <div>
-          <h2 className="text-xl font-bold text-gray-800">
+          <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400">
+              <BookOpen size={22} />
+            </div>
             Student Book Issue Management
           </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-400 mt-1">
             Track and manage borrowed library books and returns.
           </p>
         </div>
         <button
           type="button"
           onClick={() => navigate("/admin/library/bookissue/add")}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+          className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer active:scale-95"
         >
           <Plus size={16} />
           Issue New Book
@@ -121,38 +124,38 @@ export default function BookIssueList() {
       {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium border transition-all ${
+          className={`p-4 rounded-2xl text-sm font-medium flex items-center gap-3 animate-fade-in border ${
             feedback.type === "success"
-              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-              : "bg-rose-50 text-rose-700 border-rose-200"
+              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30 shadow-lg shadow-emerald-500/5"
+              : "bg-rose-500/10 text-rose-400 border-rose-500/30 shadow-lg shadow-rose-500/5"
           }`}
         >
-          {feedback.text}
+          <span>{feedback.text}</span>
         </div>
       )}
 
       {/* Main Table Wrapper */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-slate-950/40 rounded-2xl border border-slate-800/80 shadow-inner overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50/80 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                <th className="px-4 py-3.5">Student</th>
-                <th className="px-4 py-3.5">Book</th>
-                <th className="px-4 py-3.5">Issue Date</th>
-                <th className="px-4 py-3.5">Due Date</th>
-                <th className="px-4 py-3.5">Return Date</th>
-                <th className="px-4 py-3.5">Status</th>
-                <th className="px-4 py-3.5 text-right">Actions</th>
+              <tr className="bg-slate-900/80 border-b border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <th className="px-5 py-4">Student</th>
+                <th className="px-5 py-4">Book</th>
+                <th className="px-5 py-4">Issue Date</th>
+                <th className="px-5 py-4">Due Date</th>
+                <th className="px-5 py-4">Return Date</th>
+                <th className="px-5 py-4">Status</th>
+                <th className="px-5 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
+            <tbody className="divide-y divide-slate-800/60 text-sm">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-4 py-16 text-center text-slate-400">
                     <div className="flex flex-col items-center justify-center gap-3">
-                      <div className="w-7 h-7 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                      <span className="text-sm font-medium text-gray-600">
+                      <div className="w-7 h-7 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm font-medium text-slate-400">
                         Loading issued books...
                       </span>
                     </div>
@@ -160,10 +163,10 @@ export default function BookIssueList() {
                 </tr>
               ) : issues.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-16 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <BookOpen size={32} className="text-gray-300" />
-                      <span>No issued book records found.</span>
+                      <BookOpen size={36} className="text-slate-600" />
+                      <span className="text-sm">No issued book records found.</span>
                     </div>
                   </td>
                 </tr>
@@ -171,34 +174,34 @@ export default function BookIssueList() {
                 issues.map((item) => (
                   <tr
                     key={item.id}
-                    className="hover:bg-gray-50/80 transition-colors"
+                    className="hover:bg-slate-900/60 transition-colors"
                   >
-                    <td className="px-4 py-3.5 font-medium text-gray-900 whitespace-nowrap">
+                    <td className="px-5 py-4 font-semibold text-slate-200 whitespace-nowrap">
                       {item.student?.student_name || `Student ID: ${item.student_id}`}
                     </td>
-                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                    <td className="px-5 py-4 text-slate-300 whitespace-nowrap">
                       {item.book?.title || `Book ID: ${item.book_id}`}
                     </td>
-                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                    <td className="px-5 py-4 text-slate-400 whitespace-nowrap">
                       {item.issue_date || "-"}
                     </td>
-                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                    <td className="px-5 py-4 text-slate-400 whitespace-nowrap">
                       {item.due_date || "-"}
                     </td>
-                    <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                    <td className="px-5 py-4 text-slate-400 whitespace-nowrap">
                       {item.return_date || "-"}
                     </td>
-                    <td className="px-4 py-3.5 whitespace-nowrap">
+                    <td className="px-5 py-4 whitespace-nowrap">
                       {getStatusBadge(item.status, item.due_date)}
                     </td>
-                    <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                    <td className="px-5 py-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         {item.status !== "returned" && (
                           <button
                             type="button"
                             onClick={() => handleReturn(item.id)}
                             title="Mark as Returned"
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 border border-emerald-200 text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors text-xs font-medium"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-emerald-500/30 text-emerald-400 bg-emerald-500/10 rounded-xl hover:bg-emerald-500/20 transition-all text-xs font-semibold cursor-pointer active:scale-95"
                           >
                             <CheckCircle size={14} />
                             Return
@@ -208,7 +211,7 @@ export default function BookIssueList() {
                           type="button"
                           onClick={() => handleDelete(item.id)}
                           title="Delete Record"
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 border border-rose-200 text-rose-600 bg-rose-50 rounded-lg hover:bg-rose-100 transition-colors text-xs font-medium"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-rose-500/30 text-rose-400 bg-rose-500/10 rounded-xl hover:bg-rose-500/20 transition-all text-xs font-semibold cursor-pointer active:scale-95"
                         >
                           <Trash2 size={14} />
                           Delete

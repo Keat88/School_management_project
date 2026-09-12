@@ -8,13 +8,20 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\OtpPasswordResetController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\ClassController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CourseCategoryController;
+use App\Http\Controllers\CoursesController;
+use App\Http\Controllers\CoursesModulesController;
 use App\Http\Controllers\Hostel\HostelAssignmentsController;
 use App\Http\Controllers\Hostel\HostelsController;
 use App\Http\Controllers\Hostel\HostelsRoomController;
+use App\Http\Controllers\InrollmentsController;
+use App\Http\Controllers\LessonsController;
 use App\Http\Controllers\Library\BookCategoryController;
 use App\Http\Controllers\Library\BookController;
 use App\Http\Controllers\Library\BookIssureController;
 use App\Http\Controllers\Library\LibraryController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
@@ -27,7 +34,6 @@ use App\Http\Controllers\TrancsacTion\NoticeController;
 use App\Http\Controllers\TrancsacTion\Time_Table;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 // ── Auth & Public Routes ──
 Route::get('auth/google/redirect', [SocialController::class, 'redirect'])->defaults('provider', 'google');
 Route::get('auth/google/callback', [SocialController::class, 'handleCallback'])->defaults('provider', 'google');
@@ -41,6 +47,13 @@ Route::middleware('throttle:login-limiter')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
 
+// ── Public E-Learning & Contact Routes ──
+// Note: Allows guests to browse active courses, view categories, and submit contact messages.
+Route::get('/public/courses', [CoursesController::class, 'index'])->name('public.courses.index');
+Route::get('/public/courses/{courses}', [CoursesController::class, 'show'])->name('public.courses.show');
+Route::get('/public/course-categories', [CourseCategoryController::class, 'index'])->name('public.categories.index');
+Route::post('/public/contacts', [ContactController::class, 'store'])->name('public.contacts.store');
+
 // ── Protected Routes (Sanctum Authenticated) ──
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -48,6 +61,31 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
+    // ==========================================
+    // 🎓 STUDENT / USER E-LEARNING ROUTES
+    // ==========================================
+    // Note: Authenticated students can manage their orders, enrollments, and view course lessons.
+    Route::prefix('user')->name('user.')->group(function () {
+        // Student Orders
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [OrdersController::class, 'index'])->name('index');
+            Route::post('/', [OrdersController::class, 'store'])->name('store');
+            Route::get('/{orders}', [OrdersController::class, 'show'])->name('show');
+        });
+
+        // Student Enrollments
+        Route::prefix('enrollments')->name('enrollments.')->group(function () {
+            Route::get('/', [InrollmentsController::class, 'index'])->name('index');
+            Route::post('/', [InrollmentsController::class, 'store'])->name('store');
+            Route::get('/{inrollments}', [InrollmentsController::class, 'show'])->name('show');
+        });
+
+        // Student Lessons Access
+        Route::prefix('lessons')->name('lessons.')->group(function () {
+            Route::get('/', [LessonsController::class, 'index'])->name('index');
+            Route::get('/{lessons}', [LessonsController::class, 'show'])->name('show');
+        });
+    });
     // ==========================================
     // 🔒 1. ADMIN ONLY ROUTES
     // ==========================================
@@ -57,7 +95,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/form-schedult', [DashboardController::class, 'getDataForSchedult'])->name('form-schedult');
         Route::get('/reports', [ReportController::class, 'index'])->name('admin-reports');
         Route::get('/reports/export-excel', [ReportController::class, 'exportExcel'])->name('admin-reports-exportexcel');
+        // Note: Admin route to fetch all system users and their details
+        Route::prefix('users')->controller(\App\Http\Controllers\Admin\UserController::class)->group(function () {
+            Route::get('/index', 'index')->name('admin.users.index');
+            Route::get('/show/{user}', 'show')->name('admin.users.show');
+        });
         // Teacher Management
+
         Route::prefix('teacher')->controller(TeacherController::class)->group(function () {
             Route::post('/store', 'store')->name('teacher.store');
             Route::get('/index', 'index')->name('teacher.index');
@@ -116,7 +160,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/update/{id}', 'update')->name('student.update');
             Route::delete('/destroy/{id}', 'destroy')->name('student.destroy');
         });
-
         // Classroom Management
         Route::prefix('classroom')->controller(ClassController::class)->group(function () {
             Route::get('/index', 'index')->name('classroom.index');
@@ -135,7 +178,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::put('/update/{id}', 'update')->name('hostel.update');
                 Route::delete('/destroy/{id}', 'destroy')->name('hostel.destroy');
             });
-
             Route::prefix('hostel-room')->controller(HostelsRoomController::class)->group(function () {
                 Route::get('/index', 'index')->name('hostel-room.index');
                 Route::post('/store', 'store')->name('hostel-room.store');
@@ -143,7 +185,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::put('/update/{id}', 'update')->name('hostel-room.update');
                 Route::delete('/destroy/{id}', 'destroy')->name('hostel-room.destroy');
             });
-
             Route::prefix('hostel-assignment')->controller(HostelAssignmentsController::class)->group(function () {
                 Route::get('/index', 'index')->name('hostel-assignment.index');
                 Route::post('/store', 'store')->name('hostel-assignment.store');
@@ -152,8 +193,69 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('/show/{id}', 'show')->name('hostel-assignment.show');
             });
         });
-    });
+        // Course Categories Management
+        Route::prefix('course-categories')->name('categories.')->group(function () {
+            Route::get('/', [CourseCategoryController::class, 'index'])->name('index');
+            Route::post('/', [CourseCategoryController::class, 'store'])->name('store');
+            Route::get('/{courseCategory}', [CourseCategoryController::class, 'show'])->name('show');
+            Route::put('/{courseCategory}', [CourseCategoryController::class, 'update'])->name('update');
+            Route::delete('/{courseCategory}', [CourseCategoryController::class, 'destroy'])->name('destroy');
+        });
 
+        // Courses Management
+        Route::prefix('courses')->name('courses.')->group(function () {
+            Route::get('/', [CoursesController::class, 'index'])->name('index');
+            Route::post('/', [CoursesController::class, 'store'])->name('store');
+            Route::get('/{courses}', [CoursesController::class, 'show'])->name('show');
+            Route::put('/{courses}', [CoursesController::class, 'update'])->name('update');
+            Route::delete('/{courses}', [CoursesController::class, 'destroy'])->name('destroy');
+        });
+
+        // Course Modules Management
+        Route::prefix('course-modules')->name('course-modules.')->group(function () {
+            Route::get('/', [CoursesModulesController::class, 'index'])->name('index');
+            Route::post('/', [CoursesModulesController::class, 'store'])->name('store');
+            Route::get('/{coursesModules}', [CoursesModulesController::class, 'show'])->name('show');
+            Route::put('/{coursesModules}', [CoursesModulesController::class, 'update'])->name('update');
+            Route::delete('/{coursesModules}', [CoursesModulesController::class, 'destroy'])->name('destroy');
+        });
+
+        // Lessons Management
+        Route::prefix('lessons')->name('lessons.')->group(function () {
+            Route::get('/', [LessonsController::class, 'index'])->name('index');
+            Route::post('/', [LessonsController::class, 'store'])->name('store');
+            Route::get('/{lessons}', [LessonsController::class, 'show'])->name('show');
+            Route::put('/{lessons}', [LessonsController::class, 'update'])->name('update');
+            Route::delete('/{lessons}', [LessonsController::class, 'destroy'])->name('destroy');
+        });
+
+        // Orders Management
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [OrdersController::class, 'index'])->name('index');
+            Route::post('/', [OrdersController::class, 'store'])->name('store');
+            Route::get('/{orders}', [OrdersController::class, 'show'])->name('show');
+            Route::put('/{orders}', [OrdersController::class, 'update'])->name('update');
+            Route::delete('/{orders}', [OrdersController::class, 'destroy'])->name('destroy');
+        });
+
+        // Enrollments Management
+        Route::prefix('enrollments')->name('enrollments.')->group(function () {
+            Route::get('/', [InrollmentsController::class, 'index'])->name('index');
+            Route::post('/', [InrollmentsController::class, 'store'])->name('store');
+            Route::get('/{inrollments}', [InrollmentsController::class, 'show'])->name('show');
+            Route::put('/{inrollments}', [InrollmentsController::class, 'update'])->name('update');
+            Route::delete('/{inrollments}', [InrollmentsController::class, 'destroy'])->name('destroy');
+        });
+
+        // Contact Inquiries Management
+        Route::prefix('contacts')->name('contacts.')->group(function () {
+            Route::get('/', [ContactController::class, 'index'])->name('index');
+            Route::post('/', [ContactController::class, 'store'])->name('store');
+            Route::get('/{contact}', [ContactController::class, 'show'])->name('show');
+            Route::put('/{contact}', [ContactController::class, 'update'])->name('update');
+            Route::delete('/{contact}', [ContactController::class, 'destroy'])->name('destroy');
+        });
+    });
     // ==========================================
     // 🛠️ 2. ADMIN & STAFF ROUTES (Operational Control)
     // ==========================================

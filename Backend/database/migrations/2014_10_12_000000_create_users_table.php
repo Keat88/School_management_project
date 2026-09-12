@@ -17,16 +17,15 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
-            $table->enum('role', ['admin', 'teacher'])->default('teacher');
+            $table->enum('role', ['admin', 'teacher', 'user'])->default('user');
             $table->string('google_id')->nullable();
             $table->string('github_id')->nullable();
             $table->string('avatar')->nullable();
-        
+
             $table->rememberToken();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

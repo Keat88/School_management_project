@@ -7,7 +7,7 @@ import { studentData } from "../../../data/StudentsApi";
 import { classRoomApi } from "../../../data/classrooms";
 import Pagination from "../../../hooks/Pagination";
 
-function StudentList() {
+function StudentList({ isDark = false }) {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
@@ -128,7 +128,6 @@ function StudentList() {
   };
 
   const handleView = (id) => {
-   
     navigate(`/admin/students/view/${id}`);
   };
 
@@ -149,8 +148,10 @@ function StudentList() {
     <div className="space-y-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Students</h2>
-        <span className="text-sm text-gray-500">
+        <h2 className={`text-xl font-semibold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+          Students
+        </h2>
+        <span className={`text-sm ${isDark ? "text-slate-400" : "text-gray-500"}`}>
           {totalItems} students found
         </span>
       </div>
@@ -164,13 +165,16 @@ function StudentList() {
         genderFilter={genderFilter}
         onGenderChange={handleGenderChange}
         classOptions={classOptions}
+        isDark={isDark}
       />
 
       {/* Table Component */}
       {loading && students.length === 0 ? (
-        <div className="py-12 text-center text-gray-500">
+        <div className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-500"}`}>
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+            <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+              isDark ? "border-indigo-400" : "border-indigo-300"
+            }`}></div>
             <span>Loading student...</span>
           </div>
         </div>
@@ -181,6 +185,7 @@ function StudentList() {
           onEdit={handleEdit}
           onView={handleView}
           loading={loading}
+          isDark={isDark}
         />
       )}
 
@@ -191,6 +196,7 @@ function StudentList() {
         totalItems={totalItems}
         perPage={10}
         onPageChange={handlePageChange}
+        isDark={isDark}
       />
     </div>
   );

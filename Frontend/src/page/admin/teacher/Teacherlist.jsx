@@ -5,12 +5,11 @@ import { teacherApi } from "../../../data/TeacherApi";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../hooks/Pagination";
 
-function TeacherList() {
+function TeacherList({ isDark = true }) {
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [open, setIsOpen] = useState(false);
   const [gender, setGender] = useState("");
   const [teachers, setTeachers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,10 +76,6 @@ function TeacherList() {
     fetchTeacher(debouncedSearch, gender, currentPage);
   }, [debouncedSearch, gender, currentPage, fetchTeacher]);
 
-  const handleIsOpen = () => {
-    setIsOpen((prev) => !prev);
-  };
-
   const handleEdit = (id) => {
     navigate(`/admin/teacher/add/${id}`);
   };
@@ -99,17 +94,22 @@ function TeacherList() {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+
   return (
     <div className="space-y-6">
       {/* Header Bar */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-gray-800">Teachers</h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <h2 className={`text-xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+            Teachers
+          </h2>
+          <p className={`text-xs mt-0.5 ${isDark ? "text-slate-400" : "text-gray-500"}`}>
             Manage and view teacher records
           </p>
         </div>
-        <span className="text-xs font-semibold px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-full">
+        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+          isDark ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30" : "bg-indigo-50 text-indigo-700"
+        }`}>
           Total: {totalItems}
         </span>
       </div>
@@ -120,14 +120,19 @@ function TeacherList() {
         genderValue={gender}
         onSearchChange={setSearchValue}
         onGenderChange={handleGenderChange}
+        isDark={isDark}
       />
 
-      {/* Table Component with dynamic loading overlay/state */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4 min-h-[300px]">
+      {/* Table Container with dynamic loading overlay/state */}
+      <div className={`border rounded-2xl p-5 shadow-sm space-y-4 min-h-[300px] relative transition-all ${
+        isDark ? "bg-slate-900 border-slate-800" : "bg-white border-gray-200"
+      }`}>
         {loading && (
-          <div className="absolute inset-0 bg-white backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-xl transition-all">
+          <div className={`absolute inset-0 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-xl transition-all ${
+            isDark ? "bg-slate-950/70" : "bg-white/80"
+          }`}>
             <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-xs font-medium text-gray-600 mt-2">
+            <span className={`text-xs font-medium mt-2 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
               Loading page...
             </span>
           </div>
@@ -135,11 +140,9 @@ function TeacherList() {
 
         <TeacherTable
           teachers={teachers}
-          loading={loading}
           onDeleteId={handleDelete}
           onEditId={handleEdit}
-          onOpen={handleIsOpen}
-          open={open}
+          isDark={isDark}
         />
       </div>
 
@@ -150,6 +153,7 @@ function TeacherList() {
         totalItems={totalItems}
         perPage={10}
         onPageChange={handlePageChange}
+        isDark={isDark}
       />
     </div>
   );

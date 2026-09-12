@@ -11,7 +11,15 @@ import {
 import { subjectApi } from "../../../data/classrooms";
 import Pagination from "../../../hooks/Pagination";
 
-export default function ManageSubject() {
+export default function ManageSubject({ isDark: propIsDark = false }) {
+  const [isDark, setIsDark] = useState(() => {
+    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    if (savedTheme !== null) {
+      return savedTheme === "dark" || savedTheme === "true";
+    }
+    return propIsDark;
+  });
+
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
@@ -20,6 +28,20 @@ export default function ManageSubject() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+
+  // Sync with localStorage changes across components/tabs if theme toggles elsewhere
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      if (savedTheme !== null) {
+        setIsDark(savedTheme === "dark" || savedTheme === "true");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   const fetchSubjects = useCallback(async (page, searchQuery) => {
     setLoading(true);
     try {
@@ -92,9 +114,11 @@ export default function ManageSubject() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-gray-900"}`}>
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-800">Manage Subjects</h2>
+        <h2 className={`text-xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+          Manage Subjects
+        </h2>
         <Link
           to="/admin/subjects/add"
           className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5"
@@ -106,10 +130,14 @@ export default function ManageSubject() {
 
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium ${
+          className={`p-4 rounded-lg text-sm font-medium border ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? isDark
+                ? "bg-green-950/40 text-green-400 border-green-900/60"
+                : "bg-green-50 text-green-600 border-green-200"
+              : isDark
+                ? "bg-red-950/40 text-red-400 border-red-900/60"
+                : "bg-red-50 text-red-600 border-red-200"
           }`}
         >
           {feedback.text}
@@ -119,10 +147,14 @@ export default function ManageSubject() {
       {/* Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className="p-4 rounded-xl border border-gray-200 flex gap-3 shadow-md"
+        className={`p-4 rounded-xl border flex gap-3 shadow-md transition-colors ${
+          isDark ? "bg-slate-900 border-slate-800" : "bg-white border-gray-200"
+        }`}
       >
         <div className="relative flex-1">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+          <span className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${
+            isDark ? "text-slate-500" : "text-gray-400"
+          }`}>
             <Search size={16} />
           </span>
           <input
@@ -130,13 +162,21 @@ export default function ManageSubject() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by subject name or code..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={`w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+              isDark
+                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                : "bg-white border-gray-200 text-gray-900 placeholder-gray-400"
+            }`}
           />
         </div>
         <button
           type="button"
           onClick={handleResetSearch}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center gap-1.5"
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+            isDark
+              ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
         >
           <RotateCcw size={14} />
           Reset
@@ -150,33 +190,38 @@ export default function ManageSubject() {
       </form>
 
       {/* Subject List Table */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
+      <div className={`border rounded-2xl p-5 shadow-sm space-y-4 transition-colors ${
+        isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
+      }`}>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
-              <tr className="bg-gray-50/70 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              <tr className={`border-b text-xs font-semibold uppercase tracking-wider ${
+                isDark ? "border-slate-800 bg-slate-800/60 text-slate-400" : "border-gray-200 bg-gray-50/70 text-gray-500"
+              }`}>
                 <th className="px-4 py-3">Image</th>
                 <th className="px-4 py-3">Subject Name</th>
                 <th className="px-4 py-3">Code</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-sm">
+            <tbody className={`divide-y text-sm ${isDark ? "divide-slate-800" : "divide-gray-100"}`}>
               {loading ? (
                 <tr>
-
-                <td colSpan="6" className="py-12 text-center text-gray-400">
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Loading cagetegory...</span>
-                  </div>
-                </td>
-              </tr>
+                  <td colSpan="4" className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-400"}`}>
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+                        isDark ? "border-indigo-400" : "border-indigo-300"
+                      }`}></div>
+                      <span className={isDark ? "text-slate-400" : "text-gray-500"}>Loading category...</span>
+                    </div>
+                  </td>
+                </tr>
               ) : subjects.length === 0 ? (
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-4 py-10 text-center text-gray-400"
+                    className={`px-4 py-10 text-center ${isDark ? "text-slate-400" : "text-gray-400"}`}
                   >
                     No subjects found.
                   </td>
@@ -185,26 +230,38 @@ export default function ManageSubject() {
                 subjects.map((sub) => (
                   <tr
                     key={sub.id}
-                    className="hover:bg-gray-50/60 transition-colors"
+                    className={`transition-colors ${
+                      isDark ? "hover:bg-slate-800/40" : "hover:bg-gray-50/60"
+                    }`}
                   >
                     <td className="px-4 py-3 whitespace-nowrap">
                       {sub.image_url || sub.image ? (
                         <img
                           src={sub.image_url || sub.image}
                           alt={sub.subject_name}
-                          className="w-10 h-10 rounded-lg object-cover border border-gray-200"
+                          className={`w-10 h-10 rounded-lg object-cover border ${
+                            isDark ? "border-slate-700" : "border-gray-200"
+                          }`}
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${
+                          isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-100 border-gray-200 text-gray-400"
+                        }`}>
                           <ImageIcon size={18} />
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">
+                    <td className={`px-4 py-3 font-medium whitespace-nowrap ${
+                      isDark ? "text-slate-200" : "text-gray-800"
+                    }`}>
                       {sub.subject_name}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                      <span className="px-2 py-1 bg-gray-100 rounded text-xs font-mono font-medium">
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`px-2 py-1 rounded text-xs font-mono font-medium border ${
+                        isDark 
+                          ? "bg-slate-800 border-slate-700 text-slate-300" 
+                          : "bg-gray-100 border-gray-200 text-gray-600"
+                      }`}>
                         {sub.code}
                       </span>
                     </td>
@@ -212,7 +269,11 @@ export default function ManageSubject() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/admin/subjects/add/${sub.id}`}
-                          className="p-1 text-blue-500 border border-gray-200 rounded-md duration-200 hover:bg-gray-200 transition-colors"
+                          className={`px-2.5 py-1 text-xs border rounded-lg transition-colors font-medium active:scale-95 ${
+                            isDark
+                              ? "text-indigo-400 bg-indigo-950/40 border-indigo-900/60 hover:bg-indigo-900/50"
+                              : "text-indigo-600 bg-indigo-50/50 border-indigo-200/60 hover:bg-indigo-100"
+                          }`}
                           title="Edit"
                         >
                           Edit
@@ -220,10 +281,14 @@ export default function ManageSubject() {
                         <button
                           type="button"
                           onClick={() => handleDelete(sub.id)}
-                          className="p-1 text-red-500 border bg-red-50 border-gray-200 rounded-md duration-200 hover:bg-red-100 transition-colors"
+                          className={`px-2.5 py-1 text-xs border rounded-lg transition-colors font-medium active:scale-95 ${
+                            isDark
+                              ? "text-red-400 bg-red-950/40 border-red-900/60 hover:bg-red-900/50"
+                              : "text-red-600 bg-red-50/50 border-red-200/60 hover:bg-red-100"
+                          }`}
                           title="Delete"
                         >
-                        Delete
+                          Delete
                         </button>
                       </div>
                     </td>
@@ -240,7 +305,9 @@ export default function ManageSubject() {
         currentPage={currentPage}
         totalPages={totalPages}
         totalItems={totalItems}
+        perPage={10}
         onPageChange={handlePageChange}
+        isDark={isDark}
       />
     </div>
   );

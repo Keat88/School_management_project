@@ -18,6 +18,7 @@ import AttendanceOverview from "../../../components/admin/AttendanceOverview";
 import RecentActivity from "../../../components/admin/RecentActivity";
 import RecentNotices from "../../../components/admin/RecentNotices";
 import { api } from "../../../data/api";
+import ChartDashbaord from "../../../components/admin/ChartDashbaord";
 const STAT_SCHEMA = [
   {
     key: "total_students",
@@ -105,7 +106,27 @@ function AdminDashboard() {
       accent: item.accent,
     };
   });
-  console.log(activetyLog)
+  const dataChart = [
+      {
+          name: "Books",
+          students: data.total_books
+
+      },
+      {
+          name: "Teacher",
+          students: data.total_teachers
+
+      },
+      {
+          name: "Class",
+          students:data.total_class
+      },
+      {
+          name: "Student",
+          students: data.total_students
+      },
+  ];
+  console.log(data)
   return (
     <div className="space-y-6 p-4 md:p-6">
       <WelcomeBanner name={currentUser?.name} />
@@ -118,7 +139,8 @@ function AdminDashboard() {
           overallRate={data?.total_attendance ?? 92}
           byClass={[]}
         />
-        <FeeOverview collected={48200} pending={9800} total={58000} />
+        <ChartDashbaord data={dataChart}/>
+        {/* <FeeOverview collected={48200} pending={9800} total={58000} /> */}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

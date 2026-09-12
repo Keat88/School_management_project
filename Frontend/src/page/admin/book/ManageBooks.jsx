@@ -4,7 +4,15 @@ import { Plus, Search, Filter, RotateCcw, BookOpen } from "lucide-react";
 import { BookApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
 
-export default function ManageBooks() {
+export default function ManageBooks({ isDark: propIsDark = false }) {
+  const [isDark, setIsDark] = useState(() => {
+    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    if (savedTheme !== null) {
+      return savedTheme === "dark" || savedTheme === "true";
+    }
+    return propIsDark;
+  });
+
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,6 +26,19 @@ export default function ManageBooks() {
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Sync with localStorage changes across components/tabs if theme toggles elsewhere
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      if (savedTheme !== null) {
+        setIsDark(savedTheme === "dark" || savedTheme === "true");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const fetchBooks = async (page = 1, currentFilters = {}) => {
     setLoading(true);
@@ -86,14 +107,16 @@ export default function ManageBooks() {
   };
 
   return (
-    <div className="w-full lg:min-w-160 mx-auto space-y-6 px-4  py-4">
+    <div className={`w-full lg:min-w-160 mx-auto space-y-6 px-4 py-4 transition-colors ${isDark ? "text-slate-100" : "text-gray-900"}`}>
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-100">
+      <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b ${
+        isDark ? "border-slate-800" : "border-gray-100"
+      }`}>
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+          <h2 className={`text-xl sm:text-2xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
             Manage Books
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+          <p className={`text-xs sm:text-sm mt-1 ${isDark ? "text-slate-400" : "text-gray-500"}`}>
             Browse, search, filter, and modify library items
           </p>
         </div>
@@ -109,10 +132,14 @@ export default function ManageBooks() {
       {/* Feedback Alert */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium transition-all ${
+          className={`p-4 rounded-lg text-sm font-medium border transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-700 border border-green-200"
-              : "bg-red-50 text-red-700 border border-red-200"
+              ? isDark
+                ? "bg-green-950/40 text-green-400 border-green-900/60"
+                : "bg-green-50 text-green-700 border-green-200"
+              : isDark
+                ? "bg-red-950/40 text-red-400 border-red-900/60"
+                : "bg-red-50 text-red-700 border-red-200"
           }`}
         >
           {feedback.text}
@@ -122,16 +149,22 @@ export default function ManageBooks() {
       {/* Responsive Filter/Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200/80 shadow-sm"
+        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 rounded-xl border shadow-sm transition-colors ${
+          isDark ? "bg-slate-900 border-slate-800" : "bg-gray-50 border-gray-200/80"
+        }`}
       >
         <div className="relative">
-          <Search className="absolute left-3 top-2.5 text-gray-400" size={16} />
+          <Search className={`absolute left-3 top-2.5 ${isDark ? "text-slate-500" : "text-gray-400"}`} size={16} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search title or author..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+            className={`w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+              isDark
+                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                : "bg-white border-gray-200 text-gray-900 placeholder-gray-400"
+            }`}
           />
         </div>
 
@@ -141,7 +174,11 @@ export default function ManageBooks() {
             value={isbn}
             onChange={(e) => setIsbn(e.target.value)}
             placeholder="Filter by ISBN..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors font-mono ${
+              isDark
+                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                : "bg-white border-gray-200 text-gray-900 placeholder-gray-400"
+            }`}
           />
         </div>
         <div>
@@ -150,7 +187,11 @@ export default function ManageBooks() {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             placeholder="Filter by category..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+              isDark
+                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                : "bg-white border-gray-200 text-gray-900 placeholder-gray-400"
+            }`}
           />
         </div>
         <div className="flex gap-2">
@@ -164,7 +205,11 @@ export default function ManageBooks() {
           <button
             type="button"
             onClick={handleReset}
-            className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+            className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              isDark
+                ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
             title="Reset Filters"
           >
             <RotateCcw size={15} />
@@ -174,10 +219,14 @@ export default function ManageBooks() {
       </form>
 
       {/* Desktop & Tablet Table View (Hidden on small mobile screens) */}
-      <div className="hidden md:block rounded-xl border border-gray-200 bg-white overflow-hidden shadow-sm">
+      <div className={`hidden md:block rounded-xl border overflow-hidden shadow-sm transition-colors ${
+        isDark ? "bg-slate-900 border-slate-800" : "bg-white border-gray-200"
+      }`}>
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <tr className={`border-b text-xs font-semibold uppercase tracking-wider ${
+              isDark ? "bg-slate-800/60 border-slate-800 text-slate-400" : "bg-gray-50 border-gray-100 text-gray-500"
+            }`}>
               <th className="py-3.5 px-4">Image</th>
               <th className="py-3.5 px-4">Title & Author</th>
               <th className="py-3.5 px-4">ISBN</th>
@@ -186,19 +235,23 @@ export default function ManageBooks() {
               <th className="py-3.5 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+          <tbody className={`divide-y text-sm ${
+            isDark ? "divide-slate-800 text-slate-300" : "divide-gray-100 text-gray-700"
+          }`}>
             {loading ? (
               <tr>
-                <td colSpan="6" className="py-12 text-center text-gray-400">
+                <td colSpan="6" className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-400"}`}>
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+                    <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+                      isDark ? "border-indigo-400" : "border-indigo-300"
+                    }`}></div>
                     <span>Loading books...</span>
                   </div>
                 </td>
               </tr>
             ) : books.length === 0 ? (
               <tr>
-                <td colSpan="6" className="py-12 text-center text-gray-400">
+                <td colSpan="6" className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-400"}`}>
                   <BookOpen className="mx-auto mb-2 opacity-50" size={32} />
                   <span>No books found matching your criteria.</span>
                 </td>
@@ -207,39 +260,53 @@ export default function ManageBooks() {
               books.map((book) => (
                 <tr
                   key={book.id}
-                  className="hover:bg-gray-50/60 transition-colors"
+                  className={`transition-colors ${
+                    isDark ? "hover:bg-slate-800/40" : "hover:bg-gray-50/60"
+                  }`}
                 >
                   <td className="py-3.5 px-4">
                     {book.book_image ? (
                       <img
                         src={book.book_image}
                         alt={book.title}
-                        className="w-10 h-14 object-cover rounded border border-gray-200 shadow-xs"
+                        className={`w-10 h-14 object-cover rounded border shadow-xs ${
+                          isDark ? "border-slate-700" : "border-gray-200"
+                        }`}
                       />
                     ) : (
-                      <div className="w-10 h-14 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-gray-400 text-[10px] font-medium text-center px-1">
+                      <div className={`w-10 h-14 rounded border flex items-center justify-center text-[10px] font-medium text-center px-1 ${
+                        isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-100 border-gray-200 text-gray-400"
+                      }`}>
                         No Cover
                       </div>
                     )}
                   </td>
                   <td className="py-3.5 px-4 max-w-xs">
-                    <p className="font-semibold text-gray-800 truncate">
+                    <p className={`font-semibold truncate ${isDark ? "text-slate-100" : "text-gray-800"}`}>
                       {book.title}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className={`text-xs truncate ${isDark ? "text-slate-400" : "text-gray-500"}`}>
                       {book.author}
                     </p>
                   </td>
-                  <td className="py-3.5 px-4 font-mono text-xs text-gray-600">
+                  <td className={`py-3.5 px-4 font-mono text-xs ${isDark ? "text-slate-400" : "text-gray-600"}`}>
                     {book.isbn || "-"}
                   </td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-block px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-medium">
+                    <span className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium border ${
+                      isDark 
+                        ? "bg-slate-800 border-slate-700 text-slate-300" 
+                        : "bg-gray-100 border-gray-200 text-gray-700"
+                    }`}>
                       {book.category?.book_category || "Uncategorized"}
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-center">
-                    <span className="inline-block px-2.5 py-1 bg-blue-50 text-blue-500 rounded-full text-xs font-semibold">
+                    <span className={`inline-block px-2.5 py-1 rounded-full text-xs font-semibold border ${
+                      isDark
+                        ? "bg-blue-950/40 text-blue-400 border-blue-900/60"
+                        : "bg-blue-50 text-blue-500 border-blue-100/40"
+                    }`}>
                       {book.available_copies} / {book.total_copies}
                     </span>
                   </td>
@@ -248,14 +315,22 @@ export default function ManageBooks() {
                       onClick={() =>
                         navigate(`/admin/library/book/add/${book.id}`)
                       }
-                      className="px-3 py-1.5 text-md font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors inline-block"
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border ${
+                        isDark
+                          ? "text-indigo-400 bg-indigo-950/40 border-indigo-900/60 hover:bg-indigo-900/50"
+                          : "text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200"
+                      }`}
                       title="Update"
                     >
                       Update
                     </button>
                     <button
                       onClick={() => handleDelete(book.id)}
-                      className="px-3 py-1.5 text-md font-medium text-red-600 bg-red-50  hover:bg-red-100 rounded-lg transition-colors inline-block"
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border ${
+                        isDark
+                          ? "text-red-400 bg-red-950/40 border-red-900/60 hover:bg-red-900/50"
+                          : "text-red-600 bg-red-50 border-red-200 hover:bg-red-100"
+                      }`}
                       title="Delete"
                     >
                       Delete
@@ -271,12 +346,18 @@ export default function ManageBooks() {
       {/* Mobile Card Layout (Rendered for small screens) */}
       <div className="block md:hidden space-y-4">
         {loading ? (
-          <div className="py-12 text-center text-gray-400 bg-white rounded-xl border border-gray-200 p-6">
-            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+          <div className={`py-12 text-center rounded-xl border p-6 ${
+            isDark ? "bg-slate-900 border-slate-800 text-slate-400" : "bg-white border-gray-200 text-gray-400"
+          }`}>
+            <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-2 ${
+              isDark ? "border-indigo-400" : "border-blue-600"
+            }`}></div>
             <span>Loading books...</span>
           </div>
         ) : books.length === 0 ? (
-          <div className="py-12 text-center text-gray-400 bg-white rounded-xl border border-gray-200 p-6">
+          <div className={`py-12 text-center rounded-xl border p-6 ${
+            isDark ? "bg-slate-900 border-slate-800 text-slate-400" : "bg-white border-gray-200 text-gray-400"
+          }`}>
             <BookOpen className="mx-auto mb-2 opacity-50" size={32} />
             <span>No books found matching your criteria.</span>
           </div>
@@ -284,41 +365,55 @@ export default function ManageBooks() {
           books.map((book) => (
             <div
               key={book.id}
-              className="bg-white border border-gray-200 rounded-xl p-4 shadow-xs flex flex-col gap-3"
+              className={`border rounded-xl p-4 shadow-xs flex flex-col gap-3 transition-colors ${
+                isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200"
+              }`}
             >
               <div className="flex gap-3">
                 {book.book_image ? (
                   <img
                     src={book.book_image}
                     alt={book.title}
-                    className="w-14 h-20 object-cover rounded border border-gray-200 shrink-0"
+                    className={`w-14 h-20 object-cover rounded border shrink-0 ${
+                      isDark ? "border-slate-700" : "border-gray-200"
+                    }`}
                   />
                 ) : (
-                  <div className="w-14 h-20 bg-gray-100 rounded border border-gray-200 flex items-center justify-center text-gray-400 text-[10px] font-medium text-center shrink-0 p-1">
+                  <div className={`w-14 h-20 rounded border flex items-center justify-center text-[10px] font-medium text-center shrink-0 p-1 ${
+                    isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-100 border-gray-200 text-gray-400"
+                  }`}>
                     No Cover
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-800 text-base leading-tight truncate">
+                  <h3 className={`font-semibold text-base leading-tight truncate ${isDark ? "text-slate-100" : "text-gray-800"}`}>
                     {book.title}
                   </h3>
-                  <p className="text-xs text-gray-500 mt-0.5">{book.author}</p>
+                  <p className={`text-xs mt-0.5 ${isDark ? "text-slate-400" : "text-gray-500"}`}>{book.author}</p>
 
                   <div className="mt-2 flex flex-wrap gap-1.5 items-center">
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-[11px] font-medium">
+                    <span className={`px-2 py-0.5 rounded text-[11px] font-medium border ${
+                      isDark ? "bg-slate-800 border-slate-700 text-slate-300" : "bg-gray-100 border-gray-200 text-gray-700"
+                    }`}>
                       {book.category?.book_category || "Uncategorized"}
                     </span>
-                    <span className="font-mono text-[11px] text-gray-500">
+                    <span className={`font-mono text-[11px] ${isDark ? "text-slate-400" : "text-gray-500"}`}>
                       ISBN: {book.isbn || "N/A"}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-gray-100 text-xs">
+              <div className={`flex items-center justify-between pt-3 border-t text-xs ${
+                isDark ? "border-slate-800" : "border-gray-100"
+              }`}>
                 <div>
-                  <span className="text-gray-500">Available: </span>
-                  <span className="font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                  <span className={isDark ? "text-slate-400" : "text-gray-500"}>Available: </span>
+                  <span className={`font-semibold px-2 py-0.5 rounded-full border ${
+                    isDark
+                      ? "bg-blue-950/40 text-blue-400 border-blue-900/60"
+                      : "bg-blue-50 text-blue-700 border-blue-100/40"
+                  }`}>
                     {book.available_copies} / {book.total_copies} copies
                   </span>
                 </div>
@@ -328,13 +423,21 @@ export default function ManageBooks() {
                     onClick={() =>
                       navigate(`/admin/library/book/add/${book.id}`)
                     }
-                    className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border ${
+                      isDark
+                        ? "text-indigo-400 bg-indigo-950/40 border-indigo-900/60 hover:bg-indigo-900/50"
+                        : "text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200"
+                    }`}
                   >
                     Update
                   </button>
                   <button
                     onClick={() => handleDelete(book.id)}
-                    className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors border ${
+                      isDark
+                        ? "text-red-400 bg-red-950/40 border-red-900/60 hover:bg-red-900/50"
+                        : "text-red-600 bg-red-50 border-red-200 hover:bg-red-100"
+                    }`}
                   >
                     Delete
                   </button>
@@ -351,6 +454,7 @@ export default function ManageBooks() {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={(page) => setCurrentPage(page)}
+          isDark={isDark}
         />
       </div>
     </div>

@@ -22,6 +22,7 @@ const INITIAL_FORM_STATE = {
 export default function StudentForm({
   student: propStudent = null,
   onSuccess,
+  isDark = false,
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -205,25 +206,33 @@ export default function StudentForm({
   return (
     <>
       {fetchingStudent && (
-        <div className="py-12 text-center text-gray-500">
+        <div className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-500"}`}>
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
+            <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+              isDark ? "border-indigo-400" : "border-indigo-300"
+            }`}></div>
             <span>Loading student...</span>
           </div>
         </div>
       )}
 
-      <div className="mx-auto p-6 bg-white rounded-xl border border-gray-200">
-        <h2 className="text-xl font-bold text-gray-800 mb-6">
+      <div className={`mx-auto p-6 rounded-xl border transition-colors ${
+        isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
+      }`}>
+        <h2 className={`text-xl font-bold mb-6 ${isDark ? "text-slate-100" : "text-gray-800"}`}>
           {isEdit ? "Edit Student" : "Add New Student"}
         </h2>
 
         {feedback && (
           <div
-            className={`p-4 mb-6 rounded-lg text-sm font-medium ${
+            className={`p-4 mb-6 rounded-lg text-sm font-medium border ${
               feedback.type === "success"
-                ? "bg-green-50 text-green-600 border border-green-200"
-                : "bg-red-50 text-red-600 border border-red-200"
+                ? isDark
+                  ? "bg-green-500/20 text-green-300 border-green-500/30"
+                  : "bg-green-50 text-green-600 border-green-200"
+                : isDark
+                  ? "bg-red-500/20 text-red-300 border-red-500/30"
+                  : "bg-red-50 text-red-600 border-red-200"
             }`}
           >
             {feedback.text}
@@ -237,12 +246,14 @@ export default function StudentForm({
         >
           {/* Student Information Section */}
           <div>
-            <h3 className="text-md font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
+            <h3 className={`text-md font-semibold mb-4 pb-2 border-b ${
+              isDark ? "text-slate-200 border-slate-800" : "text-gray-700 border-gray-100"
+            }`}>
               Student Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Student Name
                 </label>
                 <input
@@ -251,27 +262,35 @@ export default function StudentForm({
                   value={formData.student_name}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               {/* Read-only Roll Number field displayed ONLY in Edit mode */}
               {isEdit && currentStudent?.roll_number && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-600 mb-1">
+                  <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                     Roll Number
                   </label>
                   <input
                     type="text"
                     value={currentStudent.roll_number}
                     disabled
-                    className="w-full px-3 py-2 border border-gray-200 bg-gray-100 text-gray-500 rounded-lg text-sm cursor-not-allowed"
+                    className={`w-full px-3 py-2 border rounded-lg text-sm cursor-not-allowed ${
+                      isDark
+                        ? "bg-slate-800/50 border-slate-800 text-slate-500"
+                        : "bg-gray-100 border-gray-200 text-gray-500"
+                    }`}
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Date of Birth
                 </label>
                 <input
@@ -280,19 +299,27 @@ export default function StudentForm({
                   value={formData.date_of_birth}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Gender
                 </label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 >
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -301,7 +328,7 @@ export default function StudentForm({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Class Room
                 </label>
                 <select
@@ -309,7 +336,11 @@ export default function StudentForm({
                   value={formData.class_id}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 >
                   <option value="">--Select class--</option>
                   {classRoomm.map((item) => (
@@ -323,7 +354,7 @@ export default function StudentForm({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Student Phone (Optional)
                 </label>
                 <input
@@ -331,12 +362,16 @@ export default function StudentForm({
                   name="student_phone"
                   value={formData.student_phone}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Student Email
                 </label>
                 <input
@@ -345,12 +380,16 @@ export default function StudentForm({
                   value={formData.email_student}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Address
                 </label>
                 <textarea
@@ -359,12 +398,16 @@ export default function StudentForm({
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 ></textarea>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Student Image
                 </label>
                 <div className="flex items-center gap-4 mt-2">
@@ -372,10 +415,14 @@ export default function StudentForm({
                     <img
                       src={imagePreviewStudent}
                       alt="Student Preview"
-                      className="w-16 h-16 rounded-lg object-cover border border-gray-200 shrink-0"
+                      className={`w-16 h-16 rounded-lg object-cover border shrink-0 ${
+                        isDark ? "border-slate-700" : "border-gray-200"
+                      }`}
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                    <div className={`w-16 h-16 rounded-lg border flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-50 border-gray-200 text-gray-400"
+                    }`}>
                       <ImageIcon size={24} />
                     </div>
                   )}
@@ -383,7 +430,11 @@ export default function StudentForm({
                     type="file"
                     accept="image/png, image/jpeg"
                     onChange={handleImageChange}
-                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer"
+                    className={`w-full text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
+                      isDark
+                        ? "text-slate-400 file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30"
+                        : "text-gray-500 file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                    }`}
                   />
                 </div>
               </div>
@@ -392,12 +443,14 @@ export default function StudentForm({
 
           {/* Parent Information Section */}
           <div>
-            <h3 className="text-md font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
+            <h3 className={`text-md font-semibold mb-4 pb-2 border-b ${
+              isDark ? "text-slate-200 border-slate-800" : "text-gray-700 border-gray-100"
+            }`}>
               Parent Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Father Name
                 </label>
                 <input
@@ -406,12 +459,16 @@ export default function StudentForm({
                   value={formData.father_name}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Mother Name
                 </label>
                 <input
@@ -420,12 +477,16 @@ export default function StudentForm({
                   value={formData.mother_name}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Parent Email
                 </label>
                 <input
@@ -433,12 +494,16 @@ export default function StudentForm({
                   name="email_parent"
                   value={formData.email_parent}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Parent Phone
                 </label>
                 <input
@@ -447,12 +512,16 @@ export default function StudentForm({
                   value={formData.parent_phone}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Occupation
                 </label>
                 <input
@@ -460,12 +529,16 @@ export default function StudentForm({
                   name="occupation"
                   value={formData.occupation}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isDark
+                      ? "bg-slate-800 border-slate-700 text-slate-100"
+                      : "bg-white border-gray-200 text-gray-800"
+                  }`}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">
+                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
                   Parent Image
                 </label>
                 <div className="flex items-center gap-4 mt-2">
@@ -473,10 +546,14 @@ export default function StudentForm({
                     <img
                       src={imagePreviewParent}
                       alt="Parent Preview"
-                      className="w-16 h-16 rounded-lg object-cover border border-gray-200 shrink-0"
+                      className={`w-16 h-16 rounded-lg object-cover border shrink-0 ${
+                        isDark ? "border-slate-700" : "border-gray-200"
+                      }`}
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+                    <div className={`w-16 h-16 rounded-lg border flex items-center justify-center shrink-0 ${
+                      isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-50 border-gray-200 text-gray-400"
+                    }`}>
                       <ImageIcon size={24} />
                     </div>
                   )}
@@ -484,7 +561,11 @@ export default function StudentForm({
                     type="file"
                     accept="image/png, image/jpeg"
                     onChange={handleImageParentChange}
-                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer"
+                    className={`w-full text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
+                      isDark
+                        ? "text-slate-400 file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30"
+                        : "text-gray-500 file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                    }`}
                   />
                 </div>
               </div>
@@ -495,14 +576,20 @@ export default function StudentForm({
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                isDark
+                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className={`px-6 py-2 rounded-lg text-sm font-medium text-white transition-colors cursor-pointer disabled:opacity-50 ${
+                isDark ? "bg-indigo-600 hover:bg-indigo-500" : "bg-blue-600 hover:bg-blue-700"
+              }`}
             >
               {loading
                 ? "Saving..."

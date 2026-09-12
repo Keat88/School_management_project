@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
+function Pagination({ currentPage = 1, totalPages = 1, onPageChange, isDark = false }) {
   if (!totalPages || totalPages <= 1) return null;
   const getPageNumbers = () => {
     const delta = 1;
@@ -39,8 +39,11 @@ function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
         type="button"
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600
-          hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className={`flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
+          isDark
+            ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+            : "border-gray-200 text-gray-600 hover:bg-gray-50"
+        }`}
       >
         <ChevronLeft size={15} />
         Prev
@@ -52,7 +55,9 @@ function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
           page === "..." ? (
             <span
               key={`dots-${index}`}
-              className="px-2 text-sm text-gray-400 select-none"
+              className={`px-2 text-sm select-none ${
+                isDark ? "text-slate-500" : "text-gray-400"
+              }`}
             >
               ...
             </span>
@@ -61,10 +66,14 @@ function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
               key={page}
               type="button"
               onClick={() => onPageChange(page)}
-              className={`h-8 w-8 rounded-lg text-sm font-medium transition-colors ${
+              className={`h-8 w-8 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                 page === currentPage
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-100"
+                  ? isDark
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "bg-blue-600 text-white shadow-sm"
+                  : isDark
+                    ? "text-slate-300 hover:bg-slate-800"
+                    : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               {page}
@@ -78,8 +87,11 @@ function Pagination({ currentPage = 1, totalPages = 1, onPageChange }) {
         type="button"
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600
-          hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className={`flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer ${
+          isDark
+            ? "border-slate-700 text-slate-300 hover:bg-slate-800"
+            : "border-gray-200 text-gray-600 hover:bg-gray-50"
+        }`}
       >
         Next
         <ChevronRight size={15} />
