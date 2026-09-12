@@ -7,13 +7,17 @@ import {
   LuMegaphone,
   LuWallet,
   LuBedDouble,
-  LuFileSpreadsheet, // <--- Replaced LuFileBarChart
+  LuFileSpreadsheet,
   LuSettings,
   LuSquareCheck,
 } from "react-icons/lu";
 import { FaBookOpen, FaBookBookmark } from "react-icons/fa6";
 import { HiMiniBuildingOffice2 } from "react-icons/hi2";
-import { MdCategory, MdOutlineAssignmentReturn, MdAssignmentTurnedIn } from "react-icons/md";
+import {
+  MdCategory,
+  MdOutlineAssignmentReturn,
+  MdAssignmentTurnedIn,
+} from "react-icons/md";
 
 const sidebarMenu = [
   {
@@ -138,10 +142,29 @@ const sidebarMenu = [
   },
   {
     id: 10,
-    title: "Finance",
-    path: "/admin/finance",
-    icon: LuWallet,
-    roles: ["admin"],
+    title: "Course",
+    icon: FaBookOpen,
+    child: [
+      {
+        id: 1,
+        title: "Course Category",
+        path: "/admin/course/category",
+        icon: MdCategory,
+      },
+      {
+        id: 2,
+        title: "Course",
+        path: "/admin/course",
+        icon: FaBookOpen,
+      },
+      {
+        id: 3,
+        title: "Contact",
+        path: "/admin/course/contact",
+        icon: FaBookOpen,
+      },
+    ],
+    roles: ["admin", "teacher"],
   },
   {
     id: 11,
@@ -154,7 +177,7 @@ const sidebarMenu = [
     id: 12,
     title: "Reports",
     path: "/admin/reports",
-    icon: LuFileSpreadsheet, // <--- Replaced LuFileBarChart
+    icon: LuFileSpreadsheet,
     roles: ["admin"],
   },
   {

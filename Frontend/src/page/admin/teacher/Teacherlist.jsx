@@ -5,7 +5,7 @@ import { teacherApi } from "../../../data/TeacherApi";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../hooks/Pagination";
 
-function TeacherList({ isDark = true }) {
+function TeacherList() {
   const [searchValue, setSearchValue] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -100,16 +100,14 @@ function TeacherList({ isDark = true }) {
       {/* Header Bar */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`text-xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+          <h2 className="text-xl font-bold text-gray-800 dark:text-slate-100">
             Teachers
           </h2>
-          <p className={`text-xs mt-0.5 ${isDark ? "text-slate-400" : "text-gray-500"}`}>
+          <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">
             Manage and view teacher records
           </p>
         </div>
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-          isDark ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/30" : "bg-indigo-50 text-indigo-700"
-        }`}>
+        <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-500/30">
           Total: {totalItems}
         </span>
       </div>
@@ -120,19 +118,14 @@ function TeacherList({ isDark = true }) {
         genderValue={gender}
         onSearchChange={setSearchValue}
         onGenderChange={handleGenderChange}
-        isDark={isDark}
       />
 
       {/* Table Container with dynamic loading overlay/state */}
-      <div className={`border rounded-2xl p-5 shadow-sm space-y-4 min-h-[300px] relative transition-all ${
-        isDark ? "bg-slate-900 border-slate-800" : "bg-white border-gray-200"
-      }`}>
+      <div className="border rounded-lg shadow-sm space-y-4 min-h-[300px] relative transition-all bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800">
         {loading && (
-          <div className={`absolute inset-0 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-xl transition-all ${
-            isDark ? "bg-slate-950/70" : "bg-white/80"
-          }`}>
-            <div className="w-7 h-7 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-            <span className={`text-xs font-medium mt-2 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+          <div className="absolute inset-0 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-xl transition-all bg-white/80 dark:bg-slate-950/70">
+            <div className="w-7 h-7 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-xs font-medium mt-2 text-gray-600 dark:text-slate-300">
               Loading page...
             </span>
           </div>
@@ -142,7 +135,6 @@ function TeacherList({ isDark = true }) {
           teachers={teachers}
           onDeleteId={handleDelete}
           onEditId={handleEdit}
-          isDark={isDark}
         />
       </div>
 
@@ -153,7 +145,6 @@ function TeacherList({ isDark = true }) {
         totalItems={totalItems}
         perPage={10}
         onPageChange={handlePageChange}
-        isDark={isDark}
       />
     </div>
   );

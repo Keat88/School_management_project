@@ -1,20 +1,28 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-// Import your Footer here if you have one
 
 export default function Layout() {
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navbar is safely inside the Layout component, NOT inside <Routes> */}
-      <Navbar />
+  const location = useLocation();
 
-      {/* Outlet renders whichever page route matches current URL */}
+  // Expanded array to hide Navbar and Footer on auth, password reset, and OTP pages
+  const hiddenRoutes = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/resetpassword",
+    "/otp",
+  ];
+  const isHiddenPage = hiddenRoutes.includes(location.pathname.toLowerCase());
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      {!isHiddenPage && <Navbar />}
       <main className="flex-grow">
         <Outlet />
       </main>
-      <Footer />
+      {!isHiddenPage && <Footer />}
     </div>
   );
 }

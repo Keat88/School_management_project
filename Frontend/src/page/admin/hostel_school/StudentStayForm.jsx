@@ -35,6 +35,7 @@ export default function StudentStayForm() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [status, setStatus] = useState("active");
+
   useEffect(() => {
     const loadDependencies = async () => {
       try {
@@ -143,8 +144,8 @@ export default function StudentStayForm() {
   if (fetching) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3">
-        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-gray-500 text-sm font-medium">
+        <div className="w-8 h-8 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
           Loading form details...
         </p>
       </div>
@@ -159,16 +160,16 @@ export default function StudentStayForm() {
           <button
             onClick={() => navigate(-1)}
             type="button"
-            className="p-2.5 border border-gray-200 bg-white rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 shadow-xs transition-all shrink-0"
+            className="p-2.5 border border-gray-200 bg-white rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white shadow-xs transition-all shrink-0"
             title="Back"
           >
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
               {isEditing ? "Edit Stay Record" : "Assign Bed to Student"}
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
               {isEditing
                 ? "Modify existing hostel assignment and timeline"
                 : "Allocate room, bed number, and duration for a student"}
@@ -182,14 +183,14 @@ export default function StudentStayForm() {
         <div
           className={`p-4 rounded-xl text-sm font-medium border flex items-center gap-3 transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-700 border-green-200"
-              : "bg-red-50 text-red-700 border-red-200"
+              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/50 dark:text-green-300 dark:border-green-800"
+              : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800"
           }`}
         >
           {feedback.type === "success" ? (
-            <CheckCircle2 size={18} className="shrink-0 text-green-600" />
+            <CheckCircle2 size={18} className="shrink-0 text-green-600 dark:text-green-400" />
           ) : (
-            <AlertCircle size={18} className="shrink-0 text-red-600" />
+            <AlertCircle size={18} className="shrink-0 text-red-600 dark:text-red-400" />
           )}
           <span>{feedback.text}</span>
         </div>
@@ -198,18 +199,18 @@ export default function StudentStayForm() {
       {/* Form Container */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-5 sm:p-8 rounded-2xl border border-gray-200 shadow-xs space-y-6"
+        className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xs space-y-6"
       >
         {/* Student Section */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             <User size={16} />
             <span>Student Identification</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Select Student *
               </label>
               <div className="relative">
@@ -217,23 +218,23 @@ export default function StudentStayForm() {
                   value={studentId}
                   onChange={handleStudentSelect}
                   required
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all appearance-none"
+                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all appearance-none"
                 >
-                  <option value="">Select Student</option>
+                  <option value="" className="dark:bg-gray-900">Select Student</option>
                   {students.map((st) => (
-                    <option key={st.id} value={st.id}>
+                    <option key={st.id} value={st.id} className="dark:bg-gray-900">
                       {st.name || st.student_name} ({st.email || st.code})
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 dark:text-gray-500">
                   ▼
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Roll Number *
               </label>
               <input
@@ -242,24 +243,24 @@ export default function StudentStayForm() {
                 onChange={(e) => setRollNumber(e.target.value)}
                 required
                 placeholder="e.g. R-101"
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
               />
             </div>
           </div>
         </div>
 
-        <hr className="border-gray-100" />
+        <hr className="border-gray-100 dark:border-gray-700" />
 
         {/* Accommodation Section */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             <BedDouble size={16} />
             <span>Room & Bed Assignment</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Hostel Room *
               </label>
               <div className="relative">
@@ -267,27 +268,27 @@ export default function StudentStayForm() {
                   value={hostelRoomId}
                   onChange={(e) => setHostelRoomId(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all appearance-none"
+                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all appearance-none"
                 >
-                  <option value="">Select Room</option>
+                  <option value="" className="dark:bg-gray-900">Select Room</option>
                   {rooms.map((rm) => (
-                    <option key={rm.id} value={rm.id}>
+                    <option key={rm.id} value={rm.id} className="dark:bg-gray-900">
                       Room #{rm.room_number} ({rm.block_name || rm.type})
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 dark:text-gray-500">
                   ▼
                 </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Bed Number / Identifier *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
                   <Hash size={16} />
                 </div>
                 <input
@@ -296,25 +297,25 @@ export default function StudentStayForm() {
                   onChange={(e) => setBedNumber(e.target.value)}
                   required
                   placeholder="e.g. B1 or Bed 02"
-                  className="w-full pl-10 pr-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                  className="w-full pl-10 pr-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <hr className="border-gray-100" />
+        <hr className="border-gray-100 dark:border-gray-700" />
 
         {/* Duration & Status Section */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             <Calendar size={16} />
             <span>Timeline & Status</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 Start Date *
               </label>
               <input
@@ -322,14 +323,14 @@ export default function StudentStayForm() {
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                 End Date{" "}
-                <span className="text-xs text-gray-400 font-normal">
+                <span className="text-xs text-gray-400 dark:text-gray-500 font-normal">
                   (Optional)
                 </span>
               </label>
@@ -337,26 +338,26 @@ export default function StudentStayForm() {
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
               Stay Status *
             </label>
             <div className="relative">
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all capitalize appearance-none"
+                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all capitalize appearance-none"
               >
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="active" className="dark:bg-gray-900">Active</option>
+                <option value="completed" className="dark:bg-gray-900">Completed</option>
+                <option value="cancelled" className="dark:bg-gray-900">Cancelled</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 dark:text-gray-500">
                 ▼
               </div>
             </div>
@@ -364,18 +365,18 @@ export default function StudentStayForm() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-100">
+        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 text-center transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 text-center transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs"
+            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs"
           >
             <Save size={16} />
             {loading ? "Saving..." : isEditing ? "Update Stay" : "Assign Bed"}

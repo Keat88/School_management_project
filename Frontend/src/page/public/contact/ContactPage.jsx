@@ -2,7 +2,7 @@ import React from "react";
 
 export default function ContactPage() {
   return (
-    <div className="bg-gray-50 min-h-screen font-sans">
+    <div className="bg-gray-50 dark:bg-slate-950 min-h-screen font-sans transition-colors duration-300">
       {/* Hero Section */}
       <div className="relative bg-slate-900 text-white overflow-hidden pb-24 pt-12">
         {/* Background Image with Overlay */}
@@ -29,14 +29,14 @@ export default function ContactPage() {
 
       {/* Main Contact Card Container */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-20 pb-16">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-800 p-8 sm:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 transition-colors duration-300">
           {/* Left Column: Get in touch info */}
           <div className="space-y-8">
             <div className="space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
                 Get in touch
               </h2>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-500 dark:text-slate-400 leading-relaxed">
                 Sociosqu viverra lectus placerat sem efficitur molestie vehicula
                 cubilia leo etiam nam.
               </p>
@@ -45,7 +45,7 @@ export default function ContactPage() {
             <div className="space-y-6">
               {/* Head Office */}
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 shadow-sm">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -67,10 +67,10 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-gray-900">
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                     Head Office
                   </h4>
-                  <p className="text-sm text-gray-500 mt-0.5">
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
                     Jalan Cempaka Wangi No 22
                     <br />
                     Jakarta - Indonesia
@@ -80,7 +80,7 @@ export default function ContactPage() {
 
               {/* Email Us */}
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 shadow-sm">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -96,8 +96,10 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-gray-900">Email Us</h4>
-                  <p className="text-sm text-gray-500 mt-0.5">
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-white">
+                    Email Us
+                  </h4>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
                     support@yourdomain.tld
                     <br />
                     hello@yourdomain.tld
@@ -107,7 +109,7 @@ export default function ContactPage() {
 
               {/* Call Us */}
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0 shadow-sm">
                   <svg
                     className="w-6 h-6"
                     fill="none"
@@ -123,8 +125,10 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-gray-900">Call Us</h4>
-                  <p className="text-sm text-gray-500 mt-0.5">
+                  <h4 className="text-sm font-bold text-gray-900 dark:text-white">
+                    Call Us
+                  </h4>
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
                     Phone : +6221.2002.2012
                     <br />
                     Fax : +6221.2002.2013
@@ -135,7 +139,7 @@ export default function ContactPage() {
 
             {/* Social Media Links */}
             <div className="pt-4 space-y-3">
-              <h4 className="text-sm font-bold text-gray-950">
+              <h4 className="text-sm font-bold text-gray-950 dark:text-white">
                 Follow our social media
               </h4>
               <div className="flex space-x-3">
@@ -154,76 +158,76 @@ export default function ContactPage() {
 
           {/* Right Column: Send us a message form */}
           <div className="space-y-6">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white">
               Send us a message
             </h2>
 
             <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 uppercase">
+                  <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase">
                     Name
                   </label>
                   <input
                     type="text"
                     placeholder="Name"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white transition"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 transition"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 uppercase">
+                  <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase">
                     Company
                   </label>
                   <input
                     type="text"
                     placeholder="Company"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white transition"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 transition"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 uppercase">
+                  <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase">
                     Phone
                   </label>
                   <input
                     type="text"
                     placeholder="Phone"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white transition"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 transition"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 uppercase">
+                  <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase">
                     Email
                   </label>
                   <input
                     type="email"
                     placeholder="Email"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white transition"
+                    className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 transition"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500 uppercase">
+                <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase">
                   Subject
                 </label>
                 <input
                   type="text"
                   placeholder="Subject"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white transition"
+                  className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 transition"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500 uppercase">
+                <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase">
                   Message
                 </label>
                 <textarea
                   rows={4}
                   placeholder="Message"
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white transition resize-none"
+                  className="w-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white dark:focus:bg-slate-900 transition resize-none"
                 ></textarea>
               </div>
 
@@ -238,7 +242,7 @@ export default function ContactPage() {
         </div>
 
         {/* Map Section */}
-        <div className="mt-12 bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden h-96 relative">
+        <div className="mt-12 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-gray-100 dark:border-slate-800 overflow-hidden h-96 relative transition-colors duration-300">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3715.448625776316!2d104.88799717481712!3d11.562211988638346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310951adb4d4041d%3A0x8a90e729f62ad800!2sETEC%20Center!5e1!3m2!1sen!2skh!4v1789192572269!5m2!1sen!2skh"
             className="w-full h-full border-0"

@@ -13,16 +13,28 @@ return new class extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('title'); // ចំណងជើងខ្សូស
-            $table->string('slug')->unique(); // Slug សម្រាប់ URL
-            $table->text('description')->nullable(); // ការពិពណ៌នា
-            $table->decimal('price', 10, 2)->default(0.00); // តម្លៃ
-            $table->decimal('discount_price', 10, 2)->nullable(); // តម្លៃបញ្ចុះ
-            $table->string('thumbnail')->nullable(); // រូបភាពតូច (Thumbnail)
-            $table->foreignId('category_id')->nullable()->constrained('course_categories')->nullOnDelete(); // ប្រភេទខ្សូស
-            $table->foreignId('instructor_id')->constrained('users')->cascadeOnDelete(); // គ្រូបង្រៀន
-            $table->enum('level', ['beginner', 'intermediate', 'advanced', 'all'])->default('all'); // កម្រិត
-            $table->enum('status', ['draft', 'published', 'archived'])->default('draft'); // ស្ថានភាពខ្សូស
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2)->default(0.00);
+            $table->decimal('discount_price', 10, 2)->nullable();
+            $table->string('thumbnail')->nullable();
+
+            // Missing metrics & metadata
+            $table->decimal('rating_avg', 3, 2)->default(0.00);
+            $table->unsignedInteger('reviews_count')->default(0);
+            $table->string('duration')->nullable();
+            $table->unsignedInteger('lessons_count')->default(0);
+            $table->json('requirements')->nullable();
+            $table->json('what_you_will_learn')->nullable();
+            $table->string('language')->default('English');
+            $table->boolean('has_certificate')->default(true);
+            $table->boolean('is_featured')->default(false);
+            
+            $table->foreignId('category_id')->nullable()->constrained('course_categories')->nullOnDelete();
+            $table->foreignId('instructor_id')->constrained('users')->cascadeOnDelete();
+            $table->enum('level', ['beginner', 'intermediate', 'advanced', 'all'])->default('all');
+            $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->timestamps();
         });
     }

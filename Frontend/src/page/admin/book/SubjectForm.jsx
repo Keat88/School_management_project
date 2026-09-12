@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { ArrowLeft, Image as ImageIcon, Save } from "lucide-react";
-import { api } from "../../../data/api";
 import { subjectApi } from "../../../data/classrooms";
 
 export default function SubjectForm({ isDark: propIsDark = false }) {
@@ -26,7 +25,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
-  // Sync with localStorage changes across components/tabs if theme toggles elsewhere
+  // Sync with localStorage changes across components/tabs
   useEffect(() => {
     const handleStorageChange = () => {
       const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
@@ -49,6 +48,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
           setCode(sub.code || "");
           setImagePreview(sub.image_url || sub.image || null);
         } catch (error) {
+          console.error("Error fetching subject:", error);
           setFeedback({
             type: "error",
             text: "Failed to load subject data for editing.",
@@ -85,9 +85,11 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
     }
 
     try {
-      const endpoint = isEditing
-        ? await subjectApi.upDate(formData, id)
-        : await subjectApi.addNew(formData);
+      if (isEditing) {
+        await subjectApi.upDate(formData, id);
+      } else {
+        await subjectApi.addNew(formData);
+      }
 
       setFeedback({
         type: "success",
@@ -99,6 +101,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
         navigate("/admin/subjects");
       }, 1000);
     } catch (error) {
+      console.error("Error saving subject:", error);
       setFeedback({
         type: "error",
         text:
@@ -112,57 +115,61 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
 
   if (fetching) {
     return (
-      <div className={`max-w-2xl mx-auto py-12 text-center text-sm ${isDark ? "text-slate-400" : "text-gray-400"}`}>
-        Loading subject details...
+      <div className={`max-w-2xl mx-auto py-16 text-center text-sm flex flex-col items-center justify-center gap-3 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <span>Loading subject details...</span>
       </div>
     );
   }
 
   return (
-    <div className={` lg:min-w-160 mx-auto space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-gray-900"}`}>
-      <div className="flex items-center justify-between">
+    <div className={`max-w-3xl mx-auto space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-slate-900"}`}>
+      {/* Header */}
+      <div className={`flex items-center justify-between pb-4 border-b ${isDark ? "border-slate-800" : "border-slate-200"}`}>
         <div className="flex items-center gap-3">
           <Link
             to="/admin/subjects"
-            className={`p-2 border rounded-lg transition-colors ${
+            className={`p-2.5 border rounded-xl transition-all active:scale-95 ${
               isDark
-                ? "border-slate-800 text-slate-300 hover:bg-slate-800"
-                : "border-gray-200 text-gray-600 hover:bg-gray-100"
+                ? "border-slate-800 bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white"
+                : "border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
             }`}
             title="Back to Subjects"
           >
             <ArrowLeft size={18} />
           </Link>
-          <h2 className={`text-xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+          <h2 className={`text-xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
             {isEditing ? "Edit Subject" : "Add New Subject"}
           </h2>
         </div>
       </div>
 
+      {/* Feedback Alert */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium border ${
+          className={`p-4 rounded-xl text-sm font-medium border shadow-sm ${
             feedback.type === "success"
               ? isDark
                 ? "bg-green-950/40 text-green-400 border-green-900/60"
-                : "bg-green-50 text-green-600 border-green-200"
+                : "bg-green-50 text-green-700 border-green-200"
               : isDark
-                ? "bg-red-950/40 text-red-400 border-red-900/60"
-                : "bg-red-50 text-red-600 border-red-200"
+              ? "bg-red-950/40 text-red-400 border-red-900/60"
+              : "bg-red-50 text-red-700 border-red-200"
           }`}
         >
           {feedback.text}
         </div>
       )}
 
+      {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className={`p-6 rounded-xl border shadow-sm space-y-5 transition-colors ${
-          isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
+        className={`p-6 sm:p-8 rounded-2xl border shadow-inner space-y-6 transition-colors ${
+          isDark ? "bg-slate-900/90 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"
         }`}
       >
         <div>
-          <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-700"}`}>
+          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
             Subject Name *
           </label>
           <input
@@ -172,19 +179,19 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
             required
             maxLength={255}
             placeholder="e.g. Mathematics"
-            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
+            className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 transition-all ${
               isDark
-                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
-                : "bg-white border-gray-200 text-gray-900 placeholder-gray-400"
+                ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-blue-500"
+                : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-500"
             }`}
           />
         </div>
 
         <div>
-          <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-700"}`}>
+          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
             Subject Code *{" "}
-            <span className={`text-xs font-normal ${isDark ? "text-slate-500" : "text-gray-400"}`}>
-              (Must be unique)
+            <span className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+              (must be unique)
             </span>
           </label>
           <input
@@ -193,18 +200,18 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
             onChange={(e) => setCode(e.target.value)}
             required
             placeholder="e.g. MATH101"
-            className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono transition-colors ${
+            className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 font-mono transition-all ${
               isDark
-                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
-                : "bg-white border-gray-200 text-gray-900 placeholder-gray-400"
+                ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-blue-500"
+                : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-500"
             }`}
           />
         </div>
 
         <div>
-          <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-700"}`}>
+          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
             Subject Image{" "}
-            <span className={`text-xs font-normal ${isDark ? "text-slate-500" : "text-gray-400"}`}>
+            <span className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}>
               (PNG, JPG, max 2MB)
             </span>
           </label>
@@ -213,13 +220,13 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className={`w-16 h-16 rounded-lg object-cover border shrink-0 ${
-                  isDark ? "border-slate-700" : "border-gray-200"
+                className={`w-16 h-16 rounded-xl object-cover border shrink-0 shadow-sm ${
+                  isDark ? "border-slate-700" : "border-slate-200"
                 }`}
               />
             ) : (
-              <div className={`w-16 h-16 rounded-lg border flex items-center justify-center shrink-0 ${
-                isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-50 border-gray-200 text-gray-400"
+              <div className={`w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 ${
+                isDark ? "bg-slate-950 border-slate-700 text-slate-500" : "bg-slate-50 border-slate-200 text-slate-400"
               }`}>
                 <ImageIcon size={24} />
               </div>
@@ -228,22 +235,22 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
               type="file"
               accept="image/png, image/jpeg"
               onChange={handleImageChange}
-              className={`w-full text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
+              className={`w-full text-sm cursor-pointer file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold transition-all ${
                 isDark
                   ? "text-slate-400 file:bg-blue-950/60 file:text-blue-400 hover:file:bg-blue-900/60"
-                  : "text-gray-500 file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                  : "text-slate-500 file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
               }`}
             />
           </div>
         </div>
 
-        <div className={`flex justify-end gap-3 pt-4 border-t ${isDark ? "border-slate-800" : "border-gray-100"}`}>
+        <div className={`flex items-center justify-end gap-3 pt-5 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}>
           <Link
             to="/admin/subjects"
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border active:scale-95 ${
               isDark
-                ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white"
+                : "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900"
             }`}
           >
             Cancel
@@ -251,14 +258,14 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
           >
-            <Save size={16} />
+            <Save size={15} />
             {loading
               ? "Saving..."
               : isEditing
-                ? "Update Subject"
-                : "Save Subject"}
+              ? "Update Subject"
+              : "Save Subject"}
           </button>
         </div>
       </form>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload } from "lucide-react";
+import { ArrowLeft, Upload, AlertCircle } from "lucide-react";
 import { BookApi, BookCategoryApi } from "../../../data/library";
 
 export default function BookForm() {
@@ -146,25 +146,25 @@ export default function BookForm() {
 
   if (fetching) {
     return (
-       <div className="py-12 text-center text-gray-500">
-          <div className="flex flex-col items-center justify-center gap-2">
-            <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
-            <span>Loading book form...</span>
-          </div>
+      <div className="py-12 text-center text-gray-500 dark:text-slate-400">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
+          <span>Loading book form...</span>
         </div>
+      </div>
     );
   }
 
   return (
-    <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 space-y-6">
-      <div className="flex justify-between items-center pb-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800">
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40 space-y-6">
+      <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-slate-800">
+        <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-slate-100">
           {isEditMode ? "Edit Book" : "Add New Book"}
         </h2>
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center gap-1.5"
+          className="px-4 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center gap-1.5"
         >
           <ArrowLeft size={16} />
           Back
@@ -173,20 +173,21 @@ export default function BookForm() {
 
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium ${
+          className={`p-4 rounded-xl text-sm font-medium border flex items-center gap-2.5 shadow-sm transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40"
+              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40"
           }`}
         >
-          {feedback.text}
+          {feedback.type === "error" && <AlertCircle size={18} className="shrink-0" />}
+          <span>{feedback.text}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
               Book Title *
             </label>
             <input
@@ -196,11 +197,11 @@ export default function BookForm() {
               onChange={handleChange}
               required
               placeholder="Enter book title"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
               Author *
             </label>
             <input
@@ -210,14 +211,14 @@ export default function BookForm() {
               onChange={handleChange}
               required
               placeholder="Enter author name"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
               ISBN
             </label>
             <input
@@ -226,11 +227,11 @@ export default function BookForm() {
               value={formData.isbn}
               onChange={handleChange}
               placeholder="Enter ISBN number"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
               Category *
             </label>
             <select
@@ -238,7 +239,7 @@ export default function BookForm() {
               value={formData.book_category_id}
               onChange={handleChange}
               required
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
             >
               <option value="">Select Category</option>
               {categories.map((cat) => (
@@ -250,9 +251,9 @@ export default function BookForm() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
               Total Copies *
             </label>
             <input
@@ -263,11 +264,11 @@ export default function BookForm() {
               required
               min="1"
               placeholder="0"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
               Available Copies *
             </label>
             <input
@@ -278,13 +279,13 @@ export default function BookForm() {
               required
               min="0"
               placeholder="0"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-600 mb-1">
+          <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
             Book Image
           </label>
           <div className="flex items-center gap-4">
@@ -292,12 +293,12 @@ export default function BookForm() {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="w-16 h-20 object-cover rounded border border-gray-200"
+                className="w-16 h-20 object-cover rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm"
               />
             )}
-            <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-400 transition-colors">
-              <Upload className="text-gray-400 mb-1" size={20} />
-              <span className="text-xs text-gray-500 font-medium">
+            <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors border-gray-300 hover:border-indigo-400 bg-gray-50/50 dark:bg-slate-800/50 dark:border-slate-700 dark:hover:border-indigo-400">
+              <Upload className="text-gray-400 dark:text-slate-400 mb-1" size={20} />
+              <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">
                 Click to upload image
               </span>
               <input
@@ -310,18 +311,18 @@ export default function BookForm() {
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
+        <div className="flex items-center justify-end pt-6 border-t border-gray-100 dark:border-slate-800 space-x-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
           >
             {loading ? "Saving..." : isEditMode ? "Update Book" : "Save Book"}
           </button>

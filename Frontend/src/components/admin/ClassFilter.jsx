@@ -33,28 +33,28 @@ export default function ClassFilter({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xs">
+    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-xs">
       {/* Search & Select Filters */}
       <div className="flex flex-1 flex-col sm:flex-row flex-wrap items-center gap-2.5">
         {/* Search Bar Input */}
         <div className="relative w-full sm:w-64 min-w-[200px]">
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 pointer-events-none"
           />
           <input
             type="text"
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search class or teacher..."
-            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-9 pr-8 py-2 text-xs font-medium text-gray-800 placeholder-gray-400 outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all"
+            className="w-full rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 pl-9 pr-8 py-2 text-xs font-medium text-gray-800 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all"
           />
           {searchValue && (
             <button
               type="button"
               aria-label="Clear search"
               onClick={() => onSearchChange("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:hover:text-slate-300 transition-colors cursor-pointer"
             >
               <X size={14} />
             </button>
@@ -66,7 +66,7 @@ export default function ClassFilter({
           <select
             value={gradeFilter}
             onChange={(e) => onGradeChange(e.target.value)}
-            className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer"
+            className="w-full appearance-none rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
           >
             <option value="all">All Grades</option>
             {Array.isArray(gradeOptions) &&
@@ -82,7 +82,7 @@ export default function ClassFilter({
           </select>
           <ChevronDown
             size={14}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 pointer-events-none"
           />
         </div>
 
@@ -91,7 +91,7 @@ export default function ClassFilter({
           <select
             value={sectionFilter}
             onChange={(e) => onSectionChange(e.target.value)}
-            className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer"
+            className="w-full appearance-none rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
           >
             <option value="all">All Sections</option>
             {Array.isArray(sectionOptions) &&
@@ -108,7 +108,7 @@ export default function ClassFilter({
           </select>
           <ChevronDown
             size={14}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 pointer-events-none"
           />
         </div>
 
@@ -117,7 +117,7 @@ export default function ClassFilter({
           <select
             value={classFilter}
             onChange={(e) => onClassChange(e.target.value)}
-            className="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 outline-none focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all cursor-pointer"
+            className="w-full appearance-none rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
           >
             <option value="all">All Classes</option>
             {Array.isArray(classOptions) &&
@@ -133,7 +133,7 @@ export default function ClassFilter({
           </select>
           <ChevronDown
             size={14}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 pointer-events-none"
           />
         </div>
 
@@ -142,7 +142,7 @@ export default function ClassFilter({
           <button
             type="button"
             onClick={handleReset}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors cursor-pointer"
           >
             <RotateCcw size={13} />
             Reset

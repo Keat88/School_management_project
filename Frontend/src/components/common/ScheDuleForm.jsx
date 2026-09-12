@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../../data/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Calendar, Clock, BookOpen, User, GraduationCap } from "lucide-react";
 
 export default function ScheduleForm() {
   const { id } = useParams();
@@ -24,6 +24,7 @@ export default function ScheduleForm() {
   });
   
   const [feedback, setFeedback] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchOptions = async () => {
     try {
@@ -75,9 +76,9 @@ export default function ScheduleForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFeedback(null);
+    setLoading(true);
     try {
       if (IsEdit) {
-        // Using PUT or POST depending on your backend route definition
         const response = await api.put(`/timetable/update/${id}`, formData);
         setFeedback({
           type: "success",
@@ -105,6 +106,8 @@ export default function ScheduleForm() {
         type: "error",
         text: error.response?.data?.message || "Validation error or server failure.",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,164 +122,179 @@ export default function ScheduleForm() {
   ];
 
   return (
-    <div className="lg:min-w-160 mx-auto rounded-lg p-6 bg-slate-800 border border-slate-700 shadow-xl text-slate-100 font-sans my-6">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-700">
+    <div className="lg:min-w-160 mx-auto rounded-lg p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800  text-gray-800 dark:text-slate-100 font-sans my-8 transition-all">
+      <div className="flex items-center justify-between mb-8 pb-5 border-b border-gray-100 dark:border-slate-800">
         <div>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition-all cursor-pointer border border-slate-700 mb-2"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-300 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer border border-gray-200 dark:border-slate-700/60 mb-3 shadow-xs active:scale-95"
           >
             <ArrowLeft size={14} /> Back
           </button>
-          <h3 className="text-xl font-bold text-white">
+          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
+              <Calendar size={22} />
+            </div>
             {IsEdit ? "Edit Schedule" : "Add New Schedule"}
-          </h3>
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-1">
+            {IsEdit ? "Modify existing timetable entry parameters." : "Assign a new class timetable slot."}
+          </p>
         </div>
       </div>
 
       {feedback && (
         <div
-          className={`p-4 mb-5 rounded-xl text-sm font-medium ${
-            feedback.type === "success" 
-              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" 
-              : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+          className={`p-4 mb-6 rounded-2xl text-sm font-medium flex items-center gap-3 animate-fade-in ${
+            feedback.type === "success"
+              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 shadow-lg shadow-emerald-500/5"
+              : "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-lg shadow-rose-500/5"
           }`}
         >
-          {feedback.text}
+          <span>{feedback.text}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Class Room Selection */}
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            Class Room
-          </label>
-          <select
-            name="class_id"
-            className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-            value={formData.class_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Class Room</option>
-            {dropdowns.classes.map((cls) => (
-              <option key={cls.id_class} value={cls.id_class}>
-                {cls.name_class}
-              </option>
-            ))}
-          </select>
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-gray-50/60 dark:bg-slate-950/40 p-5 rounded-2xl border border-gray-100 dark:border-slate-800/80 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800/80 flex items-center gap-2">
+            <GraduationCap size={15} className="text-indigo-600 dark:text-indigo-400" /> Timetable Parameters
+          </h3>
 
-        {/* Subject Selection */}
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            Subject
-          </label>
-          <select
-            name="subject_id"
-            className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-            value={formData.subject_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Subject</option>
-            {dropdowns.subjects.map((sub) => (
-              <option key={sub.id_subject} value={sub.id_subject}>
-                {sub.name_subject}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Class Room Selection */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
+                <GraduationCap size={13} className="text-indigo-600 dark:text-indigo-400" /> Class Room
+              </label>
+              <select
+                name="class_id"
+                value={formData.class_id}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+              >
+                <option value="">Select Class Room</option>
+                {dropdowns.classes.map((cls) => (
+                  <option key={cls.id_class} value={cls.id_class}>
+                    {cls.name_class}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Teacher Selection */}
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            Teacher
-          </label>
-          <select
-            name="teacher_id"
-            className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-            value={formData.teacher_id}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Teacher</option>
-            {dropdowns.teachers.map((teacher) => (
-              <option key={teacher.id_teacher} value={teacher.id_teacher}>
-                {teacher.name_teacher}
-              </option>
-            ))}
-          </select>
-        </div>
+            {/* Subject Selection */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
+                <BookOpen size={13} className="text-indigo-600 dark:text-indigo-400" /> Subject
+              </label>
+              <select
+                name="subject_id"
+                value={formData.subject_id}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+              >
+                <option value="">Select Subject</option>
+                {dropdowns.subjects.map((sub) => (
+                  <option key={sub.id_subject} value={sub.id_subject}>
+                    {sub.name_subject}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Day Selection */}
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-            Day of the Week
-          </label>
-          <select
-            name="day"
-            className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-            value={formData.day}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Day</option>
-            {daysOfWeek.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-        </div>
+            {/* Teacher Selection */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
+                <User size={13} className="text-indigo-600 dark:text-indigo-400" /> Teacher
+              </label>
+              <select
+                name="teacher_id"
+                value={formData.teacher_id}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+              >
+                <option value="">Select Teacher</option>
+                {dropdowns.teachers.map((teacher) => (
+                  <option key={teacher.id_teacher} value={teacher.id_teacher}>
+                    {teacher.name_teacher}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        {/* Time Slot Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-              Start Time
-            </label>
-            <input
-              type="time"
-              name="start_time"
-              className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-              value={formData.start_time}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-              End Time
-            </label>
-            <input
-              type="time"
-              name="end_time"
-              className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-              value={formData.end_time}
-              onChange={handleChange}
-              required
-            />
+            {/* Day Selection */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
+                <Calendar size={13} className="text-indigo-600 dark:text-indigo-400" /> Day of the Week
+              </label>
+              <select
+                name="day"
+                value={formData.day}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+              >
+                <option value="">Select Day</option>
+                {daysOfWeek.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Start Time */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
+                <Clock size={13} className="text-indigo-600 dark:text-indigo-400" /> Start Time
+              </label>
+              <input
+                type="time"
+                name="start_time"
+                value={formData.start_time}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+              />
+            </div>
+
+            {/* End Time */}
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
+                <Clock size={13} className="text-indigo-600 dark:text-indigo-400" /> End Time
+              </label>
+              <input
+                type="time"
+                name="end_time"
+                value={formData.end_time}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+              />
+            </div>
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-700">
+        <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 dark:border-slate-800">
           <button
             type="button"
-            className="px-4 py-2 bg-slate-900 text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
             onClick={() => navigate(-1)}
+            className="px-5 py-3 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
           >
             Cancel
           </button>
 
           <button
             type="submit"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-semibold hover:bg-emerald-700 shadow-sm transition-all cursor-pointer"
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
           >
-            <Save size={14} /> {IsEdit ? "Update Schedule" : "Save Schedule"}
+            <Save size={15} /> {loading ? "Saving..." : IsEdit ? "Update Schedule" : "Save Schedule"}
           </button>
         </div>
       </form>

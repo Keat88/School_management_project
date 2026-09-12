@@ -1,25 +1,27 @@
 const statusStyles = {
-  present: "bg-blue-50  text-blue-800",
-  absent: "bg-red-50 text-red-800",
-  late: "bg-gray-50 text-gray-800"
+  present:
+    "bg-blue-50 text-blue-700 border border-blue-200/60 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800/60",
+  absent:
+    "bg-rose-50 text-rose-700 border border-rose-200/60 dark:bg-rose-950/60 dark:text-rose-400 dark:border-rose-800/60",
+  late:
+    "bg-amber-50 text-amber-700 border border-amber-200/60 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800/60",
 };
 
 const statusLabels = {
   present: "Present",
   absent: "Absent",
-  late: "Late"
+  late: "Late",
 };
 
-function AttendanceStatusBadge({ status }) {
+export default function AttendanceStatusBadge({ status }) {
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-        statusStyles[status] || "bg-gray-100 text-gray-500"
+      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide transition-all ${
+        statusStyles[status] ||
+        "bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
       }`}
     >
       {statusLabels[status] || status}
     </span>
   );
 }
-
-export default AttendanceStatusBadge;

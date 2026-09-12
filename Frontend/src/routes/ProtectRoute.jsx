@@ -4,10 +4,10 @@ const ProtectRoute = ({ allowedRoles }) => {
   const token = localStorage.getItem("token");
   const userString = localStorage.getItem("user");
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
   if (!userString) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
   try {
     const user = JSON.parse(userString);
@@ -15,7 +15,6 @@ const ProtectRoute = ({ allowedRoles }) => {
       const hasAccess = Array.isArray(allowedRoles)
         ? allowedRoles.includes(user?.role)
         : user?.role === allowedRoles;
-
       if (!hasAccess) {
         return <Navigate to="/unauthorized" replace />; 
       }
@@ -25,7 +24,6 @@ const ProtectRoute = ({ allowedRoles }) => {
     localStorage.removeItem("user");
     return <Navigate to="/login" replace />;
   }
-
   return <Outlet />;
 };
 

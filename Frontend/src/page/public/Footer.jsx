@@ -2,18 +2,18 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0b0f19] text-gray-400 pt-16 pb-12 border-t border-gray-800">
+    <footer className="bg-[#0b0f19] dark:bg-slate-950 text-gray-400 dark:text-slate-400 pt-16 pb-12 border-t border-gray-800 dark:border-slate-800 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-800">   
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-800 dark:border-slate-800">   
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 dark:bg-blue-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
                 E
               </div>
               <span className="text-xl font-extrabold text-white tracking-tight">Edumaster</span>
             </div>
-            <p className="text-sm text-gray-400 max-w-sm leading-relaxed">
+            <p className="text-sm text-gray-400 dark:text-slate-400 max-w-sm leading-relaxed">
               Empowering learners worldwide with expert-led online courses. Advance your career, learn at your own pace, and unlock your true potential.
             </p>
             <div className="flex space-x-3 pt-2">
@@ -21,7 +21,7 @@ export default function Footer() {
                 <a 
                   key={idx} 
                   href={`#${social}`} 
-                  className="w-9 h-9 rounded-xl bg-gray-900 border border-gray-800 hover:bg-purple-600 hover:border-purple-600 text-gray-300 hover:text-white flex items-center justify-center transition"
+                  className="w-9 h-9 rounded-xl bg-gray-900 dark:bg-slate-900 border border-gray-800 dark:border-slate-800 hover:bg-purple-600 dark:hover:bg-purple-600 hover:border-purple-600 text-gray-300 dark:text-slate-300 hover:text-white flex items-center justify-center transition"
                 >
                   <span className="text-xs uppercase font-bold">{social}</span>
                 </a>
@@ -54,16 +54,16 @@ export default function Footer() {
           {/* Newsletter */}
           <div className="space-y-4">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">Stay Updated</h4>
-            <p className="text-xs text-gray-400 leading-relaxed">Get the latest news and course updates straight to your inbox.</p>
+            <p className="text-xs text-gray-400 dark:text-slate-400 leading-relaxed">Get the latest news and course updates straight to your inbox.</p>
             <form onSubmit={(e) => e.preventDefault()} className="space-y-2">
               <input 
                 type="email" 
                 placeholder="Your email address" 
-                className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+                className="w-full bg-gray-900 dark:bg-slate-900 border border-gray-800 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:border-purple-500 transition"
               />
               <button 
                 type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-2.5 rounded-xl transition shadow-sm"
+                className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium text-sm py-2.5 rounded-xl transition shadow-sm"
               >
                 Subscribe
               </button>
@@ -73,12 +73,12 @@ export default function Footer() {
         </div>
 
         {/* Bottom Copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 dark:text-slate-500 gap-4">
           <p>&copy; {new Date().getFullYear()} Edumaster. All rights reserved.</p>
           <div className="flex space-x-6">
-            <a href="/privacy" className="hover:text-gray-400 transition">Privacy Policy</a>
-            <a href="/terms" className="hover:text-gray-400 transition">Terms of Service</a>
-            <a href="/cookies" className="hover:text-gray-400 transition">Cookie Settings</a>
+            <a href="/privacy" className="hover:text-gray-400 dark:hover:text-slate-400 transition">Privacy Policy</a>
+            <a href="/terms" className="hover:text-gray-400 dark:hover:text-slate-400 transition">Terms of Service</a>
+            <a href="/cookies" className="hover:text-gray-400 dark:hover:text-slate-400 transition">Cookie Settings</a>
           </div>
         </div>
 

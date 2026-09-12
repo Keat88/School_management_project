@@ -24,7 +24,6 @@ export default function SystemSettings() {
     libraryMaxBooks: "5",
   });
 
-  // Fetch saved settings from Laravel backend on component mount
   useEffect(() => {
     api.get("/settings")
       .then((res) => {
@@ -61,22 +60,23 @@ export default function SystemSettings() {
       console.error("Error saving settings:", error);
     }
   };
+
   return (
-    <div className="space-y-6 max-w-5xl lg:min-w-160 mx-auto">
+    <div className="space-y-6 max-w-5xl lg:min-w-160 mx-auto text-slate-900 dark:text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Settings className="text-blue-600" size={22} />
+          <h2 className="text-xl font-extrabold tracking-tight flex items-center gap-2 text-slate-900 dark:text-slate-100">
+            <Settings className="text-blue-600 dark:text-blue-500" size={22} />
             System Settings & Control Panel
           </h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
             Manage core configurations, communication preferences, and security
             controls for your Student Management System.
           </p>
         </div>
         {saved && (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200 text-xs font-medium animate-fade-in">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/20 animate-fade-in">
             <CheckCircle size={14} />
             Settings saved successfully!
           </div>
@@ -86,89 +86,65 @@ export default function SystemSettings() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Sidebar Navigation */}
         <div className="md:col-span-1 space-y-1">
-          <button
-            type="button"
-            onClick={() => setActiveTab("general")}
-            className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              activeTab === "general"
-                ? "bg-blue-600 text-white shadow-xs"
-                : "text-slate-600 hover:bg-slate-100"
-            }`}
-          >
-            <Settings size={16} />
-            General Setup
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("notifications")}
-            className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              activeTab === "notifications"
-                ? "bg-blue-600 text-white shadow-xs"
-                : "text-slate-600 hover:bg-slate-100"
-            }`}
-          >
-            <Bell size={16} />
-            Notifications
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("security")}
-            className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              activeTab === "security"
-                ? "bg-blue-600 text-white shadow-xs"
-                : "text-slate-600 hover:bg-slate-100"
-            }`}
-          >
-            <Shield size={16} />
-            Security & Access
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("academic")}
-            className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-              activeTab === "academic"
-                ? "bg-blue-600 text-white shadow-xs"
-                : "text-slate-600 hover:bg-slate-100"
-            }`}
-          >
-            <BookOpen size={16} />
-            Academic & Library
-          </button>
+          {[
+            { id: "general", label: "General Setup", icon: Settings },
+            { id: "notifications", label: "Notifications", icon: Bell },
+            { id: "security", label: "Security & Access", icon: Shield },
+            { id: "academic", label: "Academic & Library", icon: BookOpen },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                  isActive
+                    ? "bg-blue-600 text-white shadow-xs"
+                    : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                }`}
+              >
+                <Icon size={16} />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Content Area */}
         <div className="md:col-span-3">
           <form
             onSubmit={handleSave}
-            className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6 shadow-xs"
+            className="rounded-2xl border p-6 space-y-6 shadow-xs bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100"
           >
             {activeTab === "general" && (
               <div className="space-y-4">
-                <h3 className="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">
+                <h3 className="text-base font-semibold border-b pb-3 text-slate-900 dark:text-slate-100 border-slate-100 dark:border-slate-800">
                   General School Information
                 </h3>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-700 dark:text-slate-300">
                     Institution Name
                   </label>
                   <input
                     type="text"
                     value={settings.schoolName}
                     onChange={(e) => handleChange("schoolName", e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-600"
+                    placeholder="Enter institution name"
+                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-700 dark:text-slate-300">
                     Current Academic Year
                   </label>
                   <input
                     type="text"
                     value={settings.academicYear}
-                    onChange={(e) =>
-                      handleChange("academicYear", e.target.value)
-                    }
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-600"
+                    onChange={(e) => handleChange("academicYear", e.target.value)}
+                    placeholder="e.g. 2026-2027"
+                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -176,44 +152,39 @@ export default function SystemSettings() {
 
             {activeTab === "notifications" && (
               <div className="space-y-4">
-                <h3 className="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">
+                <h3 className="text-base font-semibold border-b pb-3 text-slate-900 dark:text-slate-100 border-slate-100 dark:border-slate-800">
                   Notification Preferences
                 </h3>
                 <div className="flex items-center justify-between py-2">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                       Email Alerts
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Send automatic emails for announcements and fee reminders.
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.emailAlerts}
-                    onChange={(e) =>
-                      handleChange("emailAlerts", e.target.checked)
-                    }
-                    className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                    onChange={(e) => handleChange("emailAlerts", e.target.checked)}
+                    className="w-4 h-4 rounded cursor-pointer text-blue-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-blue-500"
                   />
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                       SMS Gateway Integration
                     </p>
-                    <p className="text-xs text-slate-500">
-                      Broadcast text alerts for urgent school closures or
-                      notices.
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Broadcast text alerts for urgent school closures or notices.
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.smsGateway}
-                    onChange={(e) =>
-                      handleChange("smsGateway", e.target.checked)
-                    }
-                    className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                    onChange={(e) => handleChange("smsGateway", e.target.checked)}
+                    className="w-4 h-4 rounded cursor-pointer text-blue-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -221,37 +192,33 @@ export default function SystemSettings() {
 
             {activeTab === "security" && (
               <div className="space-y-4">
-                <h3 className="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">
+                <h3 className="text-base font-semibold border-b pb-3 text-slate-900 dark:text-slate-100 border-slate-100 dark:border-slate-800">
                   Security & Authentication
                 </h3>
                 <div className="flex items-center justify-between py-2">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
                       Require Two-Factor Auth (2FA)
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       Enforce 2FA for administrative and staff login accounts.
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.twoFactorAuth}
-                    onChange={(e) =>
-                      handleChange("twoFactorAuth", e.target.checked)
-                    }
-                    className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                    onChange={(e) => handleChange("twoFactorAuth", e.target.checked)}
+                    className="w-4 h-4 rounded cursor-pointer text-blue-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-700 dark:text-slate-300">
                     Session Timeout (Minutes)
                   </label>
                   <select
                     value={settings.sessionTimeout}
-                    onChange={(e) =>
-                      handleChange("sessionTimeout", e.target.value)
-                    }
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-600 bg-white"
+                    onChange={(e) => handleChange("sessionTimeout", e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
                   >
                     <option value="15">15 Minutes</option>
                     <option value="30">30 Minutes</option>
@@ -264,19 +231,17 @@ export default function SystemSettings() {
 
             {activeTab === "academic" && (
               <div className="space-y-4">
-                <h3 className="text-base font-semibold text-slate-900 border-b border-slate-100 pb-3">
+                <h3 className="text-base font-semibold border-b pb-3 text-slate-900 dark:text-slate-100 border-slate-100 dark:border-slate-800">
                   Academic & Library Rules
                 </h3>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-700 dark:text-slate-300">
                     Grading Calculation Scale
                   </label>
                   <select
                     value={settings.gradingScale}
-                    onChange={(e) =>
-                      handleChange("gradingScale", e.target.value)
-                    }
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-600 bg-white"
+                    onChange={(e) => handleChange("gradingScale", e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
                   >
                     <option value="percentage">Percentage (0 - 100%)</option>
                     <option value="gpa">GPA Scale (0.0 - 4.0)</option>
@@ -284,26 +249,24 @@ export default function SystemSettings() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1 text-slate-700 dark:text-slate-300">
                     Max Books Borrowable per Student
                   </label>
                   <input
                     type="number"
                     value={settings.libraryMaxBooks}
-                    onChange={(e) =>
-                      handleChange("libraryMaxBooks", e.target.value)
-                    }
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-600"
+                    onChange={(e) => handleChange("libraryMaxBooks", e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
                   />
                 </div>
               </div>
             )}
 
             {/* Submit Bar */}
-            <div className="pt-4 border-t border-slate-100 flex justify-end">
+            <div className="pt-4 border-t flex justify-end border-slate-100 dark:border-slate-800">
               <button
                 type="submit"
-                className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-xs"
+                className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
               >
                 <Save size={16} />
                 Save Changes

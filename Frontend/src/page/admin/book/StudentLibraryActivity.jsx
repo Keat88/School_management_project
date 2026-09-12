@@ -1,74 +1,110 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Search, Filter, UserCheck, Flame, Sun, Moon } from "lucide-react";
 import { BookIssureApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
 
-export default function StudentLibraryActivity() {
+export default function StudentLibraryActivity({ isDark: propIsDark = true }) {
   const navigate = useNavigate();
+  const [isDark, setIsDark] = useState(() => {
+    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    if (savedTheme !== null) {
+      return savedTheme === "dark" || savedTheme === "true";
+    }
+    return propIsDark;
+  });
+
   const [studentStats, setStudentStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("library_visits"); // Default to top visitors
-  const [isDark, setIsDark] = useState(true); // Toggle between Black (dark) and White (light) mode
+  const [activeSearch, setActiveSearch] = useState("");
+  const [sortBy, setSortBy] = useState("library_visits");
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const [perPage, setPerPage] = useState(10);
 
-  const fetchStudentStats = async (page = 1, currentSort = sortBy) => {
+  // Sync with localStorage changes across components/tabs
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      if (savedTheme !== null) {
+        setIsDark(savedTheme === "dark" || savedTheme === "true");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = !isDark;
+    setIsDark(newTheme);
+    localStorage.setItem("theme", newTheme ? "dark" : "light");
+    localStorage.setItem("darkMode", newTheme ? "true" : "false");
+  };
+
+  const fetchStudentStats = useCallback(async (page, searchQuery, currentSort) => {
     setLoading(true);
     try {
       const response = await BookIssureApi.getStudentStats({
-        search: search || undefined,
+        search: searchQuery || undefined,
         sort_by: currentSort,
         sort_order: "desc",
         page: page,
         per_page: perPage,
       });
 
-      const responseData = response.data?.data || response.data;
+      const responseData = response?.data?.data || response?.data;
 
       if (Array.isArray(responseData)) {
         setStudentStats(responseData);
         setTotalPages(1);
+        setTotalItems(responseData.length);
       } else if (responseData?.data && Array.isArray(responseData.data)) {
         setStudentStats(responseData.data);
-        setCurrentPage(responseData.current_page || 1);
+        setCurrentPage(responseData.current_page || page);
         setTotalPages(responseData.last_page || 1);
+        setTotalItems(responseData.total || responseData.data.length);
       } else {
         setStudentStats([]);
+        setTotalPages(1);
+        setTotalItems(0);
       }
     } catch (error) {
-      console.log("Error fetching student stats:", error);
+      console.error("Error fetching student stats:", error);
       setStudentStats([]);
+      setTotalPages(1);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
-  };
+  }, [perPage]);
 
   useEffect(() => {
-    fetchStudentStats(1, sortBy);
-  }, [sortBy]);
+    fetchStudentStats(currentPage, activeSearch, sortBy);
+  }, [currentPage, activeSearch, sortBy, fetchStudentStats]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+    setActiveSearch(search);
     setCurrentPage(1);
-    fetchStudentStats(1, sortBy);
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    fetchStudentStats(page, sortBy);
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
   };
 
   return (
     <div
-      className={`max-w-6xl mx-auto rounded-3xl p-6 sm:p-8 shadow-2xl font-sans my-8 transition-all space-y-6 ${
+      className={`lg:min-w-160 mx-auto rounded-lg p-6 sm:p-8  font-sans my-8 transition-colors space-y-6 ${
         isDark
           ? "bg-slate-900 border border-slate-800 text-slate-100"
-          : "bg-white border border-slate-200 text-slate-800"
+          : "bg-white border border-slate-200 text-slate-900"
       }`}
     >
       {/* Header Section */}
@@ -86,10 +122,10 @@ export default function StudentLibraryActivity() {
         </div>
         
         <div className="flex items-center gap-2.5">
-          {/* Theme Toggle Button (Black / White) */}
+          {/* Theme Toggle Button */}
           <button
             type="button"
-            onClick={() => setIsDark(!isDark)}
+            onClick={toggleTheme}
             className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer active:scale-95 border shadow-sm ${
               isDark
                 ? "bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700"
@@ -131,7 +167,7 @@ export default function StudentLibraryActivity() {
           className="flex gap-2 flex-1 w-full"
         >
           <div className="relative flex-1">
-            <span className={`absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none ${isDark ? "text-slate-400" : "text-slate-400"}`}>
+            <span className={`absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none ${isDark ? "text-slate-500" : "text-slate-400"}`}>
               <Search size={16} />
             </span>
             <input
@@ -141,8 +177,8 @@ export default function StudentLibraryActivity() {
               placeholder="Search student name..."
               className={`w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/25 transition-all ${
                 isDark
-                  ? "bg-slate-900 border-slate-700/80 text-slate-200 focus:border-indigo-500"
-                  : "bg-white border-slate-300 text-slate-800 focus:border-indigo-500"
+                  ? "bg-slate-900 border-slate-700/80 text-slate-200 placeholder-slate-500 focus:border-indigo-500"
+                  : "bg-white border-slate-300 text-slate-800 placeholder-slate-400 focus:border-indigo-500"
               }`}
             />
           </div>
@@ -179,7 +215,7 @@ export default function StudentLibraryActivity() {
       {/* Main Table */}
       <div className={`rounded-2xl border shadow-inner overflow-hidden ${isDark ? "bg-slate-950/40 border-slate-800/80" : "bg-white border-slate-200"}`}>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
               <tr className={`border-b text-xs font-bold uppercase tracking-wider ${isDark ? "bg-slate-900/80 border-slate-800 text-slate-400" : "bg-slate-100 border-slate-200 text-slate-600"}`}>
                 <th className="px-5 py-4 w-16">#N</th>
@@ -217,7 +253,7 @@ export default function StudentLibraryActivity() {
               ) : (
                 studentStats.map((student, index) => (
                   <tr
-                    key={student.student_id}
+                    key={student.student_id || index}
                     className={`transition-colors ${isDark ? "hover:bg-slate-900/60" : "hover:bg-slate-50/80"}`}
                   >
                     <td className={`px-5 py-4 font-medium ${isDark ? "text-slate-500" : "text-slate-500"}`}>
@@ -254,15 +290,15 @@ export default function StudentLibraryActivity() {
         </div>
       </div>
 
-      {!loading && totalPages > 1 && (
-        <div className="flex justify-center pt-2">
-          <Pagination
-            onPageChange={handlePageChange}
-            currentPage={currentPage}
-            totalPages={totalPages}
-          />
-        </div>
-      )}
+      {/* Pagination Component */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        perPage={perPage}
+        onPageChange={handlePageChange}
+        isDark={isDark}
+      />
     </div>
   );
 }

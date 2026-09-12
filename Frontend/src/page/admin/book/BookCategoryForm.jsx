@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { BookCategoryApi } from "../../../data/library";
+import { AlertCircle } from "lucide-react";
 
 export default function BookCategoryForm() {
   const { id } = useParams();
@@ -50,7 +51,6 @@ export default function BookCategoryForm() {
 
     try {
       if (isEditMode) {
-        // Ensure id is passed first to match BookCategoryApi.upDate(id, data)
         await BookCategoryApi.upDate(id, formData);
         setFeedback({
           type: "success",
@@ -79,25 +79,25 @@ export default function BookCategoryForm() {
 
   if (fetching) {
     return (
-      <div className="py-12 text-center text-gray-500">
+      <div className="py-12 text-center text-gray-500 dark:text-slate-400">
         <div className="flex flex-col items-center justify-center gap-2">
-          <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading books categories...</span>
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
+          <span>Loading book categories...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-w-160 mx-auto p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
-      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800">
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
+      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
+        <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-slate-100">
           {isEditMode ? "Edit Book Category" : "Add New Book Category"}
         </h2>
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center space-x-1"
+          className="px-4 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center space-x-1"
         >
           <span>← Back</span>
         </button>
@@ -105,23 +105,24 @@ export default function BookCategoryForm() {
 
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-lg text-sm font-medium ${
+          className={`p-4 mb-6 rounded-xl text-sm font-medium border flex items-center gap-2.5 shadow-sm transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40"
+              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40"
           }`}
         >
-          {feedback.text}
+          {feedback.type === "error" && <AlertCircle size={18} className="shrink-0" />}
+          <span>{feedback.text}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <h3 className="text-md font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-indigo-600 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
             Category Information
           </h3>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
               Category Name
             </label>
             <input
@@ -132,23 +133,23 @@ export default function BookCategoryForm() {
               required
               maxLength={255}
               placeholder="e.g., Science Fiction"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 space-x-3">
+        <div className="flex items-center justify-end pt-6 border-t border-gray-100 dark:border-slate-800 space-x-3">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
           >
             {loading
               ? "Saving..."

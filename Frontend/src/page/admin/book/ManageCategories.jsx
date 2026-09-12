@@ -5,6 +5,14 @@ import { BookCategoryApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
 
 export default function ManageCategories() {
+  const [isDark, setIsDark] = useState(() => {
+    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    if (savedTheme !== null) {
+      return savedTheme === "dark" || savedTheme === "true";
+    }
+    return document.documentElement.classList.contains("dark");
+  });
+
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
@@ -14,6 +22,19 @@ export default function ManageCategories() {
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Sync with localStorage changes across components/tabs if theme toggles elsewhere
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      if (savedTheme !== null) {
+        setIsDark(savedTheme === "dark" || savedTheme === "true");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const fetchCategories = async (page = 1, searchTerm = search) => {
     setLoading(true);
@@ -64,10 +85,6 @@ export default function ManageCategories() {
     fetchCategories(1, search);
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this category?"))
       return;
@@ -84,100 +101,114 @@ export default function ManageCategories() {
   };
 
   return (
-    <div className="min-w-160 mx-auto">
-      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800">
-          Manage Book Categories
-        </h2>
+    <div className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6 px-4 py-4 text-gray-900 dark:text-slate-100 transition-colors duration-200`}>
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-100 dark:border-slate-800">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-slate-100">
+            Manage Book Categories
+          </h2>
+          <p className="text-xs sm:text-sm mt-1 text-gray-500 dark:text-slate-400">
+            Browse, search, and manage library categories
+          </p>
+        </div>
         <NavLink
           to="/admin/library/category/add"
-          className="flex items-center gap-2 rounded-lg bg-blue-600 text-white text-sm font-medium px-4 py-2 hover:bg-blue-700 transition-colors"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-blue-700 transition-colors shadow-sm active:scale-95 duration-150"
         >
           <Plus size={16} />
-          Add Category
+          <span>Add Category</span>
         </NavLink>
       </div>
 
+      {/* Feedback Alert */}
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-lg text-sm font-medium ${
+          className={`p-4 rounded-lg text-sm font-medium border transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-400 dark:border-green-900/60"
+              : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-900/60"
           }`}
         >
           {feedback.text}
         </div>
       )}
 
-      <form onSubmit={handleSearchSubmit} className="flex gap-2 mb-6">
+      {/* Search & Filter Form */}
+      <form
+        onSubmit={handleSearchSubmit}
+        className="flex flex-col sm:flex-row gap-2.5 p-4 rounded-lg border transition-colors bg-gray-50 border-gray-200/80 dark:bg-slate-900 dark:border-slate-800"
+      >
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+          <Search className="absolute left-3 top-2.5 text-gray-400 dark:text-slate-500" size={18} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search categories..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-white border-gray-200 text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
           />
         </div>
-        <button
-          type="button"
-          onClick={handleReset}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-400 transition-colors"
-        >
-          Reset
-        </button>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
-        >
-          Search
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            className="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-xs cursor-pointer"
+          >
+            Search
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+          >
+            Reset
+          </button>
+        </div>
       </form>
 
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
+      {/* Table Container */}
+      <div className="rounded-lg border overflow-hidden transition-colors bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-800">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase">
-              <th className="py-3 px-4">Category Name</th>
-              <th className="py-3 px-4">Created At</th>
-              <th className="py-3 px-4 text-right">Actions</th>
+            <tr className="border-b text-xs font-semibold uppercase tracking-wider bg-gray-50 border-gray-100 text-gray-500 dark:bg-slate-800/60 dark:border-slate-800 dark:text-slate-400">
+              <th className="py-3.5 px-4">Category Name</th>
+              <th className="py-3.5 px-4">Created At</th>
+              <th className="py-3.5 px-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 text-sm text-gray-700">
+          <tbody className="divide-y text-sm divide-gray-100 text-gray-700 dark:divide-slate-800 dark:text-slate-300">
             {loading ? (
               <tr>
-                <td colSpan="6" className="py-12 text-center text-gray-400">
+                <td colSpan="3" className="py-12 text-center text-gray-400 dark:text-slate-400">
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
-                    <span>Loading books...</span>
+                    <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-indigo-400"></div>
+                    <span>Loading categories...</span>
                   </div>
                 </td>
               </tr>
             ) : categories.length === 0 ? (
               <tr>
-                <td colSpan="3" className="py-6 text-center text-gray-400">
-                  No categories found.
+                <td colSpan="3" className="py-12 text-center text-gray-400 dark:text-slate-400">
+                  <span>No categories found.</span>
                 </td>
               </tr>
             ) : (
               categories.map((cat) => (
-                <tr key={cat.id} className="hover:bg-gray-50/50">
-                  <td className="py-3 px-4 font-medium text-gray-800">
+                <tr key={cat.id} className="transition-colors hover:bg-gray-50/60 dark:hover:bg-slate-800/40">
+                  <td className="py-3.5 px-4 font-semibold text-gray-800 dark:text-slate-100">
                     {cat.book_category}
                   </td>
-                  <td className="py-3 px-4 text-gray-500">
+                  <td className="py-3.5 px-4 text-xs text-gray-500 dark:text-slate-400 font-mono">
                     {cat.created_at
                       ? new Date(cat.created_at).toLocaleDateString()
                       : "-"}
                   </td>
-                  <td className="py-3 px-4 text-right space-x-1">
+                  <td className="py-3.5 px-4 text-right space-x-1.5">
                     <button
                       onClick={() =>
                         navigate(`/admin/library/category/view/${cat.id}`)
                       }
-                      className="p-1.5 bg-blue-100 text-blue-600 hover:bg-blue-200 duration-200 transition-colors rounded-lg inline-block"
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border cursor-pointer text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-950/40 dark:border-blue-900/60 dark:hover:bg-blue-900/50"
                       title="View"
                     >
                       View
@@ -186,14 +217,14 @@ export default function ManageCategories() {
                       onClick={() =>
                         navigate(`/admin/library/category/add/${cat.id}`)
                       }
-                      className="p-1.5 text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors inline-block"
-                      title="Update"
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border cursor-pointer text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200 dark:text-indigo-400 dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:hover:bg-indigo-900/50"
+                      title="Edit"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(cat.id)}
-                      className="p-1.5 text-red-600 rounded-lg bg-red-100 duration-200 transition-colors hover:bg-red-200 inline-block"
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border cursor-pointer text-red-600 bg-red-50 border-red-200 hover:bg-red-100 dark:text-red-400 dark:bg-red-950/40 dark:border-red-900/60 dark:hover:bg-red-900/50"
                       title="Delete"
                     >
                       Delete
@@ -206,11 +237,13 @@ export default function ManageCategories() {
         </table>
       </div>
 
-      <div className="mt-4">
+      {/* Pagination Footer */}
+      <div className="pt-2">
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={handlePageChange}
+          onPageChange={(page) => setCurrentPage(page)}
+          isDark={isDark}
         />
       </div>
     </div>

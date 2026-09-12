@@ -5,12 +5,12 @@ import WhyChooseUsSection from "./WhyChooseUsSection";
 
 const Home = () => {
   return (
-    <>
+    <div className="bg-white dark:bg-slate-950 transition-colors duration-300">
       <HeroSection />
       <StatsBar />
       <TestimonialsSection />
       <WhyChooseUsSection />
-    </>
+    </div>
   );
 };
 

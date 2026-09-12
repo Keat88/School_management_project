@@ -43,7 +43,6 @@ class ContactController extends Controller
             'message' => 'required|string',
             'status' => 'sometimes|in:unread,read,resolved',
         ]);
-
         $contact = Contact::create($validated);
 
         return response()->json([
@@ -52,7 +51,6 @@ class ContactController extends Controller
             'data' => $contact->load('user'),
         ], 201);
     }
-
     /**
      * Display the specified resource.
      */

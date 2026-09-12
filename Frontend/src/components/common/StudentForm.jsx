@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { studentData } from "../../data/StudentsApi";
 import { useNavigate, useParams } from "react-router-dom";
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, AlertCircle } from "lucide-react";
 import { classRoomApi } from "../../data/classrooms";
 
 const INITIAL_FORM_STATE = {
@@ -19,10 +19,11 @@ const INITIAL_FORM_STATE = {
   student_phone: "",
 };
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
 export default function StudentForm({
   student: propStudent = null,
   onSuccess,
-  isDark = false,
 }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -43,7 +44,21 @@ export default function StudentForm({
   const [feedback, setFeedback] = useState(null);
   const [classRoomm, setClassRoom] = useState([]);
 
-  // Fetch Classrooms
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreviewStudent?.startsWith("blob:")) URL.revokeObjectURL(imagePreviewStudent);
+      if (imagePreviewParent?.startsWith("blob:")) URL.revokeObjectURL(imagePreviewParent);
+    };
+  }, [imagePreviewStudent, imagePreviewParent]);
+
   const fetchClass = useCallback(async () => {
     try {
       const response = await classRoomApi.getAll();
@@ -52,10 +67,14 @@ export default function StudentForm({
         response?.data?.data ||
         response?.data ||
         [];
-      setClassRoom(Array.isArray(classData) ? classData : []);
+      if (isMounted.current) {
+        setClassRoom(Array.isArray(classData) ? classData : []);
+      }
     } catch (error) {
       console.error("Error fetching classes:", error);
-      setClassRoom([]);
+      if (isMounted.current) {
+        setClassRoom([]);
+      }
     }
   }, []);
 
@@ -63,7 +82,6 @@ export default function StudentForm({
     fetchClass();
   }, [fetchClass]);
 
-  // Fetch student details if ID is present and no prop passed
   useEffect(() => {
     if (!propStudent && id) {
       setFetchingStudent(true);
@@ -71,14 +89,17 @@ export default function StudentForm({
         .getShow(id)
         .then((response) => {
           const studentRes = response?.data?.data || response?.data;
-          setFetchedStudent(studentRes);
+          if (isMounted.current) {
+            setFetchedStudent(studentRes);
+          }
         })
         .catch((error) => console.error("Failed to load student data", error))
-        .finally(() => setFetchingStudent(false));
+        .finally(() => {
+          if (isMounted.current) setFetchingStudent(false);
+        });
     }
   }, [propStudent, id]);
 
-  // Populate Form Fields
   useEffect(() => {
     if (currentStudent) {
       setFormData({
@@ -123,29 +144,29 @@ export default function StudentForm({
     }
   }, [currentStudent]);
 
-  // Image Handlers with URL memory leak prevention
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setStudentImage(file);
-      const objectUrl = URL.createObjectURL(file);
-      setImagePreviewStudent((prevUrl) => {
-        if (prevUrl?.startsWith("blob:")) URL.revokeObjectURL(prevUrl);
-        return objectUrl;
-      });
+  const handleImageValidation = (file, setImage, setPreview) => {
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setFeedback({ type: "error", text: "Image file is too large. Max size is 2MB." });
+      return;
     }
+
+    setImage(file);
+    const objectUrl = URL.createObjectURL(file);
+    setPreview((prevUrl) => {
+      if (prevUrl?.startsWith("blob:")) URL.revokeObjectURL(prevUrl);
+      return objectUrl;
+    });
+    setFeedback(null);
+  };
+
+  const handleImageChange = (e) => {
+    handleImageValidation(e.target.files[0], setStudentImage, setImagePreviewStudent);
   };
 
   const handleImageParentChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setParentImage(file);
-      const objectUrl = URL.createObjectURL(file);
-      setImagePreviewParent((prevUrl) => {
-        if (prevUrl?.startsWith("blob:")) URL.revokeObjectURL(prevUrl);
-        return objectUrl;
-      });
-    }
+    handleImageValidation(e.target.files[0], setParentImage, setImagePreviewParent);
   };
 
   const handleChange = (e) => {
@@ -153,7 +174,6 @@ export default function StudentForm({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -180,80 +200,81 @@ export default function StudentForm({
     try {
       if (isEdit) {
         await studentData.upDate(activeId, data);
-        setFeedback({ type: "success", text: "Student updated successfully!" });
+        if (isMounted.current) {
+          setFeedback({ type: "success", text: "Student updated successfully!" });
+        }
       } else {
         await studentData.addNew(data);
-        setFeedback({ type: "success", text: "Student added successfully!" });
+        if (isMounted.current) {
+          setFeedback({ type: "success", text: "Student added successfully!" });
+        }
       }
 
       if (onSuccess) {
         onSuccess();
       } else {
-        setTimeout(() => navigate("/admin/students"), 1000);
+        setTimeout(() => {
+          if (isMounted.current) navigate("/admin/students");
+        }, 1000);
       }
     } catch (error) {
-      setFeedback({
-        type: "error",
-        text:
-          error.response?.data?.message ||
-          "Something went wrong. Please check your inputs.",
-      });
+      if (isMounted.current) {
+        setFeedback({
+          type: "error",
+          text:
+            error.response?.data?.message ||
+            "Something went wrong. Please check your inputs.",
+        });
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   };
 
   return (
     <>
       {fetchingStudent && (
-        <div className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-500"}`}>
+        <div className="py-12 text-center text-gray-500 dark:text-slate-400">
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
-              isDark ? "border-indigo-400" : "border-indigo-300"
-            }`}></div>
+            <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
             <span>Loading student...</span>
           </div>
         </div>
       )}
 
-      <div className={`mx-auto p-6 rounded-xl border transition-colors ${
-        isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
-      }`}>
-        <h2 className={`text-xl font-bold mb-6 ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+      <div className="mx-auto p-6 sm:p-8 rounded-2xl border shadow-sm transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
+        <h2 className="text-xl font-bold mb-6 tracking-tight text-gray-900 dark:text-slate-100">
           {isEdit ? "Edit Student" : "Add New Student"}
         </h2>
 
         {feedback && (
           <div
-            className={`p-4 mb-6 rounded-lg text-sm font-medium border ${
+            className={`p-4 mb-6 rounded-xl text-sm font-medium border flex items-center gap-2.5 shadow-sm transition-all ${
               feedback.type === "success"
-                ? isDark
-                  ? "bg-green-500/20 text-green-300 border-green-500/30"
-                  : "bg-green-50 text-green-600 border-green-200"
-                : isDark
-                  ? "bg-red-500/20 text-red-300 border-red-500/30"
-                  : "bg-red-50 text-red-600 border-red-200"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40"
+                : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40"
             }`}
           >
-            {feedback.text}
+            {feedback.type === "error" && <AlertCircle size={18} className="shrink-0" />}
+            <span>{feedback.text}</span>
           </div>
         )}
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-6"
+          className="space-y-8"
           encType="multipart/form-data"
         >
           {/* Student Information Section */}
-          <div>
-            <h3 className={`text-md font-semibold mb-4 pb-2 border-b ${
-              isDark ? "text-slate-200 border-slate-800" : "text-gray-700 border-gray-100"
-            }`}>
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-indigo-600 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
               Student Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Student Name
                 </label>
                 <input
@@ -262,35 +283,27 @@ export default function StudentForm({
                   value={formData.student_name}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="Enter full name"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
-              {/* Read-only Roll Number field displayed ONLY in Edit mode */}
               {isEdit && currentStudent?.roll_number && (
                 <div>
-                  <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                     Roll Number
                   </label>
                   <input
                     type="text"
                     value={currentStudent.roll_number}
                     disabled
-                    className={`w-full px-3 py-2 border rounded-lg text-sm cursor-not-allowed ${
-                      isDark
-                        ? "bg-slate-800/50 border-slate-800 text-slate-500"
-                        : "bg-gray-100 border-gray-200 text-gray-500"
-                    }`}
+                    className="w-full px-3.5 py-2.5 border rounded-xl text-sm cursor-not-allowed bg-gray-100 border-gray-200 text-gray-500 dark:bg-slate-800/40 dark:border-slate-800 dark:text-slate-400"
                   />
                 </div>
               )}
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Date of Birth
                 </label>
                 <input
@@ -299,36 +312,28 @@ export default function StudentForm({
                   value={formData.date_of_birth}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:[color-scheme:dark]"
                 />
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Gender
                 </label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
                 >
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="male" className="dark:bg-slate-800">Male</option>
+                  <option value="female" className="dark:bg-slate-800">Female</option>
+                  <option value="other" className="dark:bg-slate-800">Other</option>
                 </select>
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Class Room
                 </label>
                 <select
@@ -336,15 +341,11 @@ export default function StudentForm({
                   value={formData.class_id}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
                 >
-                  <option value="">--Select class--</option>
+                  <option value="" className="dark:bg-slate-800">--Select class--</option>
                   {classRoomm.map((item) => (
-                    <option key={item.id} value={item.id}>
+                    <option key={item.id} value={item.id} className="dark:bg-slate-800">
                       {item.grade && item.section
                         ? `${item.grade}-${item.section}`
                         : item.name}
@@ -354,24 +355,21 @@ export default function StudentForm({
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
-                  Student Phone (Optional)
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
+                  Student Phone <span className="font-normal opacity-70">(Optional)</span>
                 </label>
                 <input
                   type="text"
                   name="student_phone"
                   value={formData.student_phone}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="e.g. +123456789"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Student Email
                 </label>
                 <input
@@ -380,16 +378,13 @@ export default function StudentForm({
                   value={formData.email_student}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="student@example.com"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Address
                 </label>
                 <textarea
@@ -398,16 +393,13 @@ export default function StudentForm({
                   value={formData.address}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="Enter full address"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 ></textarea>
               </div>
 
-              <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Student Image
                 </label>
                 <div className="flex items-center gap-4 mt-2">
@@ -415,14 +407,10 @@ export default function StudentForm({
                     <img
                       src={imagePreviewStudent}
                       alt="Student Preview"
-                      className={`w-16 h-16 rounded-lg object-cover border shrink-0 ${
-                        isDark ? "border-slate-700" : "border-gray-200"
-                      }`}
+                      className="w-16 h-16 rounded-xl object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
                     />
                   ) : (
-                    <div className={`w-16 h-16 rounded-lg border flex items-center justify-center shrink-0 ${
-                      isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-50 border-gray-200 text-gray-400"
-                    }`}>
+                    <div className="w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 shadow-sm bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
                       <ImageIcon size={24} />
                     </div>
                   )}
@@ -430,11 +418,7 @@ export default function StudentForm({
                     type="file"
                     accept="image/png, image/jpeg"
                     onChange={handleImageChange}
-                    className={`w-full text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
-                      isDark
-                        ? "text-slate-400 file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30"
-                        : "text-gray-500 file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
-                    }`}
+                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-500/20 dark:file:text-indigo-300 dark:hover:file:bg-indigo-500/30 file:transition-colors"
                   />
                 </div>
               </div>
@@ -442,15 +426,13 @@ export default function StudentForm({
           </div>
 
           {/* Parent Information Section */}
-          <div>
-            <h3 className={`text-md font-semibold mb-4 pb-2 border-b ${
-              isDark ? "text-slate-200 border-slate-800" : "text-gray-700 border-gray-100"
-            }`}>
+          <div className="space-y-4 pt-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-indigo-600 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
               Parent Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Father Name
                 </label>
                 <input
@@ -459,16 +441,13 @@ export default function StudentForm({
                   value={formData.father_name}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="Father's full name"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Mother Name
                 </label>
                 <input
@@ -477,16 +456,13 @@ export default function StudentForm({
                   value={formData.mother_name}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="Mother's full name"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Parent Email
                 </label>
                 <input
@@ -494,16 +470,13 @@ export default function StudentForm({
                   name="email_parent"
                   value={formData.email_parent}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="parent@example.com"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Parent Phone
                 </label>
                 <input
@@ -512,16 +485,13 @@ export default function StudentForm({
                   value={formData.parent_phone}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="e.g. +123456789"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Occupation
                 </label>
                 <input
@@ -529,16 +499,13 @@ export default function StudentForm({
                   name="occupation"
                   value={formData.occupation}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  placeholder="Parent's occupation"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
-              <div>
-                <label className={`block text-sm font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+              <div className="md:col-span-2">
+                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Parent Image
                 </label>
                 <div className="flex items-center gap-4 mt-2">
@@ -546,14 +513,10 @@ export default function StudentForm({
                     <img
                       src={imagePreviewParent}
                       alt="Parent Preview"
-                      className={`w-16 h-16 rounded-lg object-cover border shrink-0 ${
-                        isDark ? "border-slate-700" : "border-gray-200"
-                      }`}
+                      className="w-16 h-16 rounded-xl object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
                     />
                   ) : (
-                    <div className={`w-16 h-16 rounded-lg border flex items-center justify-center shrink-0 ${
-                      isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-50 border-gray-200 text-gray-400"
-                    }`}>
+                    <div className="w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 shadow-sm bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
                       <ImageIcon size={24} />
                     </div>
                   )}
@@ -561,35 +524,25 @@ export default function StudentForm({
                     type="file"
                     accept="image/png, image/jpeg"
                     onChange={handleImageParentChange}
-                    className={`w-full text-sm cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold ${
-                      isDark
-                        ? "text-slate-400 file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30"
-                        : "text-gray-500 file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
-                    }`}
+                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-500/20 dark:file:text-indigo-300 dark:hover:file:bg-indigo-500/30 file:transition-colors"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 pt-4">
+          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-100 dark:border-slate-800">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                isDark
-                  ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`px-6 py-2 rounded-lg text-sm font-medium text-white transition-colors cursor-pointer disabled:opacity-50 ${
-                isDark ? "bg-indigo-600 hover:bg-indigo-500" : "bg-blue-600 hover:bg-blue-700"
-              }`}
+              className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
             >
               {loading
                 ? "Saving..."

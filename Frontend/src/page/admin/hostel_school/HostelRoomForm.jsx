@@ -56,8 +56,7 @@ export default function HostelRoomForm() {
           type: "error",
           text: "Failed to load form dependencies.",
         });
-      }
-      fontFinally: {
+      } finally {
         setFetching(false);
       }
     };
@@ -124,9 +123,9 @@ export default function HostelRoomForm() {
 
   if (fetching) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3">
-        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-gray-500 text-sm font-medium">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3 dark:text-slate-100">
+        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin dark:border-blue-500"></div>
+        <p className="text-gray-500 text-sm font-medium dark:text-slate-400">
           Loading room details...
         </p>
       </div>
@@ -134,22 +133,22 @@ export default function HostelRoomForm() {
   }
 
   return (
-    <div className="lg:min-w-160 w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div className="lg:min-w-160 w-full mx-auto px-4 sm:px-6 py-6 space-y-6 font-sans dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
             to="/admin/hostel-rooms"
-            className="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors shrink-0"
+            className="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors shrink-0 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100"
             title="Back"
           >
             <ArrowLeft size={18} />
           </Link>
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-slate-100">
               {isEditing ? "Edit Hostel Room" : "Add New Hostel Room"}
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">
               {isEditing
                 ? "Update room information and configuration"
                 : "Fill in details to register a new hostel room"}
@@ -163,8 +162,8 @@ export default function HostelRoomForm() {
         <div
           className={`p-4 rounded-xl text-sm font-medium border transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-700 border-green-200"
-              : "bg-red-50 text-red-700 border-red-200"
+              ? "bg-green-50 text-green-700 border-green-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30"
+              : "bg-red-50 text-red-700 border-red-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/30"
           }`}
         >
           {feedback.text}
@@ -174,23 +173,23 @@ export default function HostelRoomForm() {
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-5 sm:p-8 rounded-2xl border border-gray-200 shadow-xs space-y-6"
+        className="bg-white p-5 sm:p-8 rounded-2xl border border-gray-200 shadow-xs space-y-6 dark:bg-slate-900 dark:border-slate-800"
       >
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-400">
             Basic Information
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
                 Hostel *
               </label>
               <select
                 value={hostelId}
                 onChange={(e) => setHostelId(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
               >
                 <option value="">Select Hostel</option>
                 {hostels.map((h) => (
@@ -202,7 +201,7 @@ export default function HostelRoomForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
                 Room Number *
               </label>
               <input
@@ -211,14 +210,14 @@ export default function HostelRoomForm() {
                 onChange={(e) => setRoomNumber(e.target.value)}
                 required
                 placeholder="e.g. 102"
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
                 Block Name
               </label>
               <input
@@ -226,19 +225,19 @@ export default function HostelRoomForm() {
                 value={blockName}
                 onChange={(e) => setBlockName(e.target.value)}
                 placeholder="e.g. Block A"
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
                 Room Type *
               </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
               >
                 <option value="standard">Standard</option>
                 <option value="deluxe">Deluxe</option>
@@ -250,22 +249,22 @@ export default function HostelRoomForm() {
           </div>
         </div>
 
-        <hr className="border-gray-100" />
+        <hr className="border-gray-100 dark:border-slate-800" />
 
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-400">
             Specifications & Pricing
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
                 Gender *
               </label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all capitalize"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all capitalize dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -274,7 +273,7 @@ export default function HostelRoomForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
                 Number of Beds *
               </label>
               <input
@@ -284,12 +283,12 @@ export default function HostelRoomForm() {
                 onChange={(e) => setNumberOfBeds(e.target.value)}
                 required
                 placeholder="e.g. 2"
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
                 Cost Per Bed ($) *
               </label>
               <input
@@ -300,19 +299,19 @@ export default function HostelRoomForm() {
                 onChange={(e) => setCostPerBed(e.target.value)}
                 required
                 placeholder="0.00"
-                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all"
+                className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
               Status *
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all capitalize"
+              className="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all capitalize dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
             >
               <option value="available">Available</option>
               <option value="occupied">Occupied</option>
@@ -321,30 +320,30 @@ export default function HostelRoomForm() {
           </div>
         </div>
 
-        <hr className="border-gray-100" />
+        <hr className="border-gray-100 dark:border-slate-800" />
 
         {/* Media Upload */}
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
             Room Image
           </label>
-          <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 hover:bg-gray-50 transition-colors">
+          <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 hover:bg-gray-50 transition-colors dark:border-slate-700 dark:bg-slate-800/40 dark:hover:bg-slate-800/60">
             {imagePreview ? (
               <div className="relative group shrink-0">
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  className="w-24 h-24 sm:w-20 sm:h-20 rounded-xl object-cover border border-gray-200 shadow-xs"
+                  className="w-24 h-24 sm:w-20 sm:h-20 rounded-xl object-cover border border-gray-200 shadow-xs dark:border-slate-700"
                 />
               </div>
             ) : (
-              <div className="w-20 h-20 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 shrink-0">
+              <div className="w-20 h-20 rounded-xl bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 shrink-0 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-500">
                 <ImageIcon size={28} />
               </div>
             )}
 
             <div className="flex-1 text-center sm:text-left space-y-1">
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 shadow-xs transition-colors">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 shadow-xs transition-colors dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-700">
                 <Upload size={16} />
                 <span>Choose Image</span>
                 <input
@@ -354,23 +353,23 @@ export default function HostelRoomForm() {
                   className="hidden"
                 />
               </label>
-              <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400">PNG, JPG up to 5MB</p>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-100">
+        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <Link
             to="/admin/hostel-rooms"
-            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 text-center transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 text-center transition-colors dark:bg-slate-800 dark:text-slate-300 dark:border dark:border-slate-700 dark:hover:bg-slate-700"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs"
+            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs dark:bg-blue-600 dark:hover:bg-blue-500"
           >
             <Save size={16} />
             {loading ? "Saving..." : isEditing ? "Update Room" : "Save Room"}

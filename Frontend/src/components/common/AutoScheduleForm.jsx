@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../../data/api";
 import { useNavigate } from "react-router-dom";
-import { Wand2, ArrowLeft, Plus, Trash2, Clock, Calendar, BookOpen, Users } from "lucide-react";
+import { Wand2, ArrowLeft, Plus, Trash2, Clock, Calendar, BookOpen } from "lucide-react";
 
 export default function AutoScheduleForm() {
   const navigate = useNavigate();
@@ -85,7 +85,6 @@ export default function AutoScheduleForm() {
   };
 
   const handleTimeSlotChange = (index, field, value) => {
-    const updated = [...prevTimeSlots => prevTimeSlots]; // fixed scoping below
     setFormData(prev => {
       const slots = [...prev.time_slots];
       slots[index][field] = value;
@@ -129,18 +128,18 @@ export default function AutoScheduleForm() {
   };
 
   return (
-    <div className=" lg:min-w-160 mx-auto rounded-lg p-6 bg-slate-500 border border-slate-700 shadow-xl text-slate-100 font-sans my-6">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-700">
+    <div className="lg:min-w-160 mx-auto rounded-2xl p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-xl text-gray-800 dark:text-slate-100 font-sans my-6">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-slate-700 transition-all cursor-pointer border border-slate-700 mb-2"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-slate-700 transition-all cursor-pointer border border-gray-200 dark:border-slate-700 mb-2"
           >
             <ArrowLeft size={14} /> Back
           </button>
-          <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <Wand2 className="text-indigo-400" size={22} />
+          <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+            <Wand2 className="text-indigo-600 dark:text-indigo-400" size={22} />
             Auto-Generate Weekly Timetable
           </h3>
         </div>
@@ -150,8 +149,8 @@ export default function AutoScheduleForm() {
         <div
           className={`p-4 mb-5 rounded-xl text-sm font-medium ${
             feedback.type === "success"
-              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-              : "bg-rose-500/20 text-rose-400 border border-rose-500/30"
+              ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30"
+              : "bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30"
           }`}
         >
           {feedback.text}
@@ -161,12 +160,12 @@ export default function AutoScheduleForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Class Selection */}
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5">
             Target Class Room
           </label>
           <select
             name="class_id"
-            className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-slate-200 text-sm focus:outline-none focus:border-indigo-500 transition-all"
+            className="w-full px-3.5 py-2.5 bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-800 rounded-xl text-gray-800 dark:text-slate-100 text-sm focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 transition-all"
             value={formData.class_id}
             onChange={(e) => setFormData({ ...formData, class_id: e.target.value })}
             required
@@ -181,15 +180,15 @@ export default function AutoScheduleForm() {
         </div>
 
         {/* Subjects & Teachers Pairs */}
-        <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/60 space-y-3">
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <BookOpen size={14} className="text-indigo-400" /> Subjects & Assigned Teachers (8-9+ Subjects)
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 flex items-center gap-1.5">
+              <BookOpen size={14} className="text-indigo-600 dark:text-indigo-400" /> Subjects & Assigned Teachers (8-9+ Subjects)
             </label>
             <button
               type="button"
               onClick={addAssignment}
-              className="inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold cursor-pointer"
             >
               <Plus size={14} /> Add Subject Pair
             </button>
@@ -202,7 +201,7 @@ export default function AutoScheduleForm() {
                   value={pair.subject_id}
                   onChange={(e) => handleAssignmentChange(index, 'subject_id', e.target.value)}
                   required
-                  className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="flex-1 px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
                 >
                   <option value="">Select Subject {index + 1}</option>
                   {dropdowns.subjects.map((sub) => (
@@ -216,7 +215,7 @@ export default function AutoScheduleForm() {
                   value={pair.teacher_id}
                   onChange={(e) => handleAssignmentChange(index, 'teacher_id', e.target.value)}
                   required
-                  className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="flex-1 px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
                 >
                   <option value="">Select Teacher</option>
                   {dropdowns.teachers.map((t) => (
@@ -230,7 +229,7 @@ export default function AutoScheduleForm() {
                   <button
                     type="button"
                     onClick={() => removeAssignment(index)}
-                    className="p-2 text-slate-400 hover:text-rose-400 bg-slate-800 rounded-xl border border-slate-700 cursor-pointer"
+                    className="p-2 text-gray-400 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 cursor-pointer"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -241,9 +240,9 @@ export default function AutoScheduleForm() {
         </div>
 
         {/* Days of the Week Selection */}
-        <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/60">
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
-            <Calendar size={14} className="text-indigo-400" /> Active Days for Schedule Distribution
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800">
+          <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
+            <Calendar size={14} className="text-indigo-600 dark:text-indigo-400" /> Active Days for Schedule Distribution
           </label>
           <div className="flex flex-wrap gap-2">
             {allDays.map((day) => {
@@ -256,7 +255,7 @@ export default function AutoScheduleForm() {
                   className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                     isSelected
                       ? "bg-indigo-600 text-white border-indigo-500 shadow-md"
-                      : "bg-slate-900 text-slate-400 border-slate-700 hover:bg-slate-700"
+                      : "bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700"
                   }`}
                 >
                   {day}
@@ -267,15 +266,15 @@ export default function AutoScheduleForm() {
         </div>
 
         {/* Time Slots Setup */}
-        <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-700/60 space-y-3">
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-              <Clock size={14} className="text-indigo-400" /> Daily Time Slots / Periods
+            <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 flex items-center gap-1.5">
+              <Clock size={14} className="text-indigo-600 dark:text-indigo-400" /> Daily Time Slots / Periods
             </label>
             <button
               type="button"
               onClick={addTimeSlot}
-              className="inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 font-semibold cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold cursor-pointer"
             >
               <Plus size={14} /> Add Time Slot
             </button>
@@ -290,15 +289,15 @@ export default function AutoScheduleForm() {
                     value={slot.start}
                     onChange={(e) => handleTimeSlotChange(index, 'start', e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
                   />
-                  <span className="text-slate-400 text-xs font-medium">to</span>
+                  <span className="text-gray-400 dark:text-slate-400 text-xs font-medium">to</span>
                   <input
                     type="time"
                     value={slot.end}
                     onChange={(e) => handleTimeSlotChange(index, 'end', e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
@@ -306,7 +305,7 @@ export default function AutoScheduleForm() {
                   <button
                     type="button"
                     onClick={() => removeTimeSlot(index)}
-                    className="p-2 text-slate-400 hover:text-rose-400 bg-slate-800 rounded-xl border border-slate-700 cursor-pointer"
+                    className="p-2 text-gray-400 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 cursor-pointer"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -317,10 +316,10 @@ export default function AutoScheduleForm() {
         </div>
 
         {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-700">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <button
             type="button"
-            className="px-4 py-2.5 bg-slate-900 text-slate-300 rounded-xl text-xs font-semibold hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
+            className="px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700 transition-all cursor-pointer"
             onClick={() => navigate(-1)}
           >
             Cancel

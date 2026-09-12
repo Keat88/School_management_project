@@ -28,8 +28,8 @@ class AuthController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'role' => 'user',
         ]);
-        
         $deviceName = 'auth_token';
         $access_token = $user->createToken($deviceName)->plainTextToken;
 
@@ -37,7 +37,6 @@ class AuthController extends Controller
             'status' => 'success',
             'message' => 'Account registered successfully!',
             'token' => $access_token,
-            'role' => $user->role,
             'user' => $user
         ], 201);
     }

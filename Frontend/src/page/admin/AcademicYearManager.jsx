@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { api } from "../../data/api";
-import { useNavigate } from "react-router-dom";
 import Pagination from "../../hooks/Pagination";
 
 export const academicYearApi = {
@@ -10,12 +9,11 @@ export const academicYearApi = {
   delete: (id) => api.delete(`/academic-years/destroy/${id}`),
 };
 
-export default function AcademicYearManager({ isDark = true }) {
+export default function AcademicYearManager() {
   const [academicYears, setAcademicYears] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const navigate = useNavigate();
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +32,6 @@ export default function AcademicYearManager({ isDark = true }) {
     fetchAcademicYears();
   }, []);
 
-  // Helper to extract YYYY-MM-DD for <input type="date" />
   const formatDateForInput = (dateString) => {
     if (!dateString) return "";
     return dateString.split("T")[0];
@@ -53,17 +50,22 @@ export default function AcademicYearManager({ isDark = true }) {
       setAcademicYears(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Failed to load academic years", error);
-      setAcademicYears([]); // Fallback to an empty array on error
+      setAcademicYears([]);
       setFeedback({ type: "error", text: "Failed to load academic years." });
     } finally {
       setLoading(false);
     }
   };
 
-  // Safe client-side pagination calculation
   const safeAcademicYears = Array.isArray(academicYears) ? academicYears : [];
-
   const totalPages = Math.ceil(safeAcademicYears.length / itemsPerPage) || 1;
+
+  // Keep currentPage within valid bounds if items are deleted
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
   const currentAcademicYears = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -147,26 +149,20 @@ export default function AcademicYearManager({ isDark = true }) {
   };
 
   return (
-    <div className={`border rounded-2xl p-5 shadow-sm space-y-4 transition-colors ${
-      isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
-    }`}>
+    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-6  shadow-slate-200/50 dark:shadow-none space-y-6 transition-all">
       {/* Header */}
-      <div className={`flex justify-between items-center pb-4 border-b ${
-        isDark ? "border-slate-800" : "border-gray-100"
-      }`}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-5 border-b border-slate-100 dark:border-slate-800 gap-4">
         <div>
-          <h2 className={`text-xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
             Academic Years Management
           </h2>
-          <p className={`text-sm ${isDark ? "text-slate-400" : "text-gray-500"}`}>
+          <p className="text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
             Configure school years and active session status.
           </p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer text-white ${
-            isDark ? "bg-indigo-600 hover:bg-indigo-500" : "bg-blue-600 hover:bg-blue-700"
-          }`}
+          className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-white bg-indigo-600 hover:bg-indigo-500 shadow-sm active:scale-95"
         >
           + Add Academic Year
         </button>
@@ -175,14 +171,10 @@ export default function AcademicYearManager({ isDark = true }) {
       {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium border transition-all ${
+          className={`p-4 rounded-xl text-sm font-semibold border transition-all ${
             feedback.type === "success"
-              ? isDark
-                ? "bg-green-500/20 text-green-300 border-green-500/30"
-                : "bg-green-50 text-green-700 border-green-200"
-              : isDark
-                ? "bg-red-500/20 text-red-300 border-red-500/30"
-                : "bg-red-50 text-red-700 border-red-200"
+              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/20"
+              : "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/20"
           }`}
         >
           {feedback.text}
@@ -191,34 +183,30 @@ export default function AcademicYearManager({ isDark = true }) {
 
       {/* Table */}
       {loading ? (
-        <div className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-500"}`}>
-          <div className="flex flex-col items-center justify-center gap-2">
-            <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
-              isDark ? "border-indigo-500" : "border-blue-600"
-            }`}></div>
-            <span>Loading Academic years...</span>
+        <div className="py-12 text-center text-slate-500 dark:text-slate-400">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-indigo-500"></div>
+            <span className="text-sm font-semibold">
+              Loading academic years...
+            </span>
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className={`border-b text-xs font-semibold uppercase ${
-                isDark ? "border-slate-800 text-slate-400 bg-slate-800/50" : "border-gray-200 text-gray-500 bg-gray-50"
-              }`}>
-                <th className="p-3">Name</th>
-                <th className="p-3">Start Date</th>
-                <th className="p-3">End Date</th>
-                <th className="p-3">Status</th>
-                <th className="p-3 text-right">Actions</th>
+              <tr className="border-b text-xs font-bold uppercase tracking-wider border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 bg-slate-50/75 dark:bg-slate-800/40">
+                <th className="px-5 py-3.5">Name</th>
+                <th className="px-5 py-3.5">Start Date</th>
+                <th className="px-5 py-3.5">End Date</th>
+                <th className="px-5 py-3.5">Status</th>
+                <th className="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className={`divide-y text-sm ${
-              isDark ? "divide-slate-800" : "divide-gray-100"
-            }`}>
+            <tbody className="divide-y text-sm font-medium divide-slate-100 dark:divide-slate-800">
               {currentAcademicYears.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className={`text-center py-8 ${isDark ? "text-slate-500" : "text-gray-400"}`}>
+                  <td colSpan="5" className="text-center py-12 text-slate-400 dark:text-slate-500">
                     No academic years found.
                   </td>
                 </tr>
@@ -226,56 +214,38 @@ export default function AcademicYearManager({ isDark = true }) {
                 currentAcademicYears.map((year) => (
                   <tr
                     key={year.id}
-                    className={`transition-colors ${
-                      isDark ? "hover:bg-slate-800/50" : "hover:bg-gray-50/80"
-                    }`}
+                    className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
                   >
-                    <td className={`p-3 font-medium ${isDark ? "text-slate-200" : "text-gray-800"}`}>
+                    <td className="px-5 py-4 font-bold text-slate-900 dark:text-slate-100">
                       {year.name}
                     </td>
-                    <td className={`p-3 ${isDark ? "text-slate-400" : "text-gray-600"}`}>
+                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
                       {formatDateForInput(year.start_date)}
                     </td>
-                    <td className={`p-3 ${isDark ? "text-slate-400" : "text-gray-600"}`}>
+                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
                       {formatDateForInput(year.end_date)}
                     </td>
-                    <td className="p-3">
+                    <td className="px-5 py-4">
                       {year.is_current ? (
-                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
-                          isDark
-                            ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
-                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                        }`}>
+                        <span className="px-3 py-1 text-xs font-bold rounded-full border bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20">
                           Current Active
                         </span>
                       ) : (
-                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${
-                          isDark
-                            ? "bg-slate-800 text-slate-400 border-slate-700"
-                            : "bg-gray-100 text-gray-600 border-gray-200"
-                        }`}>
+                        <span className="px-3 py-1 text-xs font-bold rounded-full border bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700">
                           Inactive
                         </span>
                       )}
                     </td>
-                    <td className="p-3 text-right space-x-2">
+                    <td className="px-5 py-4 text-right space-x-2">
                       <button
                         onClick={() => handleOpenModal(year)}
-                        className={`px-3 py-1 text-md font-medium rounded-lg transition-colors cursor-pointer ${
-                          isDark
-                            ? "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
+                        className="px-3 py-1.5 text-xs font-bold rounded-xl transition-colors cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 dark:hover:text-white"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(year.id)}
-                        className={`px-3 py-1 text-md font-medium rounded-lg border transition-colors cursor-pointer ${
-                          isDark
-                            ? "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20"
-                            : "bg-red-50 text-rose-600 border-rose-200 hover:bg-red-100"
-                        }`}
+                        className="px-3 py-1.5 text-xs font-bold rounded-xl border transition-colors cursor-pointer bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-500/20 hover:bg-rose-100 dark:hover:bg-rose-500/20"
                       >
                         Delete
                       </button>
@@ -288,31 +258,28 @@ export default function AcademicYearManager({ isDark = true }) {
         </div>
       )}
 
-      {/* Pagination Hook Integration */}
+      {/* Pagination Integration */}
       {!loading && academicYears.length > 0 && (
-        <div className={`pt-4 border-t flex justify-end ${isDark ? "border-slate-800" : "border-gray-100"}`}>
+        <div className="pt-4 border-t flex justify-end border-slate-100 dark:border-slate-800">
           <Pagination
             totalPages={totalPages}
             currentPage={currentPage}
             onPageChange={handlePageChange}
-            isDark={isDark}
           />
         </div>
       )}
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className={`rounded-xl max-w-md w-full p-6 shadow-xl border transition-colors ${
-            isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-100 text-gray-800"
-          }`}>
-            <h3 className={`text-lg font-bold mb-4 ${isDark ? "text-slate-100" : "text-gray-800"}`}>
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
+          <div className="rounded-2xl max-w-md w-full p-6 shadow-2xl border transition-all bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-900 dark:text-slate-100">
+            <h3 className="text-lg font-extrabold mb-5 text-slate-900 dark:text-slate-100">
               {editingId ? "Edit Academic Year" : "Add New Academic Year"}
             </h3>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className={`block text-xs font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-slate-500 dark:text-slate-400">
                   Name (e.g., 2026-2027)
                 </label>
                 <input
@@ -322,16 +289,12 @@ export default function AcademicYearManager({ isDark = true }) {
                   onChange={handleChange}
                   required
                   placeholder="2026-2027"
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100 placeholder-slate-500"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
                 />
               </div>
 
               <div>
-                <label className={`block text-xs font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-slate-500 dark:text-slate-400">
                   Start Date
                 </label>
                 <input
@@ -340,16 +303,12 @@ export default function AcademicYearManager({ isDark = true }) {
                   value={formData.start_date}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                 />
               </div>
 
               <div>
-                <label className={`block text-xs font-medium mb-1 ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-slate-500 dark:text-slate-400">
                   End Date
                 </label>
                 <input
@@ -358,48 +317,36 @@ export default function AcademicYearManager({ isDark = true }) {
                   value={formData.end_date}
                   onChange={handleChange}
                   required
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                    isDark
-                      ? "bg-slate-800 border-slate-700 text-slate-100"
-                      : "bg-white border-gray-200 text-gray-800"
-                  }`}
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                 />
               </div>
 
               <div className="flex items-center pt-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
+                <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
                     name="is_current"
                     checked={formData.is_current}
                     onChange={handleChange}
-                    className={`w-4 h-4 rounded focus:ring-indigo-500 ${
-                      isDark ? "text-indigo-600 border-slate-700 bg-slate-800" : "text-blue-600 border-gray-300"
-                    }`}
+                    className="w-4 h-4 rounded focus:ring-indigo-500 cursor-pointer text-indigo-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
                   />
-                  <span className={`text-sm font-medium ${isDark ? "text-slate-300" : "text-gray-600"}`}>
+                  <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
                     Set as Current Active Year
                   </span>
                 </label>
               </div>
 
-              <div className={`flex justify-end space-x-2 pt-4 border-t ${isDark ? "border-slate-800" : "border-gray-100"}`}>
+              <div className="flex justify-end space-x-2.5 pt-5 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                    isDark
-                      ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className={`px-4 py-2 rounded-lg text-sm font-medium text-white transition-colors cursor-pointer ${
-                    isDark ? "bg-indigo-600 hover:bg-indigo-500" : "bg-blue-600 hover:bg-blue-700"
-                  }`}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all cursor-pointer bg-indigo-600 hover:bg-indigo-500 shadow-sm active:scale-95"
                 >
                   {editingId ? "Update" : "Save"}
                 </button>

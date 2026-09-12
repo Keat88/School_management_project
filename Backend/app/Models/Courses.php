@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Courses extends Model
+class Course extends Model
 {
     use HasFactory;
+
+    protected $table = 'courses';
 
     protected $fillable = [
         'title',
@@ -22,6 +24,25 @@ class Courses extends Model
         'instructor_id',
         'level',
         'status',
+        'rating_avg',
+        'reviews_count',
+        'duration',
+        'lessons_count',
+        'requirements',
+        'what_you_will_learn',
+        'language',
+        'has_certificate',
+        'is_featured',
+    ];
+
+    protected $casts = [
+        'price' => 'decimal:2',
+        'discount_price' => 'decimal:2',
+        'rating_avg' => 'decimal:2',
+        'has_certificate' => 'boolean',
+        'is_featured' => 'boolean',
+        'requirements' => 'array',
+        'what_you_will_learn' => 'array',
     ];
 
     public function category(): BelongsTo
@@ -46,7 +67,7 @@ class Courses extends Model
 
     public function enrollments(): HasMany
     {
-        return $this->hasMany(Inrollments::class, 'course_id');
+        return $this->hasMany(Enrollment::class, 'course_id');
     }
 
     public function reviews(): HasMany

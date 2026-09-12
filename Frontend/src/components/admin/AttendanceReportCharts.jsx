@@ -5,27 +5,31 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip
+  Tooltip,
 } from "recharts";
 
-function AttendanceReportChart({ data = [] }) {
+export default function AttendanceReportChart({ data = [] }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5">
-      <h3 className="text-base font-semibold text-gray-800 mb-4">
+    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-200/50 dark:bg-slate-900 dark:border-slate-800 dark:shadow-none transition-all">
+      <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-5">
         Attendance Report
       </h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+            <CartesianGrid 
+              strokeDasharray="3 3" 
+              stroke="#F1F5F9" 
+              className="dark:stroke-slate-800" 
+            />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 12, fill: "#6B7280" }}
-              axisLine={{ stroke: "#E5E7EB" }}
+              tick={{ fontSize: 12, fill: "#64748B" }}
+              axisLine={{ stroke: "#E2E8F0" }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: "#6B7280" }}
+              tick={{ fontSize: 12, fill: "#64748B" }}
               axisLine={false}
               tickLine={false}
               domain={[0, 100]}
@@ -33,10 +37,14 @@ function AttendanceReportChart({ data = [] }) {
             />
             <Tooltip
               contentStyle={{
-                borderRadius: 8,
-                border: "1px solid #E5E7EB",
-                fontSize: 13
+                backgroundColor: "#0F172A",
+                border: "1px solid #334155",
+                borderRadius: 12,
+                color: "#F8FAFC",
+                fontSize: 13,
+                boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.3)",
               }}
+              itemStyle={{ color: "#F8FAFC" }}
               formatter={(value) => [`${value}%`, "Attendance"]}
             />
             <Line
@@ -45,7 +53,7 @@ function AttendanceReportChart({ data = [] }) {
               stroke="#2563EB"
               strokeWidth={2.5}
               dot={{ r: 3, fill: "#2563EB" }}
-              activeDot={{ r: 5 }}
+              activeDot={{ r: 5, fill: "#2563EB", stroke: "#93C5FD", strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -53,5 +61,3 @@ function AttendanceReportChart({ data = [] }) {
     </div>
   );
 }
-
-export default AttendanceReportChart;

@@ -1,23 +1,26 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const GuestRoute = () => {
+export default function GuestRoute() {
   const token = localStorage.getItem("token");
   const userString = localStorage.getItem("user");
 
-  if (token && userString) {
+  if (token) {
+    // If token exists but user object is missing, clear token to prevent broken states
+    if (!userString) {
+      localStorage.removeItem("token");
+      return <Outlet />;
+    }
+
     try {
       const user = JSON.parse(userString);
-      if (user?.role === "admin") {
-        return <Navigate to="/admin/dashboard" replace />;
-      }
-      return <Navigate to="/" replace />;
+      const destination = user?.role === "admin" ? "/admin/dashboard" : "/";
+      return <Navigate to={destination} replace />;
     } catch (error) {
+      console.error("Failed to parse user data:", error);
       localStorage.removeItem("token");
       localStorage.removeItem("user");
     }
   }
 
   return <Outlet />;
-};
-
-export default GuestRoute;
+}

@@ -57,38 +57,49 @@ import Footer from "./page/public/Footer";
 import Layout from "./page/public/LayOut";
 import UnauthorizedPage from "./page/auth/UnauthorizedPage";
 import AboutPage from "./page/public/about/AboutPage";
+import CourseCategoryPage from "./page/admin/course/category/CourseCategoryPage";
+import CoursesTable from "./page/admin/course/categorycourse/CoursesTable";
+import CourseCategoryForm from "./page/admin/course/category/CourseCategoryForm";
+import CourseForm from "./page/admin/course/categorycourse/CourseForm";
+import ContactInquiries from "./page/admin/course/contact/ContactInquiries";
+import RegisterForm from "./page/auth/RegisterForm";
 
 function App() {
   return (
     <AuthProvider>
       <Routes>
         <Route element={<Layout />}>
-          {/* Public / Guest Routes */}
+          {/* Guest-Only Routes (e.g., Login, Register, Password Recovery) */}
           <Route element={<GuestRoute />}>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/login" element={<LoginForm />} />
-            <Route path="/login-success" element={<LoginSuccess />} />
+            <Route path="/register" element={<RegisterForm />} />
             <Route path="/forgot-password" element={<ForgotPasswordForm />} />
             <Route path="/forgot-password-verify" element={<VerifyOtp />} />
             <Route path="/forgot-password-reset" element={<ResetPassword />} />
+            <Route path="/login-success" element={<LoginSuccess />} />
           </Route>
-          {/* Unauthorized page should be accessible to logged-in users who lack permissions */}
+          {/* Authenticated User Routes */}
+          {/* <Route element={<ProtectRoute allowedRoles={["user"]} />}> */}
+          {/* </Route> */}
+
+          {/* Public / Unrestricted Error Pages */}
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Route>
         {/* Protected Routes (Only accessible when logged in) */}
         <Route element={<ProtectRoute allowedRoles={["admin", "teacher"]} />}>
           <Route path="/admin" element={<DashboardLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
+
             {/* Student Routes */}
             <Route path="profile" element={<ProfilePage />} />
             <Route path="students" element={<StudentList />} />
             <Route path="students/add" element={<StudentForm />} />
             <Route path="students/add/:id" element={<StudentForm />} />
             <Route path="students/view/:id" element={<StudentView />} />
-
             {/* Teacher & Class Routes */}
             <Route path="teachers" element={<TeacherList />} />
             <Route path="teacher/add" element={<TeacherForm />} />
@@ -98,6 +109,16 @@ function App() {
             <Route path="classes/add/:id" element={<ClassForm />} />
             <Route path="classes/:id" element={<ClassroomDetail />} />
             <Route path="academic-year" element={<AcademicYearManager />} />
+
+            {/* for course category */}
+            <Route path="course/category" element={<CourseCategoryPage />} />
+            <Route
+              path="course/category/add"
+              element={<CourseCategoryForm />}
+            />
+            <Route path="course" element={<CoursesTable />} />
+            <Route path="course/add" element={<CourseForm />} />
+            <Route path="course/contact" element={<ContactInquiries />} />
 
             {/* Other Admin Sections */}
             <Route path="schedule" element={<SchedulePage />} />

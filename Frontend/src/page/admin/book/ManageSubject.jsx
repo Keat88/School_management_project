@@ -213,7 +213,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                       <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
                         isDark ? "border-indigo-400" : "border-indigo-300"
                       }`}></div>
-                      <span className={isDark ? "text-slate-400" : "text-gray-500"}>Loading category...</span>
+                      <span className={isDark ? "text-slate-400" : "text-gray-500"}>Loading subjects...</span>
                     </div>
                   </td>
                 </tr>
