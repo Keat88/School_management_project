@@ -8,7 +8,7 @@ export default function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-9 h-9 rounded-xl bg-purple-600 flex items-center justify-center text-white font-bold text-xl">
+              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl">
                 E
               </div>
               <span className="text-xl font-extrabold text-white tracking-tight">Edumaster</span>
@@ -34,9 +34,9 @@ export default function Footer() {
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">Explore</h4>
             <ul className="space-y-2.5 text-sm">
               <li><a href="/courses" className="hover:text-purple-400 transition">All Courses</a></li>
-              <li><a href="/instructors" className="hover:text-purple-400 transition">Instructors</a></li>
-              <li><a href="/categories" className="hover:text-purple-400 transition">Categories</a></li>
-              <li><a href="/about" className="hover:text-purple-400 transition">About Us</a></li>
+              <li><a href="/instructors" className="hover:text-blue-400 transition">Instructors</a></li>
+              <li><a href="/categories" className="hover:text-blue-400 transition">Categories</a></li>
+              <li><a href="/about" className="hover:text-blue-400 transition">About Us</a></li>
             </ul>
           </div>
 
@@ -44,10 +44,10 @@ export default function Footer() {
           <div className="space-y-4">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">Categories</h4>
             <ul className="space-y-2.5 text-sm">
-              <li><a href="/categories/development" className="hover:text-purple-400 transition">Development</a></li>
-              <li><a href="/categories/business" className="hover:text-purple-400 transition">Business</a></li>
-              <li><a href="/categories/design" className="hover:text-purple-400 transition">Design</a></li>
-              <li><a href="/categories/marketing" className="hover:text-purple-400 transition">Marketing</a></li>
+              <li><a href="/categories/development" className="hover:text-blue-400 transition">Development</a></li>
+              <li><a href="/categories/business" className="hover:text-blue-400 transition">Business</a></li>
+              <li><a href="/categories/design" className="hover:text-blue-400 transition">Design</a></li>
+              <li><a href="/categories/marketing" className="hover:text-blue-400 transition">Marketing</a></li>
             </ul>
           </div>
 
@@ -63,7 +63,7 @@ export default function Footer() {
               />
               <button 
                 type="submit" 
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium text-sm py-2.5 rounded-xl transition shadow-sm"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm py-2.5 rounded-xl transition shadow-sm"
               >
                 Subscribe
               </button>

@@ -26,13 +26,13 @@ export default function HeroSection() {
           
           {/* Left Column: Content */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center space-x-2 bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+            <div className="inline-flex items-center space-x-2 bg-purple-100 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
               <span>#1 Platform for Online Learning</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
               Learn New Skills. <br />
-              <span className="text-purple-600">Advance Your Future.</span>
+              <span className="text-blue-600">Advance Your Future.</span>
             </h1>
 
             <p className="text-gray-600 text-base sm:text-lg max-w-xl">
@@ -42,7 +42,7 @@ export default function HeroSection() {
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <a 
                 href="/courses" 
-                className="bg-purple-600 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-purple-700 transition shadow-sm flex items-center space-x-2"
+                className="bg-blue-600 text-white font-medium px-6 py-3.5 rounded-xl hover:bg-blue-700 transition shadow-sm flex items-center space-x-2"
               >
                 <span>Explore Courses</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,6 @@ export default function HeroSection() {
                 <span>How It Works</span>
               </a>
             </div>
-
             <div className="pt-4 flex items-center space-x-4">
               <div className="flex -space-x-2 overflow-hidden">
                 <img className="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="User" />
@@ -117,7 +116,7 @@ export default function HeroSection() {
         <div className="mt-16 bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
             <h3 className="text-xl font-bold text-gray-900">Popular Categories</h3>
-            <a href="/categories" className="text-sm font-semibold text-purple-600 hover:text-purple-700 flex items-center space-x-1 group">
+            <a href="/categories" className="text-sm font-semibold text-blue-600 hover:text-blue-700 flex items-center space-x-1 group">
               <span>View All Categories</span>
               <span className="group-hover:translate-x-1 transition">→</span>
             </a>
@@ -136,7 +135,7 @@ export default function HeroSection() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-gray-900 group-hover:text-purple-600 transition">{cat.name}</h4>
+                  <h4 className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition">{cat.name}</h4>
                   <p className="text-xs text-gray-400 mt-0.5">{cat.courses}</p>
                 </div>
               </a>

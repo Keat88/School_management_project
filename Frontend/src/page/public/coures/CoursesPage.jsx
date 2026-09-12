@@ -108,10 +108,9 @@ export default function CoursesPage() {
   return (
     <div className="bg-gray-50/50 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10">
-        
         {/* Header Title */}
         <div className="text-center space-y-3">
-          <span className="text-xs font-bold text-purple-600 tracking-wider uppercase bg-purple-100 px-3 py-1.5 rounded-full">
+          <span className="text-xs font-bold text-blue-500 tracking-wider uppercase bg-purple-100 px-3 py-1.5 rounded-full">
             Our Catalog
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">
@@ -137,7 +136,7 @@ export default function CoursesPage() {
               placeholder="Search courses or instructors..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl pl-11 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white transition"
+              className="w-full bg-gray-50/50 border border-gray-200 rounded-2xl pl-11 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-blue-600 focus:bg-white transition"
             />
           </div>
 
@@ -148,7 +147,7 @@ export default function CoursesPage() {
             <select 
               value={selectedPrice}
               onChange={(e) => setSelectedPrice(e.target.value)}
-              className="bg-gray-50/50 border border-gray-200 text-gray-700 text-sm rounded-2xl px-4 py-3 focus:outline-none focus:border-purple-500 transition cursor-pointer"
+              className="bg-gray-50/50 border border-gray-200 text-gray-700 text-sm rounded-2xl px-4 py-3 focus:outline-none focus:border-blue-500 transition cursor-pointer"
             >
               <option value="All">All Prices</option>
               <option value="Free">Free Courses</option>
@@ -166,7 +165,7 @@ export default function CoursesPage() {
               onClick={() => setSelectedCategory(cat)}
               className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition whitespace-nowrap shadow-sm ${
                 selectedCategory === cat
-                  ? 'bg-purple-600 text-white shadow-purple-200'
+                  ? 'bg-blue-500 text-white shadow-blue-200'
                   : 'bg-white text-gray-600 border border-gray-100 hover:border-purple-200 hover:bg-gray-50'
               }`}
             >
@@ -177,7 +176,7 @@ export default function CoursesPage() {
 
         {/* Courses Grid */}
         {filteredCourses.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {filteredCourses.map((course) => (
               <div 
                 key={course.id}
@@ -190,15 +189,15 @@ export default function CoursesPage() {
                     alt={course.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   />
-                  <div className="absolute top-3 left-3 bg-purple-600 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-md">
+                  <div className="absolute top-3 left-3 bg-blue-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl shadow-md">
                     {course.category}
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-6 flex flex-col justify-between flex-grow space-y-4">
-                  <div className="space-y-3">
-                    <h3 className="text-lg font-bold text-gray-900 leading-snug group-hover:text-purple-600 transition">
+                  <div className="space-y-1">
+                    <h3 className="text-lg font-bold text-gray-900 leading-snug transition">
                       {course.title}
                     </h3>
 
@@ -230,7 +229,7 @@ export default function CoursesPage() {
                   <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                     <div className="flex items-baseline space-x-2">
                       {course.isFree ? (
-                        <span className="text-xl font-extrabold text-emerald-600">Free</span>
+                        <span className="text-lg font-extrabold text-blue-500">Free</span>
                       ) : (
                         <>
                           <span className="text-xl font-extrabold text-gray-900">${course.price}</span>
@@ -241,7 +240,7 @@ export default function CoursesPage() {
 
                     <a 
                       href={`/courses/${course.id}`}
-                      className="bg-purple-50 text-purple-600 hover:bg-purple-600 hover:text-white font-medium text-xs px-4 py-2.5 rounded-xl transition"
+                      className="bg-purple-50 text-blue-500 hover:bg-blue-600 hover:text-white font-medium text-xs px-4 py-2.5 rounded-xl transition"
                     >
                       Enroll Now
                     </a>

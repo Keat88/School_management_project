@@ -56,6 +56,7 @@ import Navbar from "./page/public/Navbar";
 import Footer from "./page/public/Footer";
 import Layout from "./page/public/LayOut";
 import UnauthorizedPage from "./page/auth/UnauthorizedPage";
+import AboutPage from "./page/public/about/AboutPage";
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
           {/* Public / Guest Routes */}
           <Route element={<GuestRoute />}>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/login" element={<LoginForm />} />
@@ -73,11 +75,9 @@ function App() {
             <Route path="/forgot-password-verify" element={<VerifyOtp />} />
             <Route path="/forgot-password-reset" element={<ResetPassword />} />
           </Route>
-
           {/* Unauthorized page should be accessible to logged-in users who lack permissions */}
           <Route path="/unauthorized" element={<UnauthorizedPage />} />
         </Route>
-
         {/* Protected Routes (Only accessible when logged in) */}
         <Route element={<ProtectRoute allowedRoles={["admin", "teacher"]} />}>
           <Route path="/admin" element={<DashboardLayout />}>

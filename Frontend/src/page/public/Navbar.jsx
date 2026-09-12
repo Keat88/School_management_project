@@ -17,7 +17,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo & Tagline */}
         <Link to="/" className="flex items-center space-x-3 focus:outline-none">
-          <div className="bg-purple-600 text-white p-2 rounded-xl flex items-center justify-center font-bold shadow-sm">
+          <div className="bg-blue-600 text-white p-2 rounded-xl flex items-center justify-center font-bold shadow-sm">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -33,12 +33,12 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-600">
+        <div className="hidden md:flex items-center space-x-6 text-sm font-bold text-gray-600">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               to={link.path}
-              className="hover:text-purple-600 transition"
+              className="hover:text-blue-600 transition"
             >
               {link.name}
             </Link>
@@ -51,9 +51,9 @@ export default function Navbar() {
             <input
               type="text"
               placeholder="Search courses..."
-              className="bg-gray-50 border border-gray-200 text-sm rounded-full pl-4 pr-10 py-2 focus:outline-none focus:border-purple-600 w-60 transition"
+              className="bg-gray-50 border border-gray-200 text-sm rounded-full pl-4 pr-10 py-2 focus:outline-none focus:border-blue-600 w-60 transition"
             />
-            <button className="absolute right-3 top-2.5 text-gray-400 hover:text-purple-600">
+            <button className="absolute right-3 top-2.5 text-gray-400 hover:text-blue-600">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -78,7 +78,7 @@ export default function Navbar() {
           </Link>
           <Link
             to="/register"
-            className="bg-purple-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-purple-700 transition shadow-sm"
+            className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-purple-700 transition shadow-sm"
           >
             Get Started
           </Link>
@@ -118,7 +118,6 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-
       {/* Mobile Menu Dropdown */}
       {isOpen && (
         <div className="md:hidden mt-3 pt-3 border-t border-gray-100 space-y-2 text-sm font-medium text-gray-600 pb-2">
@@ -127,7 +126,7 @@ export default function Navbar() {
               key={link.name}
               to={link.path}
               onClick={() => setIsOpen(false)}
-              className="block py-2 px-3 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition"
+              className="block py-2 px-3 hover:bg-purple-50 hover:text-blue-600 rounded-lg transition"
             >
               {link.name}
             </Link>
@@ -136,7 +135,7 @@ export default function Navbar() {
             <Link
               to="/register"
               onClick={() => setIsOpen(false)}
-              className="block text-center bg-purple-600 text-white py-2 rounded-xl font-medium shadow-sm"
+              className="block text-center bg-blue-600 text-white py-2 rounded-xl font-medium shadow-sm"
             >
               Get Started
             </Link>

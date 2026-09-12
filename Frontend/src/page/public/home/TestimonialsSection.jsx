@@ -26,7 +26,7 @@ export default function TestimonialsSection() {
     <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gray-50/50">
       {/* Section Header */}
       <div className="text-center mb-12">
-        <span className="text-xs font-bold text-purple-600 tracking-wider uppercase">
+        <span className="text-xs font-bold text-blue tracking-wider uppercase">
           Testimonials
         </span>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-2">
@@ -43,7 +43,7 @@ export default function TestimonialsSection() {
           >
             <div>
               {/* Quote Icon */}
-              <div className="text-purple-600 text-4xl font-serif leading-none mb-3">
+              <div className="text-blue-600 text-4xl font-serif leading-none mb-3">
                 “
               </div>
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8">
@@ -80,7 +80,7 @@ export default function TestimonialsSection() {
 
       {/* Carousel Pagination Dots */}
       <div className="flex items-center justify-center space-x-2 mt-8">
-        <span className="w-6 h-2 bg-purple-600 rounded-full"></span>
+        <span className="w-6 h-2 bg-blue-600 rounded-full"></span>
         <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
         <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
       </div>

@@ -25,12 +25,12 @@ export default function StatsBar() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
+    <div className="max-w-7xl mx-auto">
       <div className="bg-[#13182b] rounded-3xl py-8 px-6 sm:px-10 shadow-xl border border-gray-800">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4 items-center justify-between">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4 items-center justify-between">
           {stats.map((stat, index) => (
             <div key={index} className="flex items-center space-x-4">
-              <div className="p-3 bg-purple-950/60 border border-purple-500/20 text-purple-400 rounded-2xl flex-shrink-0">
+              <div className="p-3 bg-purple-950/60 border border-purple-500/20 text-blue-400 rounded-lg flex-shrink-0">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={stat.svg} />
                 </svg>

@@ -45,7 +45,7 @@ export default function WhyChooseUsSection() {
         {features.map((feature, index) => (
           <div 
             key={index} 
-            className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 flex flex-col justify-between transition hover:shadow-md"
+            className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100 flex flex-col justify-between duration-200 transition-transform hover:-translate-y-0.5  hover:shadow-md"
           >
             <div>
               {/* Icon */}
