@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CourseModule;
 use App\Models\CoursesModules;
 use Illuminate\Http\Request;
 
@@ -12,12 +13,11 @@ class CoursesModulesController extends Controller
      */
     public function index(Request $request)
     {
-        $query = CoursesModules::with(['course', 'lessons']);
+        $query = CourseModule::with(['course', 'lessons']);
 
         if ($request->has('course_id')) {
             $query->where('course_id', $request->course_id);
         }
-
         $modules = $query->orderBy('sort_order')->get();
 
         return response()->json([
@@ -37,7 +37,7 @@ class CoursesModulesController extends Controller
             'sort_order' => 'sometimes|integer|min:0',
         ]);
 
-        $module = CoursesModules::create($validated);
+        $module = CourseModule::create($validated);
 
         return response()->json([
             'status' => 'success',
@@ -49,7 +49,7 @@ class CoursesModulesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CoursesModules $coursesModules)
+    public function show(CourseModule $coursesModules)
     {
         $coursesModules->load(['course', 'lessons']);
 
@@ -62,7 +62,7 @@ class CoursesModulesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CoursesModules $coursesModules)
+    public function update(Request $request, CourseModule $coursesModules)
     {
         $validated = $request->validate([
             'course_id' => 'sometimes|exists:courses,id',
@@ -81,7 +81,7 @@ class CoursesModulesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CoursesModules $coursesModules)
+    public function destroy(CourseModule $coursesModules)
     {
         $coursesModules->delete();
         return response()->json([

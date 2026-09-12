@@ -2,16 +2,14 @@ import { useState, useEffect } from "react";
 import {
   Mail,
   CheckCircle,
-  Clock,
   Trash2,
   Search,
-  Filter,
   AlertCircle,
   Eye,
 } from "lucide-react";
 import { api } from "../../../../data/api";
 
-export default function ContactInquiries({ isDark = false }) {
+export default function ContactInquiries() {
   const [inquiries, setInquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -98,32 +96,18 @@ export default function ContactInquiries({ isDark = false }) {
     }
   };
 
-  const inputClass = `px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 ${
-    isDark
-      ? "bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-blue-900 focus:border-blue-500"
-      : "bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-blue-100 focus:border-blue-600"
-  }`;
+  const inputClass = "px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-blue-100 focus:border-blue-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:ring-blue-900 dark:focus:border-blue-500";
 
   return (
-    <div
-      className={`space-y-6 p-6 rounded-2xl border shadow-xs ${
-        isDark
-          ? "bg-slate-900 border-slate-800 text-slate-100"
-          : "bg-white border-slate-200 text-slate-900"
-      }`}
-    >
+    <div className="space-y-6 p-6  text-slate-900  dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2
-            className={`text-xl font-bold tracking-tight flex items-center gap-2 ${isDark ? "text-slate-100" : "text-slate-900"}`}
-          >
+          <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 text-slate-900 dark:text-slate-100">
             <Mail className="text-blue-600" size={22} />
             Contact Inquiries
           </h2>
-          <p
-            className={`text-sm mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}
-          >
+          <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
             Manage and respond to messages submitted by users and visitors.
           </p>
         </div>
@@ -153,31 +137,17 @@ export default function ContactInquiries({ isDark = false }) {
       </div>
 
       {error && (
-        <div
-          className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-medium ${
-            isDark
-              ? "bg-red-950/50 text-red-400 border-red-900/60"
-              : "bg-red-50 text-red-700 border-red-200"
-          }`}
-        >
+        <div className="flex items-center gap-2 p-3 rounded-xl border text-xs font-medium bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-400 dark:border-red-900/60">
           <AlertCircle size={16} />
           {error}
         </div>
       )}
 
       {/* Table */}
-      <div
-        className={`overflow-x-auto rounded-xl border ${isDark ? "border-slate-800" : "border-slate-200"}`}
-      >
+      <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
         <table className="w-full text-left border-collapse text-sm">
           <thead>
-            <tr
-              className={`border-b text-xs uppercase tracking-wider ${
-                isDark
-                  ? "bg-slate-800/50 border-slate-800 text-slate-400"
-                  : "bg-slate-50 border-slate-200 text-slate-600"
-              }`}
-            >
+            <tr className="border-b text-xs uppercase tracking-wider bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800/50 dark:border-slate-800 dark:text-slate-400">
               <th className="p-3 font-semibold">Sender</th>
               <th className="p-3 font-semibold">Subject</th>
               <th className="p-3 font-semibold">Message Preview</th>
@@ -189,13 +159,13 @@ export default function ContactInquiries({ isDark = false }) {
           <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
             {loading ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-slate-400">
+                <td colSpan="6" className="text-center py-8 text-slate-400 dark:text-slate-500">
                   Loading inquiries...
                 </td>
               </tr>
             ) : inquiries.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center py-8 text-slate-400">
+                <td colSpan="6" className="text-center py-8 text-slate-400 dark:text-slate-500">
                   No inquiries found.
                 </td>
               </tr>
@@ -203,37 +173,29 @@ export default function ContactInquiries({ isDark = false }) {
               inquiries.map((item) => (
                 <tr
                   key={item.id}
-                  className={`transition-colors ${isDark ? "hover:bg-slate-800/40" : "hover:bg-slate-50/80"}`}
+                  className="transition-colors hover:bg-slate-50/80 dark:hover:bg-slate-800/40"
                 >
                   <td className="p-3">
                     <div className="font-medium">{item.name}</div>
-                    <div
-                      className={`text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}
-                    >
+                    <div className="text-xs text-slate-500 dark:text-slate-400">
                       {item.email}
                     </div>
                   </td>
                   <td className="p-3 font-medium">
                     {item.subject || "No Subject"}
                   </td>
-                  <td className="p-3 max-w-xs truncate text-slate-500">
+                  <td className="p-3 max-w-xs truncate text-slate-500 dark:text-slate-400">
                     {item.message}
                   </td>
                   <td className="p-3">{getStatusBadge(item.status)}</td>
-                  <td
-                    className={`p-3 text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}
-                  >
+                  <td className="p-3 text-xs text-slate-500 dark:text-slate-400">
                     {new Date(item.created_at).toLocaleDateString()}
                   </td>
                   <td className="p-3 text-right space-x-2">
                     <button
                       onClick={() => setSelectedMessage(item)}
                       title="View Message"
-                      className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
-                        isDark
-                          ? "border-slate-700 hover:bg-slate-800 text-slate-300"
-                          : "border-slate-200 hover:bg-slate-100 text-slate-600"
-                      }`}
+                      className="p-1.5 rounded-lg border transition-colors cursor-pointer border-slate-200 hover:bg-slate-100 text-slate-600 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300"
                     >
                       <Eye size={16} />
                     </button>
@@ -241,11 +203,7 @@ export default function ContactInquiries({ isDark = false }) {
                       <button
                         onClick={() => updateStatus(item.id, "resolved")}
                         title="Mark as Resolved"
-                        className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
-                          isDark
-                            ? "border-emerald-900/50 hover:bg-emerald-950 text-emerald-400"
-                            : "border-emerald-200 hover:bg-emerald-50 text-emerald-600"
-                        }`}
+                        className="p-1.5 rounded-lg border transition-colors cursor-pointer border-emerald-200 hover:bg-emerald-50 text-emerald-600 dark:border-emerald-900/50 dark:hover:bg-emerald-950 dark:text-emerald-400"
                       >
                         <CheckCircle size={16} />
                       </button>
@@ -253,11 +211,7 @@ export default function ContactInquiries({ isDark = false }) {
                     <button
                       onClick={() => deleteInquiry(item.id)}
                       title="Delete"
-                      className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
-                        isDark
-                          ? "border-red-900/50 hover:bg-red-950 text-red-400"
-                          : "border-red-200 hover:bg-red-50 text-red-600"
-                      }`}
+                      className="p-1.5 rounded-lg border transition-colors cursor-pointer border-red-200 hover:bg-red-50 text-red-600 dark:border-red-900/50 dark:hover:bg-red-950 dark:text-red-400"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -272,21 +226,13 @@ export default function ContactInquiries({ isDark = false }) {
       {/* Message Modal Preview */}
       {selectedMessage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div
-            className={`w-full max-w-lg p-6 rounded-2xl border shadow-xl space-y-4 ${
-              isDark
-                ? "bg-slate-900 border-slate-800 text-slate-100"
-                : "bg-white border-slate-200 text-slate-900"
-            }`}
-          >
+          <div className="w-full max-w-lg p-6 rounded-2xl border shadow-xl space-y-4 bg-white border-slate-200 text-slate-900 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-lg font-bold">
                   {selectedMessage.subject || "Contact Message"}
                 </h3>
-                <p
-                  className={`text-xs mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}
-                >
+                <p className="text-xs mt-0.5 text-slate-500 dark:text-slate-400">
                   From:{" "}
                   <span className="font-semibold">{selectedMessage.name}</span>{" "}
                   ({selectedMessage.email})
@@ -295,13 +241,7 @@ export default function ContactInquiries({ isDark = false }) {
               {getStatusBadge(selectedMessage.status)}
             </div>
 
-            <div
-              className={`p-4 rounded-xl border text-sm whitespace-pre-wrap ${
-                isDark
-                  ? "bg-slate-800/50 border-slate-700 text-slate-200"
-                  : "bg-slate-50 border-slate-200 text-slate-800"
-              }`}
-            >
+            <div className="p-4 rounded-xl border text-sm whitespace-pre-wrap bg-slate-50 border-slate-200 text-slate-800 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-200">
               {selectedMessage.message}
             </div>
 
@@ -319,11 +259,7 @@ export default function ContactInquiries({ isDark = false }) {
               )}
               <button
                 onClick={() => setSelectedMessage(null)}
-                className={`px-4 py-2 rounded-xl border text-sm font-medium cursor-pointer ${
-                  isDark
-                    ? "border-slate-700 hover:bg-slate-800 text-slate-300"
-                    : "border-slate-200 hover:bg-slate-100 text-slate-700"
-                }`}
+                className="px-4 py-2 rounded-xl border text-sm font-medium cursor-pointer border-slate-200 hover:bg-slate-100 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300"
               >
                 Close
               </button>

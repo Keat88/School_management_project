@@ -1,15 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layers, Save, AlertCircle, CheckCircle, X } from "lucide-react";
 import { api } from "../../../../data/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CourseCategoryForm({ isDark = false, onSuccess }) {
+export default function CourseCategoryForm({ onSuccess }) {
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchCategory = async () => {
+        try {
+          const res = await api.get(`/course-categories/${id}`);
+          if (res.data.status === "success") {
+            setName(res.data.data.name);
+            setIcon(res.data.data.icon || "");
+          }
+        } catch (err) {
+          console.error("Failed to load category:", err);
+          setError("Failed to load category details for editing.");
+        }
+      };
+      fetchCategory();
+    }
+  }, [id, isEditMode]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -17,13 +39,17 @@ export default function CourseCategoryForm({ isDark = false, onSuccess }) {
     setSuccess(false);
 
     try {
-      const response = await api.post("/course-categories", { name, icon });
+      const response = isEditMode
+        ? await api.put(`/course-categories/${id}`, { name, icon })
+        : await api.post("/course-categories", { name, icon });
+
       if (response.data.status === "success") {
         setSuccess(true);
-        setName("");
-        setIcon("");
         if (onSuccess) onSuccess(response.data.data);
-        setTimeout(() => setSuccess(false), 3000);
+        setTimeout(() => {
+          setSuccess(false);
+          navigate(-1);
+        }, 1500);
       }
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
@@ -31,7 +57,10 @@ export default function CourseCategoryForm({ isDark = false, onSuccess }) {
         const firstError = Object.values(errors)[0][0];
         setError(firstError);
       } else {
-        setError(err.response?.data?.message || "Failed to create category.");
+        setError(
+          err.response?.data?.message ||
+            (isEditMode ? "Failed to update category." : "Failed to create category.")
+        );
       }
     } finally {
       setLoading(false);
@@ -39,60 +68,38 @@ export default function CourseCategoryForm({ isDark = false, onSuccess }) {
   };
 
   return (
-    <div
-      className={`space-y-6 lg:min-w-160 mx-auto p-6 rounded-2xl border shadow-xs ${
-        isDark
-          ? "bg-slate-900 border-slate-800 text-slate-100"
-          : "bg-white border-slate-200 text-slate-900"
-      }`}
-    >
+    <div className="space-y-6 lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors">
       <div className="flex items-center justify-between">
         <div>
-          <h2
-            className={`text-xl font-bold tracking-tight flex items-center gap-2 ${isDark ? "text-slate-100" : "text-slate-900"}`}
-          >
-            <Layers className="text-blue-600" size={22} />
-            Create Course Category
+          <h2 className="text-xl font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
+            <Layers className="text-blue-600 dark:text-indigo-400" size={22} />
+            {isEditMode ? "Edit Course Category" : "Create Course Category"}
           </h2>
-          <p
-            className={`text-sm mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}
-          >
-            Add a new category to organize your courses.
+          <p className="text-sm mt-1 text-slate-500 dark:text-slate-400">
+            {isEditMode
+              ? "Modify the selected course category details."
+              : "Add a new category to organize your courses."}
           </p>
         </div>
       </div>
 
       {error && (
-        <div
-          className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-medium ${
-            isDark
-              ? "bg-red-950/50 text-red-400 border-red-900/60"
-              : "bg-red-50 text-red-700 border-red-200"
-          }`}
-        >
-          <AlertCircle size={16} />
+        <div className="flex items-center gap-2 p-3.5 rounded-xl border text-xs font-medium bg-red-50 dark:bg-rose-500/10 text-red-700 dark:text-rose-400 border-red-200 dark:border-rose-500/20">
+          <AlertCircle size={16} className="shrink-0" />
           {error}
         </div>
       )}
 
       {success && (
-        <div
-          className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-medium ${
-            isDark
-              ? "bg-emerald-950/50 text-emerald-400 border-emerald-900/60"
-              : "bg-emerald-50 text-emerald-700 border-emerald-200"
-          }`}
-        >
-          <CheckCircle size={16} />
-          Category created successfully!
+        <div className="flex items-center gap-2 p-3.5 rounded-xl border text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20">
+          <CheckCircle size={16} className="shrink-0" />
+          {isEditMode ? "Category updated successfully!" : "Category created successfully!"}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label
-            className={`block text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}
-          >
+          <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-slate-700 dark:text-slate-300">
             Category Name *
           </label>
           <input
@@ -101,18 +108,12 @@ export default function CourseCategoryForm({ isDark = false, onSuccess }) {
             placeholder="e.g. Web Development"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className={`w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 ${
-              isDark
-                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-blue-900 focus:border-blue-500"
-                : "bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-blue-100 focus:border-blue-600"
-            }`}
+            className="w-full px-3.5 py-2.5 rounded-xl border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-500/30 focus:border-blue-600 dark:focus:border-indigo-500"
           />
         </div>
 
         <div>
-          <label
-            className={`block text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? "text-slate-300" : "text-slate-700"}`}
-          >
+          <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-slate-700 dark:text-slate-300">
             Icon Class / Identifier
           </label>
           <input
@@ -120,31 +121,19 @@ export default function CourseCategoryForm({ isDark = false, onSuccess }) {
             placeholder="e.g. code, laptop, or icon name"
             value={icon}
             onChange={(e) => setIcon(e.target.value)}
-            className={`w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 ${
-              isDark
-                ? "bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-blue-900 focus:border-blue-500"
-                : "bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-blue-100 focus:border-blue-600"
-            }`}
+            className="w-full px-3.5 py-2.5 rounded-xl border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-500/30 focus:border-blue-600 dark:focus:border-indigo-500"
           />
-          <p
-            className={`text-xs mt-1 ${isDark ? "text-slate-500" : "text-slate-400"}`}
-          >
+          <p className="text-xs mt-1.5 text-slate-400 dark:text-slate-500">
             Optional. Used for rendering category icons in the frontend UI.
           </p>
         </div>
 
-        <div
-          className={`pt-4 border-t flex justify-end gap-3 ${isDark ? "border-slate-800" : "border-slate-100"}`}
-        >
+        <div className="pt-5 border-t flex justify-end gap-3 border-slate-100 dark:border-slate-800/80">
           <button
             type="button"
             onClick={() => navigate(-1)}
             disabled={loading}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-xs cursor-pointer disabled:opacity-50 ${
-              isDark
-                ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200"
-            }`}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-xs cursor-pointer disabled:opacity-50 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700/80"
           >
             <X size={16} />
             Cancel
@@ -152,10 +141,10 @@ export default function CourseCategoryForm({ isDark = false, onSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 dark:bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 dark:hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer disabled:opacity-50"
           >
             <Save size={16} />
-            {loading ? "Saving..." : "Save Category"}
+            {loading ? "Saving..." : isEditMode ? "Update Category" : "Save Category"}
           </button>
         </div>
       </form>

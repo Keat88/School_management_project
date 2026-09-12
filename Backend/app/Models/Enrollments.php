@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Inrollments extends Model
+class Enrollment extends Model
 {
     use HasFactory;
 
@@ -27,7 +27,7 @@ class Inrollments extends Model
 
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Courses::class, 'course_id');
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
     public function order(): BelongsTo

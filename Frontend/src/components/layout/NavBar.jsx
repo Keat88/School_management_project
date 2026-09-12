@@ -17,7 +17,7 @@ import { SiAdminer } from "react-icons/si";
 
 const roleBadgeStyles = {
   admin:
-    "bg-purple-100 text-purple-700 ring-1 ring-inset ring-purple-200 dark:bg-purple-950/60 dark:text-purple-400 dark:ring-purple-900",
+    "bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:ring-blue-900",
   staff:
     "bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:ring-blue-900",
   student:
@@ -39,18 +39,11 @@ export default function Navbar({ title, notificationCount = 0 }) {
   const {
     isDarkMode,
     toggleTheme,
-    accentColor = "#2563EB",
+    accentColor = "#2563EC",
   } = useTheme() || {};
 
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
-
-  const role = currentUser?.role;
-  const badgeStyle =
-    roleBadgeStyles[role] ||
-    "bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-700";
-  const badgeLabel = roleLabels[role] || "Guest";
-
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -125,7 +118,7 @@ export default function Navbar({ title, notificationCount = 0 }) {
                 {/* Avatar container styled with the stored accent color border */}
                 <div
                   style={{ borderColor: accentColor }}
-                  className="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-2 flex items-center justify-center font-bold uppercase shrink-0 shadow-sm overflow-hidden transition-all"
+                  className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 border-2 flex items-center justify-center font-bold uppercase shrink-0 shadow-sm overflow-hidden transition-all"
                 >
                   {currentUser?.avatarUrl || currentUser?.avatar ? (
                     <img
@@ -139,13 +132,14 @@ export default function Navbar({ title, notificationCount = 0 }) {
                 </div>
 
                 <div className="hidden md:flex flex-col text-left">
-                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate max-w-[140px]">
+                  <span className="text-sm font-bold text-slate-700 dark:text-slate-100 truncate uppercase max-w-[140px]">
                     {currentUser?.name || "User"}
                   </span>
                   <span
-                    className={`mt-0.5 inline-flex w-fit items-center px-2 py-0.5 rounded-md text-[10px] font-bold tracking-wide uppercase ${badgeStyle}`}
+                    className="mt-0.5 inline-flex w-fit items-center text-gray-500 rounded-md text-[10px] font-bold tracking-wide"
                   >
-                    {badgeLabel}
+            
+                    {currentUser.email}
                   </span>
                 </div>
 
@@ -165,9 +159,9 @@ export default function Navbar({ title, notificationCount = 0 }) {
                       {currentUser?.name || "User"}
                     </p>
                     <span
-                      className={`mt-1 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${badgeStyle}`}
+                      className="mt-1 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase"
                     >
-                      {badgeLabel}
+                    {currentUser.email}
                     </span>
                   </div>
 

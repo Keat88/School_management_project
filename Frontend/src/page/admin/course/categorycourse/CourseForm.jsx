@@ -1,9 +1,23 @@
 import { useState, useEffect } from "react";
-import { BookOpen, Save, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react";
+import { BookOpen, Save, AlertCircle, CheckCircle, ArrowLeft, DollarSign, Clock, Tag, FileText } from "lucide-react";
 import { api } from "../../../../data/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CourseForm({ isDark = false, course = null, onSuccess, onCancel }) {
+export default function CourseForm({ course = null, onSuccess, onCancel }) {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  
+  const [fetchedCourse, setFetchedCourse] = useState(null);
+  const [loadingCourse, setLoadingCourse] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [instructors, setInstructors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  const activeCourse = course || fetchedCourse;
+  const isEditMode = Boolean(activeCourse);
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -23,52 +37,73 @@ export default function CourseForm({ isDark = false, course = null, onSuccess, o
     what_you_will_learn: "",
   });
 
-  const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
-  const [instructors, setInstructors] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
-
+  // Fetch categories and instructors
   useEffect(() => {
     api.get("/course-categories")
       .then((res) => {
-        if (res.data.status === "success") {
-          setCategories(res.data.data);
+        if (res.data.status === "success" || res.data.status === true) {
+          const catData = res.data.data;
+          setCategories(Array.isArray(catData) ? catData : catData.data || []);
         }
       })
       .catch((err) => console.error("Failed to load categories:", err));
 
-    api.get("/users")
+    api.get("/teacher/index")
       .then((res) => {
-        if (res.data.status === "success") {
+        // Updated to handle boolean status (true) matching your API response
+        if (res.data.status === true || res.data.status === "success") {
           const data = res.data.data;
           setInstructors(Array.isArray(data) ? data : data.data || []);
         }
       })
       .catch((err) => console.error("Failed to load instructors:", err));
+  }, []);
 
-    if (course) {
+  // Fetch course by URL param ID if no course prop was passed
+  useEffect(() => {
+    if (id && !course) {
+      setLoadingCourse(true);
+      api.get(`/courses/${id}`)
+        .then((res) => {
+          if (res.data.status === "success" || res.data.status === true) {
+            setFetchedCourse(res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load course:", err);
+          setError("Failed to load course details for editing.");
+        })
+        .finally(() => setLoadingCourse(false));
+    }
+  }, [id, course]);
+
+  // Populate form data when activeCourse is available
+  useEffect(() => {
+    if (activeCourse) {
       setFormData({
-        title: course.title || "",
-        description: course.description || "",
-        price: course.price ?? "",
-        discount_price: course.discount_price ?? "",
-        thumbnail: course.thumbnail || "",
-        category_id: course.category_id || "",
-        instructor_id: course.instructor_id || "",
-        level: course.level || "beginner",
-        status: course.status || "draft",
-        duration: course.duration || "",
-        lessons_count: course.lessons_count ?? "",
-        language: course.language || "English",
-        has_certificate: course.has_certificate ?? true,
-        is_featured: course.is_featured ?? false,
-        requirements: Array.isArray(course.requirements) ? course.requirements.join("\n") : (course.requirements || ""),
-        what_you_will_learn: Array.isArray(course.what_you_will_learn) ? course.what_you_will_learn.join("\n") : (course.what_you_will_learn || ""),
+        title: activeCourse.title || "",
+        description: activeCourse.description || "",
+        price: activeCourse.price ?? "",
+        discount_price: activeCourse.discount_price ?? "",
+        thumbnail: activeCourse.thumbnail || "",
+        category_id: activeCourse.category_id || "",
+        instructor_id: activeCourse.instructor_id || "",
+        level: activeCourse.level || "beginner",
+        status: activeCourse.status || "draft",
+        duration: activeCourse.duration || "",
+        lessons_count: activeCourse.lessons_count ?? "",
+        language: activeCourse.language || "English",
+        has_certificate: activeCourse.has_certificate ?? true,
+        is_featured: activeCourse.is_featured ?? false,
+        requirements: Array.isArray(activeCourse.requirements) 
+          ? activeCourse.requirements.join("\n") 
+          : (activeCourse.requirements || ""),
+        what_you_will_learn: Array.isArray(activeCourse.what_you_will_learn) 
+          ? activeCourse.what_you_will_learn.join("\n") 
+          : (activeCourse.what_you_will_learn || ""),
       });
     }
-  }, [course]);
+  }, [activeCourse]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -80,7 +115,6 @@ export default function CourseForm({ isDark = false, course = null, onSuccess, o
     setError(null);
     setSuccess(false);
 
-    // Format textareas into arrays for backend JSON columns
     const payload = {
       ...formData,
       requirements: formData.requirements ? formData.requirements.split("\n").filter(Boolean) : [],
@@ -89,16 +123,21 @@ export default function CourseForm({ isDark = false, course = null, onSuccess, o
 
     try {
       let response;
-      if (course) {
-        response = await api.put(`/courses/${course.id}`, payload);
+      const courseId = activeCourse?.id || id;
+
+      if (courseId) {
+        response = await api.put(`/courses/${courseId}`, payload);
       } else {
         response = await api.post("/courses", payload);
       }
 
-      if (response.data.status === "success") {
+      if (response.data.status === "success" || response.data.status === true) {
         setSuccess(true);
         if (onSuccess) onSuccess(response.data.data);
-        setTimeout(() => setSuccess(false), 3000);
+        setTimeout(() => {
+          setSuccess(false);
+          if (!onSuccess) navigate(-1);
+        }, 1500);
       }
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
@@ -106,300 +145,314 @@ export default function CourseForm({ isDark = false, course = null, onSuccess, o
         const firstError = Object.values(errors)[0][0];
         setError(firstError);
       } else {
-        setError(err.response?.data?.message || "Failed to save course.");
+        setError(err.response?.data?.message || (isEditMode ? "Failed to update course." : "Failed to create course."));
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const inputClass = `w-full px-3 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 ${
-    isDark 
-      ? "bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:ring-blue-900 focus:border-blue-500" 
-      : "bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:ring-blue-100 focus:border-blue-600"
-  }`;
+  const inputClass = "w-full px-3.5 py-2.5 rounded-xl border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-500/30 focus:border-blue-600 dark:focus:border-indigo-500";
+  const labelClass = "block text-xs font-semibold uppercase tracking-wider mb-1.5 text-slate-700 dark:text-slate-300";
 
-  const labelClass = `block text-xs font-semibold uppercase tracking-wider mb-1 ${
-    isDark ? "text-slate-300" : "text-slate-700"
-  }`;
+  if (loadingCourse) {
+    return (
+      <div className="flex items-center justify-center p-12 text-sm text-slate-500 dark:text-slate-400">
+        Loading course details...
+      </div>
+    );
+  }
 
   return (
-    <div className={`space-y-6 lg:min-w-160 mx-auto p-6 rounded-2xl border shadow-xs ${
-      isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"
-    }`}>
+    <div className="space-y-6 lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="flex items-center gap-3.5">
           <button
             type="button"
             onClick={onCancel || (() => navigate(-1))}
-            className={`p-2 rounded-xl border transition-colors cursor-pointer ${
-              isDark ? "border-slate-700 hover:bg-slate-800 text-slate-300" : "border-slate-200 hover:bg-slate-100 text-slate-600"
-            }`}
+            className="p-2.5 rounded-xl border transition-colors cursor-pointer border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
+            title="Go back"
           >
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h2 className={`text-xl font-bold tracking-tight flex items-center gap-2 ${isDark ? "text-slate-100" : "text-slate-900"}`}>
-              <BookOpen className="text-blue-600" size={22} />
-              {course ? "Edit Course" : "Create New Course"}
+            <h2 className="text-xl font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
+              <BookOpen className="text-blue-600 dark:text-indigo-400" size={22} />
+              {isEditMode ? "Edit Course" : "Create New Course"}
             </h2>
-            <p className={`text-sm mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-              {course ? "Update course details and configurations." : "Fill out the information below to publish a new course."}
+            <p className="text-sm mt-1 text-slate-500 dark:text-slate-400">
+              {isEditMode 
+                ? "Update course details, pricing, and curriculum configurations." 
+                : "Fill out the information below to publish a brand new course."}
             </p>
           </div>
         </div>
       </div>
 
       {error && (
-        <div className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-medium ${
-          isDark ? "bg-red-950/50 text-red-400 border-red-900/60" : "bg-red-50 text-red-700 border-red-200"
-        }`}>
-          <AlertCircle size={16} />
+        <div className="flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium bg-red-50 dark:bg-rose-500/10 text-red-700 dark:text-rose-400 border-red-200 dark:border-rose-500/20">
+          <AlertCircle size={16} className="shrink-0" />
           {error}
         </div>
       )}
 
       {success && (
-        <div className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-medium ${
-          isDark ? "bg-emerald-950/50 text-emerald-400 border-emerald-900/60" : "bg-emerald-50 text-emerald-700 border-emerald-200"
-        }`}>
-          <CheckCircle size={16} />
-          {course ? "Course updated successfully!" : "Course created successfully!"}
+        <div className="flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20">
+          <CheckCircle size={16} className="shrink-0" />
+          {isEditMode ? "Course updated successfully!" : "Course created successfully!"}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Title */}
-        <div>
-          <label className={labelClass}>Course Title *</label>
-          <input
-            type="text"
-            required
-            placeholder="e.g. Advanced React & Next.js Masterclass"
-            value={formData.title}
-            onChange={(e) => handleChange("title", e.target.value)}
-            className={inputClass}
-          />
-        </div>
-
-        {/* Category & Instructor */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Section 1: General Info */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+            <FileText size={16} /> General Information
+          </h3>
+          
           <div>
-            <label className={labelClass}>Category *</label>
-            <select
-              required
-              value={formData.category_id}
-              onChange={(e) => handleChange("category_id", e.target.value)}
-              className={inputClass}
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={labelClass}>Instructor *</label>
-            <select
-              required
-              value={formData.instructor_id}
-              onChange={(e) => handleChange("instructor_id", e.target.value)}
-              className={inputClass}
-            >
-              <option value="">Select Instructor</option>
-              {instructors.map((inst) => (
-                <option key={inst.id} value={inst.id}>{inst.name}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Price & Discount Price */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Price ($) *</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              required
-              placeholder="99.99"
-              value={formData.price}
-              onChange={(e) => handleChange("price", e.target.value)}
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <label className={labelClass}>Discount Price ($)</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="49.99"
-              value={formData.discount_price}
-              onChange={(e) => handleChange("discount_price", e.target.value)}
-              className={inputClass}
-            />
-          </div>
-        </div>
-
-        {/* Duration & Lessons Count */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Duration</label>
+            <label className={labelClass}>Course Title *</label>
             <input
               type="text"
-              placeholder="e.g. 12.5 total hours"
-              value={formData.duration}
-              onChange={(e) => handleChange("duration", e.target.value)}
+              required
+              placeholder="e.g. Advanced React & Next.js Masterclass"
+              value={formData.title}
+              onChange={(e) => handleChange("title", e.target.value)}
               className={inputClass}
             />
           </div>
-          <div>
-            <label className={labelClass}>Lessons Count</label>
-            <input
-              type="number"
-              min="0"
-              placeholder="e.g. 45"
-              value={formData.lessons_count}
-              onChange={(e) => handleChange("lessons_count", e.target.value)}
-              className={inputClass}
-            />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Category *</label>
+              <select
+                required
+                value={formData.category_id}
+                onChange={(e) => handleChange("category_id", e.target.value)}
+                className={inputClass}
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>Instructor *</label>
+              <select
+                required
+                value={formData.instructor_id}
+                onChange={(e) => handleChange("instructor_id", e.target.value)}
+                className={inputClass}
+              >
+                <option value="">Select Instructor</option>
+                {instructors.map((inst) => (
+                  <option key={inst.id} value={inst.id}>{inst.name}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* Level, Language & Status */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label className={labelClass}>Level</label>
-            <select
-              value={formData.level}
-              onChange={(e) => handleChange("level", e.target.value)}
-              className={inputClass}
-            >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-              <option value="all">All Levels</option>
-            </select>
+        {/* Section 2: Pricing & Metrics */}
+        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+            <DollarSign size={16} /> Pricing & Course Metrics
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Price ($) *</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                required
+                placeholder="99.99"
+                value={formData.price}
+                onChange={(e) => handleChange("price", e.target.value)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Discount Price ($)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                placeholder="49.99"
+                value={formData.discount_price}
+                onChange={(e) => handleChange("discount_price", e.target.value)}
+                className={inputClass}
+              />
+            </div>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className={labelClass}>Duration</label>
+              <input
+                type="text"
+                placeholder="e.g. 12.5 total hours"
+                value={formData.duration}
+                onChange={(e) => handleChange("duration", e.target.value)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Lessons Count</label>
+              <input
+                type="number"
+                min="0"
+                placeholder="e.g. 45"
+                value={formData.lessons_count}
+                onChange={(e) => handleChange("lessons_count", e.target.value)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Language</label>
+              <input
+                type="text"
+                placeholder="e.g. English"
+                value={formData.language}
+                onChange={(e) => handleChange("language", e.target.value)}
+                className={inputClass}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Configuration & Media */}
+        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+            <Tag size={16} /> Status & Settings
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Level</label>
+              <select
+                value={formData.level}
+                onChange={(e) => handleChange("level", e.target.value)}
+                className={inputClass}
+              >
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+                <option value="all">All Levels</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>Publication Status</label>
+              <select
+                value={formData.status}
+                onChange={(e) => handleChange("status", e.target.value)}
+                className={inputClass}
+              >
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+
           <div>
-            <label className={labelClass}>Language</label>
+            <label className={labelClass}>Thumbnail Image URL</label>
             <input
               type="text"
-              placeholder="e.g. English"
-              value={formData.language}
-              onChange={(e) => handleChange("language", e.target.value)}
+              placeholder="https://example.com/image.jpg"
+              value={formData.thumbnail}
+              onChange={(e) => handleChange("thumbnail", e.target.value)}
               className={inputClass}
             />
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 p-4 rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/30">
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={formData.has_certificate}
+                onChange={(e) => handleChange("has_certificate", e.target.checked)}
+                className="w-4 h-4 rounded text-blue-600 dark:text-indigo-500 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+              />
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Offers Completion Certificate
+              </span>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={formData.is_featured}
+                onChange={(e) => handleChange("is_featured", e.target.checked)}
+                className="w-4 h-4 rounded text-blue-600 dark:text-indigo-500 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+              />
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Feature on Homepage
+              </span>
+            </label>
+          </div>
+        </div>
+
+        {/* Section 4: Content & Descriptions */}
+        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
+          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+            <Clock size={16} /> Course Syllabus & Details
+          </h3>
+
           <div>
-            <label className={labelClass}>Status</label>
-            <select
-              value={formData.status}
-              onChange={(e) => handleChange("status", e.target.value)}
-              className={inputClass}
-            >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-              <option value="archived">Archived</option>
-            </select>
+            <label className={labelClass}>Description</label>
+            <textarea
+              rows="4"
+              placeholder="Write a comprehensive description of what students will experience..."
+              value={formData.description}
+              onChange={(e) => handleChange("description", e.target.value)}
+              className={`${inputClass} resize-y`}
+            />
           </div>
-        </div>
 
-        {/* Checkboxes / Toggles */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-          <label className="flex items-center gap-3 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={formData.has_certificate}
-              onChange={(e) => handleChange("has_certificate", e.target.checked)}
-              className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
-            />
-            <span className={`text-sm font-medium ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-              Offers Completion Certificate
-            </span>
-          </label>
-          <label className="flex items-center gap-3 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={formData.is_featured}
-              onChange={(e) => handleChange("is_featured", e.target.checked)}
-              className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
-            />
-            <span className={`text-sm font-medium ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-              Feature on Homepage
-            </span>
-          </label>
-        </div>
-
-        {/* Thumbnail URL */}
-        <div>
-          <label className={labelClass}>Thumbnail URL</label>
-          <input
-            type="text"
-            placeholder="https://example.com/image.jpg"
-            value={formData.thumbnail}
-            onChange={(e) => handleChange("thumbnail", e.target.value)}
-            className={inputClass}
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className={labelClass}>Description</label>
-          <textarea
-            rows="3"
-            placeholder="Write a comprehensive description..."
-            value={formData.description}
-            onChange={(e) => handleChange("description", e.target.value)}
-            className={`${inputClass} resize-y`}
-          />
-        </div>
-
-        {/* Requirements */}
-        <div>
-          <label className={labelClass}>Requirements (One per line)</label>
-          <textarea
-            rows="3"
-            placeholder="Basic JavaScript knowledge&#10;A computer with internet access"
-            value={formData.requirements}
-            onChange={(e) => handleChange("requirements", e.target.value)}
-            className={`${inputClass} resize-y`}
-          />
-        </div>
-
-        {/* What You Will Learn */}
-        <div>
-          <label className={labelClass}>What You Will Learn (One per line)</label>
-          <textarea
-            rows="3"
-            placeholder="Build full-stack web applications&#10;Master React hooks and state management"
-            value={formData.what_you_will_learn}
-            onChange={(e) => handleChange("what_you_will_learn", e.target.value)}
-            className={`${inputClass} resize-y`}
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Requirements (One per line)</label>
+              <textarea
+                rows="3"
+                placeholder="Basic JavaScript knowledge&#10;A computer with internet access"
+                value={formData.requirements}
+                onChange={(e) => handleChange("requirements", e.target.value)}
+                className={`${inputClass} resize-y`}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>What You Will Learn (One per line)</label>
+              <textarea
+                rows="3"
+                placeholder="Build full-stack web applications&#10;Master React hooks & state"
+                value={formData.what_you_will_learn}
+                onChange={(e) => handleChange("what_you_will_learn", e.target.value)}
+                className={`${inputClass} resize-y`}
+              />
+            </div>
+          </div>
         </div>
 
         {/* Footer Actions */}
-        <div className={`pt-4 border-t flex items-center justify-end gap-3 ${isDark ? "border-slate-800" : "border-slate-100"}`}>
+        <div className="pt-5 border-t flex items-center justify-end gap-3 border-slate-100 dark:border-slate-800/80">
           <button
             type="button"
             onClick={onCancel || (() => navigate(-1))}
-            className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors cursor-pointer ${
-              isDark ? "border-slate-700 hover:bg-slate-800 text-slate-300" : "border-slate-200 hover:bg-slate-100 text-slate-700"
-            }`}
+            disabled={loading}
+            className="px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-xs cursor-pointer disabled:opacity-50 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700/80"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-xs cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 dark:bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 dark:hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer disabled:opacity-50"
           >
             <Save size={16} />
-            {loading ? "Saving..." : course ? "Update Course" : "Save Course"}
+            {loading ? "Saving..." : isEditMode ? "Update Course" : "Save Course"}
           </button>
         </div>
       </form>

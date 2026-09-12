@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lesson;
 use App\Models\Lessons;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,7 @@ class LessonsController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Lessons::with(['module', 'course']);
+        $query = Lesson::with(['module', 'course']);
 
         if ($request->has('module_id')) {
             $query->where('module_id', $request->module_id);
@@ -46,7 +47,7 @@ class LessonsController extends Controller
             'sort_order' => 'sometimes|integer|min:0',
         ]);
 
-        $lesson = Lessons::create($validated);
+        $lesson = Lesson::create($validated);
 
         return response()->json([
             'status' => 'success',
@@ -58,7 +59,7 @@ class LessonsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Lessons $lessons)
+    public function show(Lesson $lessons)
     {
         $lessons->load(['module', 'course']);
 
@@ -71,7 +72,7 @@ class LessonsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Lessons $lessons)
+    public function update(Request $request, Lesson $lessons)
     {
         $validated = $request->validate([
             'module_id' => 'sometimes|exists:course_modules,id',
@@ -96,7 +97,7 @@ class LessonsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Lessons $lessons)
+    public function destroy(Lesson $lessons)
     {
         $lessons->delete();
 

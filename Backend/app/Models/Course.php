@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
@@ -45,33 +43,12 @@ class Course extends Model
         'what_you_will_learn' => 'array',
     ];
 
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(CourseCategory::class, 'category_id');
     }
-
-    public function instructor(): BelongsTo
+    public function user()
     {
-        return $this->belongsTo(User::class, 'instructor_id');
-    }
-
-    public function modules(): HasMany
-    {
-        return $this->hasMany(CoursesModules::class, 'course_id');
-    }
-
-    public function lessons(): HasMany
-    {
-        return $this->hasMany(Lessons::class, 'course_id');
-    }
-
-    public function enrollments(): HasMany
-    {
-        return $this->hasMany(Enrollment::class, 'course_id');
-    }
-
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(CourseReview::class, 'course_id');
+        return $this->belongsTo(User::class);
     }
 }

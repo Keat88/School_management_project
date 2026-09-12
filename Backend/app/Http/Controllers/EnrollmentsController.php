@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Enrollment;
 use App\Models\Inrollments;
 use Illuminate\Http\Request;
 
-class InrollmentsController extends Controller
+class EnrollmentsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        $query = Inrollments::with(['user', 'course', 'order']);
+        $query = Enrollment::with(['user', 'course', 'order']);
 
         if ($request->has('user_id')) {
             $query->where('user_id', $request->user_id);
@@ -43,7 +44,7 @@ class InrollmentsController extends Controller
             'completed_at' => 'nullable|date',
         ]);
 
-        $inrollment = Inrollments::create($validated);
+        $inrollment = Enrollment::create($validated);
 
         return response()->json([
             'status' => 'success',
@@ -55,7 +56,7 @@ class InrollmentsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Inrollments $inrollments)
+    public function show(Enrollment $inrollments)
     {
         $inrollments->load(['user', 'course', 'order']);
 
@@ -68,7 +69,7 @@ class InrollmentsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Inrollments $inrollments)
+    public function update(Request $request, Enrollment $inrollments)
     {
         $validated = $request->validate([
             'user_id' => 'sometimes|exists:users,id',
@@ -90,7 +91,7 @@ class InrollmentsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Inrollments $inrollments)
+    public function destroy(Enrollment $inrollments)
     {
         $inrollments->delete();
 

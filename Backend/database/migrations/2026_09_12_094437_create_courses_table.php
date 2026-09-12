@@ -19,8 +19,6 @@ return new class extends Migration
             $table->decimal('price', 10, 2)->default(0.00);
             $table->decimal('discount_price', 10, 2)->nullable();
             $table->string('thumbnail')->nullable();
-
-            // Missing metrics & metadata
             $table->decimal('rating_avg', 3, 2)->default(0.00);
             $table->unsignedInteger('reviews_count')->default(0);
             $table->string('duration')->nullable();
@@ -30,7 +28,6 @@ return new class extends Migration
             $table->string('language')->default('English');
             $table->boolean('has_certificate')->default(true);
             $table->boolean('is_featured')->default(false);
-            
             $table->foreignId('category_id')->nullable()->constrained('course_categories')->nullOnDelete();
             $table->foreignId('instructor_id')->constrained('users')->cascadeOnDelete();
             $table->enum('level', ['beginner', 'intermediate', 'advanced', 'all'])->default('all');

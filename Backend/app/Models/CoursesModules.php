@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class CoursesModules extends Model
+class CourseModule extends Model
 {
     use HasFactory;
 
@@ -21,11 +21,11 @@ class CoursesModules extends Model
 
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Courses::class, 'course_id');
+        return $this->belongsTo(Course::class, 'course_id');
     }
 
     public function lessons(): HasMany
     {
-        return $this->hasMany(Lessons::class, 'module_id');
+        return $this->hasMany(Lesson::class, 'module_id');
     }
 }

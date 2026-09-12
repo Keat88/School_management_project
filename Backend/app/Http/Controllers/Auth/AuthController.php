@@ -61,38 +61,31 @@ class AuthController extends Controller
                 'message' => 'Invalid email or password combination.',
             ], 401);
         }
-
         $user = Auth::user();
-
         // Check if THIS specific user has 2FA enabled by the admin
-        // if ($user->two_factor_enabled === true || $user->two_factor_enabled == 1) {
-        //     $otp = rand(100000, 999999);
-        //     $user->otp_code = Hash::make($otp);
-        //     $user->otp_expires_at = now()->addMinutes(10);
-        //     $user->save();
-
-        //     // Send OTP via email
-        //     Mail::raw("Your login verification OTP is: {$otp}", function ($message) use ($user) {
-        //         $message->to($user->email);
-        //         $message->subject('System Login Verification Code');
-        //     });
-
-        //     ActivityLog::create([
-        //         'action' => '2FA OTP triggered for user: ' . $user->email,
-        //         'ip_address' => $request->ip(),
-        //     ]);
-
-        //     return response()->json([
-        //         'status' => 'requires_2fa',
-        //         'message' => 'OTP code sent to your registered email.',
-        //         'email' => $user->email
-        //     ], 200);
-        // }
-
+        if ($user->two_factor_enabled === true || $user->two_factor_enabled == 1) {
+            $otp = rand(100000, 999999);
+            $user->otp_code = Hash::make($otp);
+            $user->otp_expires_at = now()->addMinutes(10);
+            $user->save();
+            // Send OTP via email
+            Mail::raw("Your login verification OTP is: {$otp}", function ($message) use ($user) {
+                $message->to($user->email);
+                $message->subject('System Login Verification Code');
+            });
+            ActivityLog::create([
+                'action' => '2FA OTP triggered for user: ' . $user->email,
+                'ip_address' => $request->ip(),
+            ]);
+            return response()->json([
+                'status' => 'requires_2fa',
+                'message' => 'OTP code sent to your registered email.',
+                'email' => $user->email
+            ], 200);
+        }
         // Standard login if 2FA is turned off for this user
         $deviceName = 'auth_token';
         $access_token = $user->createToken($deviceName)->plainTextToken;
-
         ActivityLog::create([
             'action' => 'Logged into the system from IP: ' . $request->ip(),
             'ip_address' => $request->ip(),
@@ -111,14 +104,13 @@ class AuthController extends Controller
      */
     public function updateUser2Fa(Request $request, $id)
     {
+
         $request->validate([
             'two_factor_enabled' => 'required|boolean'
         ]);
-
         $user = User::findOrFail($id);
         $user->two_factor_enabled = $request->two_factor_enabled;
         $user->save();
-
         return response()->json([
             'status' => 'success',
             'message' => "2FA status for {$user->name} has been updated."
@@ -134,7 +126,6 @@ class AuthController extends Controller
             'email' => 'required|email|exists:users,email',
             'otp' => 'required|string|size:6',
         ]);
-
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->otp, $user->otp_code) || now()->isAfter($user->otp_expires_at)) {
@@ -143,7 +134,6 @@ class AuthController extends Controller
                 'message' => 'Invalid or expired verification code.'
             ], 422);
         }
-
         // Clear OTP data after successful check
         $user->otp_code = null;
         $user->otp_expires_at = null;

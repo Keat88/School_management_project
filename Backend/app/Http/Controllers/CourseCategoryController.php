@@ -14,13 +14,11 @@ class CourseCategoryController extends Controller
     public function index()
     {
         $categories = CourseCategory::withCount('courses')->get();
-
         return response()->json([
             'status' => 'success',
             'data' => $categories,
         ]);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -41,7 +39,6 @@ class CourseCategoryController extends Controller
             'data' => $category,
         ], 201);
     }
-
     /**
      * Display the specified resource.
      */
@@ -54,7 +51,6 @@ class CourseCategoryController extends Controller
             'data' => $courseCategory,
         ]);
     }
-
     /**
      * Update the specified resource in storage.
      */

@@ -18,15 +18,13 @@ class CourseController extends Controller
         if ($request->has('category_id')) {
             $query->where('category_id', $request->category_id);
         }
-
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
-
         if ($request->has('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
-
+        
         $courses = $query->paginate(10);
 
         return response()->json([
@@ -92,7 +90,7 @@ class CourseController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'discount_price' => 'nullable|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0|lt:price',
             'thumbnail' => 'nullable|string|max:500',
             'category_id' => 'required|exists:course_categories,id',
             'instructor_id' => 'required|exists:users,id',

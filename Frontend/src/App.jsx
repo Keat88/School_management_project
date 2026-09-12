@@ -116,6 +116,10 @@ function App() {
               path="course/category/add"
               element={<CourseCategoryForm />}
             />
+            <Route
+              path="course/category/add/:id"
+              element={<CourseCategoryForm />}
+            />
             <Route path="course" element={<CoursesTable />} />
             <Route path="course/add" element={<CourseForm />} />
             <Route path="course/contact" element={<ContactInquiries />} />
