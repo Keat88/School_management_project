@@ -17,7 +17,6 @@ class SettingController extends Controller
             'settings' => $settings
         ], 200);
     }
-
     public function update(Request $request)
     {
         // Extract the nested settings array from the request payload

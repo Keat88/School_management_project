@@ -13,14 +13,12 @@ import { useTheme } from "../../context/ThemeContext";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
-  const { logout } = useAuth();
+  const { logout,currentUser } = useAuth();
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme } = useTheme();
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
-
   const dropdownRef = useRef(null);
-
   // Close dropdown on outside click
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -47,6 +45,7 @@ export default function Navbar() {
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
+  console.log(currentUser)
   return (
     <nav className="bg-white dark:bg-slate-950 border-b border-gray-100 dark:border-slate-800 px-6 py-3 shadow-sm sticky top-0 z-50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -110,12 +109,11 @@ export default function Navbar() {
             className="p-2.5 rounded-full bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition border border-gray-200 dark:border-slate-800 focus:outline-none shadow-sm flex items-center justify-center"
           >
             {isDarkMode ? (
-              <FaSun className="w-4 h-4 text-amber-400" />
+              <FaSun className="w-4 h-4 text-gray-400" />
             ) : (
               <FaMoon className="w-4 h-4 text-slate-600" />
             )}
           </button>
-
           {token ? (
             <div className="relative" ref={dropdownRef}>
               <button

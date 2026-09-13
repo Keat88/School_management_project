@@ -1,12 +1,27 @@
 import { useState, useEffect } from "react";
-import { BookOpen, Save, AlertCircle, CheckCircle, ArrowLeft, DollarSign, Clock, Tag, FileText } from "lucide-react";
+import {
+  BookOpen,
+  Save,
+  AlertCircle,
+  CheckCircle,
+  ArrowLeft,
+  DollarSign,
+  Clock,
+  Tag,
+  FileText,
+  Loader2,
+  Upload,
+  X,
+  Link as LinkIcon,
+  Image as ImageIcon,
+} from "lucide-react";
 import { api } from "../../../../data/api";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function CourseForm({ course = null, onSuccess, onCancel }) {
   const navigate = useNavigate();
   const { id } = useParams();
-  
+
   const [fetchedCourse, setFetchedCourse] = useState(null);
   const [loadingCourse, setLoadingCourse] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -14,6 +29,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+
+  // Toggle between 'file' upload and 'url' string input
+  const [thumbnailType, setThumbnailType] = useState("file");
 
   const activeCourse = course || fetchedCourse;
   const isEditMode = Boolean(activeCourse);
@@ -23,7 +41,7 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
     description: "",
     price: "",
     discount_price: "",
-    thumbnail: "",
+    thumbnail: "", // Can be a File object or a string URL
     category_id: "",
     instructor_id: "",
     level: "beginner",
@@ -39,18 +57,21 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
 
   // Fetch categories and instructors
   useEffect(() => {
-    api.get("/course-categories")
+    setLoading(true);
+    api
+      .get("/course-categories")
       .then((res) => {
         if (res.data.status === "success" || res.data.status === true) {
           const catData = res.data.data;
           setCategories(Array.isArray(catData) ? catData : catData.data || []);
         }
       })
-      .catch((err) => console.error("Failed to load categories:", err));
+      .catch((err) => console.error("Failed to load categories:", err))
+      .finally(setLoading(false));
 
-    api.get("/teacher/index")
+    api
+      .get("/teacher/index")
       .then((res) => {
-        // Updated to handle boolean status (true) matching your API response
         if (res.data.status === true || res.data.status === "success") {
           const data = res.data.data;
           setInstructors(Array.isArray(data) ? data : data.data || []);
@@ -63,10 +84,14 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
   useEffect(() => {
     if (id && !course) {
       setLoadingCourse(true);
-      api.get(`/courses/${id}`)
+      api
+        .get(`/course/show/${id}`)
         .then((res) => {
           if (res.data.status === "success" || res.data.status === true) {
-            setFetchedCourse(res.data.data);
+            const courseData = res.data.data;
+            setFetchedCourse(
+              Array.isArray(courseData) ? courseData[0] : courseData,
+            );
           }
         })
         .catch((err) => {
@@ -93,20 +118,42 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
         duration: activeCourse.duration || "",
         lessons_count: activeCourse.lessons_count ?? "",
         language: activeCourse.language || "English",
-        has_certificate: activeCourse.has_certificate ?? true,
-        is_featured: activeCourse.is_featured ?? false,
-        requirements: Array.isArray(activeCourse.requirements) 
-          ? activeCourse.requirements.join("\n") 
-          : (activeCourse.requirements || ""),
-        what_you_will_learn: Array.isArray(activeCourse.what_you_will_learn) 
-          ? activeCourse.what_you_will_learn.join("\n") 
-          : (activeCourse.what_you_will_learn || ""),
+        has_certificate:
+          activeCourse.has_certificate !== undefined
+            ? Boolean(Number(activeCourse.has_certificate))
+            : true,
+        is_featured:
+          activeCourse.is_featured !== undefined
+            ? Boolean(Number(activeCourse.is_featured))
+            : false,
+        requirements: Array.isArray(activeCourse.requirements)
+          ? activeCourse.requirements.join("\n")
+          : activeCourse.requirements || "",
+        what_you_will_learn: Array.isArray(activeCourse.what_you_will_learn)
+          ? activeCourse.what_you_will_learn.join("\n")
+          : activeCourse.what_you_will_learn || "",
       });
+
+      // If existing thumbnail is a URL string (and not a local storage path file starting with /storage/), switch to URL mode automatically
+      if (
+        activeCourse.thumbnail &&
+        typeof activeCourse.thumbnail === "string" &&
+        activeCourse.thumbnail.startsWith("http")
+      ) {
+        setThumbnailType("url");
+      }
     }
   }, [activeCourse]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleChange("thumbnail", file);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -115,20 +162,44 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
     setError(null);
     setSuccess(false);
 
-    const payload = {
-      ...formData,
-      requirements: formData.requirements ? formData.requirements.split("\n").filter(Boolean) : [],
-      what_you_will_learn: formData.what_you_will_learn ? formData.what_you_will_learn.split("\n").filter(Boolean) : [],
-    };
+    const data = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (key === "requirements" || key === "what_you_will_learn") {
+        const items = formData[key]
+          ? formData[key].split("\n").filter(Boolean)
+          : [];
+        items.forEach((item, index) => {
+          data.append(`${key}[${index}]`, item);
+        });
+      } else if (key === "thumbnail") {
+        if (
+          formData.thumbnail !== null &&
+          formData.thumbnail !== undefined &&
+          formData.thumbnail !== ""
+        ) {
+          data.append("thumbnail", formData.thumbnail);
+        }
+      } else if (key === "has_certificate" || key === "is_featured") {
+        data.append(key, formData[key] ? 1 : 0);
+      } else if (formData[key] !== null && formData[key] !== undefined) {
+        data.append(key, formData[key]);
+      }
+    });
 
     try {
       let response;
       const courseId = activeCourse?.id || id;
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
 
       if (courseId) {
-        response = await api.put(`/courses/${courseId}`, payload);
+        data.append("_method", "PUT");
+        response = await api.post(`/course/update/${courseId}`, data, config);
       } else {
-        response = await api.post("/courses", payload);
+        response = await api.post("/course/store", data, config);
       }
 
       if (response.data.status === "success" || response.data.status === true) {
@@ -145,20 +216,42 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
         const firstError = Object.values(errors)[0][0];
         setError(firstError);
       } else {
-        setError(err.response?.data?.message || (isEditMode ? "Failed to update course." : "Failed to create course."));
+        setError(
+          err.response?.data?.message ||
+            (isEditMode
+              ? "Failed to update course."
+              : "Failed to create course."),
+        );
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const inputClass = "w-full px-3.5 py-2.5 rounded-xl border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-500/30 focus:border-blue-600 dark:focus:border-indigo-500";
-  const labelClass = "block text-xs font-semibold uppercase tracking-wider mb-1.5 text-slate-700 dark:text-slate-300";
+  const inputClass =
+    "w-full px-3.5 py-2.5 rounded-xl border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-500/30 focus:border-blue-600 dark:focus:border-indigo-500";
+  const labelClass =
+    "block text-xs font-semibold uppercase tracking-wider mb-1.5 text-slate-700 dark:text-slate-300";
+
+  // Helper to determine thumbnail preview URL
+  const getPreviewUrl = () => {
+    if (!formData.thumbnail) return null;
+    if (formData.thumbnail instanceof File) {
+      return URL.createObjectURL(formData.thumbnail);
+    }
+    if (typeof formData.thumbnail === "string") {
+      return formData.thumbnail;
+    }
+    return null;
+  };
 
   if (loadingCourse) {
     return (
-      <div className="flex items-center justify-center p-12 text-sm text-slate-500 dark:text-slate-400">
-        Loading course details...
+      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-950">
+        <Loader2
+          className="animate-spin text-indigo-600 dark:text-indigo-400"
+          size={32}
+        />
       </div>
     );
   }
@@ -178,12 +271,15 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
           </button>
           <div>
             <h2 className="text-xl font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-              <BookOpen className="text-blue-600 dark:text-indigo-400" size={22} />
+              <BookOpen
+                className="text-blue-600 dark:text-indigo-400"
+                size={22}
+              />
               {isEditMode ? "Edit Course" : "Create New Course"}
             </h2>
             <p className="text-sm mt-1 text-slate-500 dark:text-slate-400">
-              {isEditMode 
-                ? "Update course details, pricing, and curriculum configurations." 
+              {isEditMode
+                ? "Update course details, pricing, and curriculum configurations."
                 : "Fill out the information below to publish a brand new course."}
             </p>
           </div>
@@ -196,11 +292,12 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
           {error}
         </div>
       )}
-
       {success && (
         <div className="flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20">
           <CheckCircle size={16} className="shrink-0" />
-          {isEditMode ? "Course updated successfully!" : "Course created successfully!"}
+          {isEditMode
+            ? "Course updated successfully!"
+            : "Course created successfully!"}
         </div>
       )}
 
@@ -210,7 +307,7 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
           <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
             <FileText size={16} /> General Information
           </h3>
-          
+
           <div>
             <label className={labelClass}>Course Title *</label>
             <input
@@ -234,7 +331,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -248,7 +347,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
               >
                 <option value="">Select Instructor</option>
                 {instructors.map((inst) => (
-                  <option key={inst.id} value={inst.id}>{inst.name}</option>
+                  <option key={inst.id} value={inst.id}>
+                    {inst.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -358,15 +459,110 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
             </div>
           </div>
 
-          <div>
-            <label className={labelClass}>Thumbnail Image URL</label>
-            <input
-              type="text"
-              placeholder="https://example.com/image.jpg"
-              value={formData.thumbnail}
-              onChange={(e) => handleChange("thumbnail", e.target.value)}
-              className={inputClass}
-            />
+          {/* Thumbnail Input (Toggle between Upload File & Image URL) */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className={labelClass}>Thumbnail Image</label>
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setThumbnailType("file");
+                    if (formData.thumbnail instanceof String) {
+                      handleChange("thumbnail", "");
+                    }
+                  }}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                    thumbnailType === "file"
+                      ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-indigo-400 shadow-xs"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                  }`}
+                >
+                  Upload File
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setThumbnailType("url");
+                    handleChange("thumbnail", "");
+                  }}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                    thumbnailType === "url"
+                      ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-indigo-400 shadow-xs"
+                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+                  }`}
+                >
+                  Image URL
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              {thumbnailType === "file" ? (
+                <label className="flex-1 w-full flex flex-col items-center justify-center px-6 py-4 border-2 border-dashed rounded-xl cursor-pointer border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-indigo-500 bg-slate-50 dark:bg-slate-950/40 transition-colors">
+                  <div className="flex flex-col items-center justify-center pt-2 pb-3 text-center">
+                    <Upload className="w-8 h-8 mb-2 text-slate-400 dark:text-slate-500" />
+                    <p className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                      <span className="font-semibold text-blue-600 dark:text-indigo-400">
+                        Click to upload
+                      </span>{" "}
+                      or drag and drop
+                    </p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                      PNG, JPG, WEBP (MAX. 2MB)
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </label>
+              ) : (
+                <div className="flex-1 w-full">
+                  <div className="relative">
+                    <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                      <LinkIcon size={16} />
+                    </span>
+                    <input
+                      type="url"
+                      placeholder="https://example.com/image.jpg"
+                      value={
+                        typeof formData.thumbnail === "string"
+                          ? formData.thumbnail
+                          : ""
+                      }
+                      onChange={(e) =>
+                        handleChange("thumbnail", e.target.value)
+                      }
+                      className={`${inputClass} pl-10`}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {getPreviewUrl() && (
+                <div className="relative w-32 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 bg-slate-100 dark:bg-slate-950">
+                  <img
+                    src={getPreviewUrl()}
+                    alt="Thumbnail Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleChange("thumbnail", "")}
+                    className="absolute top-1 right-1 p-1 bg-slate-900/70 hover:bg-slate-900 text-white rounded-full transition"
+                    title="Remove image"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 p-4 rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/30">
@@ -374,7 +570,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
               <input
                 type="checkbox"
                 checked={formData.has_certificate}
-                onChange={(e) => handleChange("has_certificate", e.target.checked)}
+                onChange={(e) =>
+                  handleChange("has_certificate", e.target.checked)
+                }
                 className="w-4 h-4 rounded text-blue-600 dark:text-indigo-500 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
               />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -424,12 +622,16 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
               />
             </div>
             <div>
-              <label className={labelClass}>What You Will Learn (One per line)</label>
+              <label className={labelClass}>
+                What You Will Learn (One per line)
+              </label>
               <textarea
                 rows="3"
                 placeholder="Build full-stack web applications&#10;Master React hooks & state"
                 value={formData.what_you_will_learn}
-                onChange={(e) => handleChange("what_you_will_learn", e.target.value)}
+                onChange={(e) =>
+                  handleChange("what_you_will_learn", e.target.value)
+                }
                 className={`${inputClass} resize-y`}
               />
             </div>
@@ -451,8 +653,16 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
             disabled={loading}
             className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 dark:bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 dark:hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer disabled:opacity-50"
           >
-            <Save size={16} />
-            {loading ? "Saving..." : isEditMode ? "Update Course" : "Save Course"}
+            {loading ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Save size={16} />
+            )}
+            {loading
+              ? "Saving..."
+              : isEditMode
+                ? "Update Course"
+                : "Save Course"}
           </button>
         </div>
       </form>

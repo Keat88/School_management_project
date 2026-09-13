@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\CourseModule;
-use App\Models\CoursesModules;
 use Illuminate\Http\Request;
 
 class CoursesModulesController extends Controller
@@ -13,8 +12,7 @@ class CoursesModulesController extends Controller
      */
     public function index(Request $request)
     {
-        $query = CourseModule::with(['course', 'lessons']);
-
+        $query = CourseModule::with(['course', 'lessons']);     
         if ($request->has('course_id')) {
             $query->where('course_id', $request->course_id);
         }

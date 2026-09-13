@@ -8,7 +8,7 @@ export default function ContactPage() {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0 opacity-40">
           <img
-            src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1600"
+            src="https://i.pinimg.com/736x/79/ce/d2/79ced2f05291501d54611e056b58bda7.jpg"
             alt="Support team"
             className="w-full h-full object-cover"
           />
@@ -71,9 +71,9 @@ export default function ContactPage() {
                     Head Office
                   </h4>
                   <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
-                    Jalan Cempaka Wangi No 22
+                    32,Street 58P,Sen Sok
                     <br />
-                    Jakarta - Indonesia
+                    Phnom Penh,Cambodia
                   </p>
                 </div>
               </div>
@@ -102,7 +102,7 @@ export default function ContactPage() {
                   <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
                     support@yourdomain.tld
                     <br />
-                    hello@yourdomain.tld
+                    Keatkeng88@gmail.com
                   </p>
                 </div>
               </div>
@@ -129,9 +129,8 @@ export default function ContactPage() {
                     Call Us
                   </h4>
                   <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
-                    Phone : +6221.2002.2012
+                    Phone : +885965757413
                     <br />
-                    Fax : +6221.2002.2013
                   </p>
                 </div>
               </div>

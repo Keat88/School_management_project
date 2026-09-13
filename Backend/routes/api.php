@@ -3,6 +3,7 @@
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UnBlockAttendance;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\OtpPasswordResetController;
@@ -49,7 +50,9 @@ Route::middleware('throttle:login-limiter')->group(function () {
 
 // ── Public E-Learning & Contact Routes ──
 // Note: Allows guests to browse active courses, view categories, and submit contact messages.
+Route::get('/public/destination', [DashboardController::class, 'getRatePublic'])->name('public.destination.getRatePublic');
 Route::get('/public/courses', [CourseController::class, 'index'])->name('public.courses.index');
+Route::get('/public/category', [CourseCategoryController::class, 'index'])->name('public.courses-category.index');
 Route::get('/public/courses/{courses}', [CourseController::class, 'show'])->name('public.courses.show');
 Route::get('/public/course-categories', [CourseCategoryController::class, 'index'])->name('public.categories.index');
 Route::post('/public/contacts', [ContactController::class, 'store'])->name('public.contacts.store');
@@ -101,6 +104,13 @@ Route::middleware('auth:sanctum')->group(function () {
         });
         // Teacher Management
 
+        Route::prefix('admin')->group(function () {
+            Route::get('/users', [UserController::class, 'index']);
+            Route::post('/users', [UserController::class, 'store']);
+            Route::get('/users/{id}', [UserController::class, 'show']);
+            Route::put('/users/{id}', [UserController::class, 'update']);
+            Route::delete('/users/{id}', [UserController::class, 'destroy']);
+        });
         Route::prefix('teacher')->controller(TeacherController::class)->group(function () {
             Route::post('/store', 'store')->name('teacher.store');
             Route::get('/index', 'index')->name('teacher.index');
@@ -201,13 +211,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/{courseCategory}', [CourseCategoryController::class, 'destroy'])->name('destroy');
         });
 
-        // Courses Management
-        Route::prefix('courses')->name('courses.')->group(function () {
-            Route::get('/', [CourseController::class, 'index'])->name('index');
-            Route::post('/', [CourseController::class, 'store'])->name('store');
-            Route::get('/{courses}', [CourseController::class, 'show'])->name('show');
-            Route::put('/{courses}', [CourseController::class, 'update'])->name('update');
-            Route::delete('/{courses}', [CourseController::class, 'destroy'])->name('destroy');
+        Route::prefix('course')->controller(CourseController::class)->group(function () {
+            Route::get('/index',  'index')->name('course.index');
+            Route::post('/store', 'store')->name('course.store');
+            Route::get('/show/{course}', 'show')->name('course.show');
+            Route::put('/update/{course}', 'update')->name('course.update');
+            Route::delete('/destroy/{course}',  'destroy')->name('course.destroy');
         });
 
         // Course Modules Management

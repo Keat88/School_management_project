@@ -10,7 +10,9 @@ import {
   LuFileSpreadsheet,
   LuSettings,
   LuSquareCheck,
+
 } from "react-icons/lu";
+import { FaUser } from "react-icons/fa6";
 import { FaBookOpen, FaBookBookmark } from "react-icons/fa6";
 import { HiMiniBuildingOffice2 } from "react-icons/hi2";
 import {
@@ -29,10 +31,22 @@ const sidebarMenu = [
   },
   {
     id: 2,
-    title: "Teachers",
-    path: "/admin/teachers",
-    icon: LuGraduationCap,
-    roles: ["admin"],
+    title: "List user",
+    icon: LuSchool,
+    child: [
+      {
+        title: "Teachers",
+        path: "/admin/teachers",
+        icon: LuGraduationCap,
+      },
+      {
+        id: 2,
+        title: "Users",
+        path: "/admin/users",
+        icon: FaUser,
+      },
+    ],
+    roles: ["admin", "teacher"],
   },
   {
     id: 3,

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Course\CourseResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
@@ -24,12 +26,10 @@ class CourseController extends Controller
         if ($request->has('search')) {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
-        
         $courses = $query->paginate(10);
-
         return response()->json([
             'status' => 'success',
-            'data' => $courses,
+            'data' => CourseResource::collection($courses),
         ]);
     }
 
@@ -43,7 +43,7 @@ class CourseController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'discount_price' => 'nullable|numeric|min:0|lt:price',
-            'thumbnail' => 'nullable|string|max:500',
+            'thumbnail' => 'nullable', // Accepts either a file upload or string URL
             'category_id' => 'required|exists:course_categories,id',
             'instructor_id' => 'required|exists:users,id',
             'level' => 'sometimes|in:beginner,intermediate,advanced,all',
@@ -57,8 +57,14 @@ class CourseController extends Controller
             'is_featured' => 'boolean',
         ]);
 
+        // Handle local file upload or fallback to text URL string
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('courses', 'public');
+            $validated['thumbnail'] = '/storage/' . $path;
+        } else {
+            $validated['thumbnail'] = $request->input('thumbnail');
+        }
         $validated['slug'] = Str::slug($validated['title']);
-
         $course = Course::create($validated);
 
         return response()->json([
@@ -73,11 +79,12 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        $course->load(['category', 'instructor', 'modules.lessons', 'reviews.user']);
+        // Fixed: Use route model binding instead of .get() so it fetches the exact course with relations
+        $course->load(['category', 'instructor']);
 
         return response()->json([
             'status' => 'success',
-            'data' => $course,
+            'data' => new CourseResource($course),
         ]);
     }
 
@@ -91,7 +98,7 @@ class CourseController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'discount_price' => 'nullable|numeric|min:0|lt:price',
-            'thumbnail' => 'nullable|string|max:500',
+            'thumbnail' => 'nullable', // Accepts either a file upload or string URL
             'category_id' => 'required|exists:course_categories,id',
             'instructor_id' => 'required|exists:users,id',
             'level' => 'sometimes|in:beginner,intermediate,advanced,all',
@@ -104,6 +111,15 @@ class CourseController extends Controller
             'has_certificate' => 'boolean',
             'is_featured' => 'boolean',
         ]);
+
+        // Handle file upload or keep existing thumbnail/URL
+        if ($request->hasFile('thumbnail')) {
+            $path = $request->file('thumbnail')->store('courses', 'public');
+            $validated['thumbnail'] = '/storage/' . $path;
+        } else {
+            // If no new file is uploaded, retain the existing thumbnail value if not explicitly changed
+            $validated['thumbnail'] = $request->input('thumbnail', $course->thumbnail);
+        }
 
         if ($request->has('title') && $request->title !== $course->title) {
             $validated['slug'] = Str::slug($validated['title']);

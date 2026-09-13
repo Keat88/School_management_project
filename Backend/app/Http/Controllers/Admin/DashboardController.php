@@ -8,16 +8,31 @@ use App\Models\Attendance;
 use App\Models\BookCategory;
 use App\Models\Books;
 use App\Models\ClassRoom;
+use App\Models\Course;
 use App\Models\Hostel_assignments;
 use App\Models\Hostel_rooms;
 use App\Models\Notice;
 use App\Models\Students;
 use App\Models\Subjects;
 use App\Models\Teachers;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    public function getRatePublic()
+    {
+        $totalStudents = Students::count();
+        $totalUser = User::count();
+        $totalCourse = Course::count();
+        $totalTeachers = Teachers::count();
+        return $this->success('recived successfully', [
+            'total_student' => $totalStudents,
+            'total_course' => $totalCourse,
+            'total_User' => $totalUser,
+            'total_teacher' => $totalTeachers,
+        ], 200);
+    }
     public function Adminsdashboard()
     {
         $totalStudents = Students::count();

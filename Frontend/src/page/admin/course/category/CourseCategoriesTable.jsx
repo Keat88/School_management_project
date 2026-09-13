@@ -30,12 +30,15 @@ export default function CourseCategoriesTable() {
   }, []);
 
   const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+    category.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const totalPages = Math.ceil(filteredCategories.length / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentCategories = filteredCategories.slice(startIndex, startIndex + itemsPerPage);
+  const currentCategories = filteredCategories.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   const handleEdit = (id) => {
     navigate(`/admin/course/category/add/${id}`);
@@ -45,7 +48,11 @@ export default function CourseCategoriesTable() {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
         const res = await api.delete(`course-categories/${id}`);
-        if (res.status === 200 || res.status === 204 || res.data?.status === "success") {
+        if (
+          res.status === 200 ||
+          res.status === 204 ||
+          res.data?.status === "success"
+        ) {
           setCategories(categories.filter((cat) => cat.id !== id));
         }
       } catch (err) {
@@ -109,7 +116,9 @@ export default function CourseCategoriesTable() {
                   colSpan="5"
                   className="py-8 text-center text-slate-400 dark:text-slate-500"
                 >
-                  Loading categories...
+                  <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-950">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+                  </div>
                 </td>
               </tr>
             ) : currentCategories.length === 0 ? (
@@ -146,17 +155,17 @@ export default function CourseCategoriesTable() {
                   <td className="py-3 px-4 text-right space-x-2">
                     <button
                       onClick={() => handleEdit(category.id)}
-                      className="p-1.5 rounded-lg border transition-colors cursor-pointer border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
+                      className="px-2 py-1 rounded-lg border transition-colors cursor-pointer border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
                       title="Edit"
                     >
-                      <Edit size={16} />
+                     Edit
                     </button>
                     <button
                       onClick={() => handleDelete(category.id)}
-                      className="p-1.5 rounded-lg border transition-colors cursor-pointer border-red-100 dark:border-red-950 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400"
+                      className="px-2 py-1 rounded-lg border transition-colors cursor-pointer border-red-100 dark:border-red-950 bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400"
                       title="Delete"
                     >
-                      <Trash2 size={16} />
+                     Delete
                     </button>
                   </td>
                 </tr>

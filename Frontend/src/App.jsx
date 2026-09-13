@@ -63,6 +63,8 @@ import CourseCategoryForm from "./page/admin/course/category/CourseCategoryForm"
 import CourseForm from "./page/admin/course/categorycourse/CourseForm";
 import ContactInquiries from "./page/admin/course/contact/ContactInquiries";
 import RegisterForm from "./page/auth/RegisterForm";
+import CourseView from "./page/admin/course/categorycourse/CourseView";
+import UsersManagementPage from "./page/admin/user/UsersManagementPage";
 
 function App() {
   return (
@@ -92,7 +94,9 @@ function App() {
         {/* Protected Routes (Only accessible when logged in) */}
         <Route element={<ProtectRoute allowedRoles={["admin", "teacher"]} />}>
           <Route path="/admin" element={<DashboardLayout />}>
+            
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<UsersManagementPage />} />
 
             {/* Student Routes */}
             <Route path="profile" element={<ProfilePage />} />
@@ -101,6 +105,7 @@ function App() {
             <Route path="students/add/:id" element={<StudentForm />} />
             <Route path="students/view/:id" element={<StudentView />} />
             {/* Teacher & Class Routes */}
+
             <Route path="teachers" element={<TeacherList />} />
             <Route path="teacher/add" element={<TeacherForm />} />
             <Route path="teacher/add/:id" element={<TeacherForm />} />
@@ -122,6 +127,8 @@ function App() {
             />
             <Route path="course" element={<CoursesTable />} />
             <Route path="course/add" element={<CourseForm />} />
+            <Route path="course/add/:id" element={<CourseForm />} />
+            <Route path="course/view/:id" element={<CourseView />} />
             <Route path="course/contact" element={<ContactInquiries />} />
 
             {/* Other Admin Sections */}

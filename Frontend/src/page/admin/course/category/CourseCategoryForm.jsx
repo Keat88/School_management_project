@@ -9,7 +9,7 @@ export default function CourseCategoryForm({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
-  
+
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
@@ -18,6 +18,7 @@ export default function CourseCategoryForm({ onSuccess }) {
     if (isEditMode) {
       const fetchCategory = async () => {
         try {
+          setLoading(true);
           const res = await api.get(`/course-categories/${id}`);
           if (res.data.status === "success") {
             setName(res.data.data.name);
@@ -26,6 +27,8 @@ export default function CourseCategoryForm({ onSuccess }) {
         } catch (err) {
           console.error("Failed to load category:", err);
           setError("Failed to load category details for editing.");
+        } finally {
+          setLoading(false);
         }
       };
       fetchCategory();
@@ -59,13 +62,23 @@ export default function CourseCategoryForm({ onSuccess }) {
       } else {
         setError(
           err.response?.data?.message ||
-            (isEditMode ? "Failed to update category." : "Failed to create category.")
+            (isEditMode
+              ? "Failed to update category."
+              : "Failed to create category."),
         );
       }
     } finally {
       setLoading(false);
     }
   };
+  if (loading) {
+    return (
+      <div className="flex justify-center flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-950">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+        Loding...
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors">
@@ -93,7 +106,9 @@ export default function CourseCategoryForm({ onSuccess }) {
       {success && (
         <div className="flex items-center gap-2 p-3.5 rounded-xl border text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20">
           <CheckCircle size={16} className="shrink-0" />
-          {isEditMode ? "Category updated successfully!" : "Category created successfully!"}
+          {isEditMode
+            ? "Category updated successfully!"
+            : "Category created successfully!"}
         </div>
       )}
 
@@ -144,7 +159,11 @@ export default function CourseCategoryForm({ onSuccess }) {
             className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 dark:bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 dark:hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer disabled:opacity-50"
           >
             <Save size={16} />
-            {loading ? "Saving..." : isEditMode ? "Update Category" : "Save Category"}
+            {loading
+              ? "Saving..."
+              : isEditMode
+                ? "Update Category"
+                : "Save Category"}
           </button>
         </div>
       </form>

@@ -42,7 +42,6 @@ class OrdersController extends Controller
             'payment_method' => 'nullable|string|max:100',
             'transaction_id' => 'nullable|string|max:100',
         ]);
-
         $order = Orders::create($validated);
 
         return response()->json([
