@@ -134,7 +134,7 @@ function Sidebar() {
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 h-16 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-between px-5 h-[73px] border-b border-gray-200 dark:border-gray-800">
           <span className="text-xl font-bold text-gray-800 dark:text-white">
             {nameSchool && (
               <div className="flex gap-x-1 items-center">

@@ -180,13 +180,13 @@ const sidebarMenu = [
     ],
     roles: ["admin", "teacher"],
   },
-  {
-    id: 11,
-    title: "Notices",
-    path: "/admin/notices",
-    icon: LuMegaphone,
-    roles: ["admin", "teacher"],
-  },
+  // {
+  //   id: 11,
+  //   title: "Notices",
+  //   path: "/admin/notices",
+  //   icon: LuMegaphone,
+  //   roles: ["admin", "teacher"],
+  // },
   {
     id: 12,
     title: "Reports",

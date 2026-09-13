@@ -135,6 +135,7 @@ function ClassroomList() {
     },
     [],
   );
+
   // 4. Trigger API Call on search, page, or filter changes
   useEffect(() => {
     fetchClass(
@@ -193,83 +194,85 @@ function ClassroomList() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-gray-800 tracking-tight">
-            Classes
-          </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Manage and view classroom records
-          </p>
-        </div>
-        <span className="text-xs font-semibold px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
-          Total: {totalItems} classes
-        </span>
-      </div>
-
-      {/* Filter Component */}
-      <ClassFilter
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
-        gradeFilter={gradeFilter}
-        onGradeChange={handleGradeChange}
-        gradeOptions={gradeOptions}
-        sectionFilter={sectionFilter}
-        onSectionChange={handleSectionChange}
-        sectionOptions={sectionOptions}
-        classFilter={classFilter}
-        onClassChange={handleClassChange}
-        classOptions={classOptions}
-        onResetFilters={handleResetFilters}
-      />
-
-      {/* Error Banner */}
-      {errorMessage && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-xs font-medium text-red-600">
-          {errorMessage}
-        </div>
-      )}
-
-      {/* Content Grid */}
-      <div className="relative min-h-[300px]">
-        {loading ? (
-          <div className="py-16 flex flex-col items-center justify-center gap-2 text-gray-500">
-            <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs font-medium text-gray-500 mt-2">
-              កំពុងទាញយកទិន្នន័យថ្នាក់រៀន...
-            </span>
+    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header Section */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Classes
+            </h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Manage and view classroom records
+            </p>
           </div>
-        ) : Array.isArray(classRoom) && classRoom.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {classRoom.map((classroom) => (
-              <ClassroomCard
-                key={classroom.id}
-                classroom={classroom}
-                onViewDetails={handleViewDetails}
-                onUpdateRoom={handleEdit}
-                onDeleteRoom={handleDelete}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 text-gray-400 bg-white rounded-2xl border border-gray-100 shadow-2xs">
-            <p className="text-sm font-medium">ពុំមានទិន្នន័យថ្នាក់រៀនឡើយ</p>
+          <span className="text-xs font-semibold px-3 py-1 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 rounded-full border border-indigo-100 dark:border-indigo-500/20">
+            Total: {totalItems} classes
+          </span>
+        </div>
+
+        {/* Filter Component */}
+        <ClassFilter
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          gradeFilter={gradeFilter}
+          onGradeChange={handleGradeChange}
+          gradeOptions={gradeOptions}
+          sectionFilter={sectionFilter}
+          onSectionChange={handleSectionChange}
+          sectionOptions={sectionOptions}
+          classFilter={classFilter}
+          onClassChange={handleClassChange}
+          classOptions={classOptions}
+          onResetFilters={handleResetFilters}
+        />
+
+        {/* Error Banner */}
+        {errorMessage && (
+          <div className="p-4 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-xs font-medium text-rose-700 dark:text-rose-400">
+            {errorMessage}
           </div>
         )}
-      </div>
 
-      {/* Pagination */}
-      {!loading && totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalItems={totalItems}
-          perPage={8}
-          onPageChange={handlePageChange}
-        />
-      )}
+        {/* Content Grid */}
+        <div className="relative min-h-[300px]">
+          {loading ? (
+            <div className="py-16 flex flex-col items-center justify-center gap-2 text-slate-500 dark:text-slate-400">
+              <div className="w-8 h-8 border-3 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2">
+               Loading...
+              </span>
+            </div>
+          ) : Array.isArray(classRoom) && classRoom.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {classRoom.map((classroom) => (
+                <ClassroomCard
+                  key={classroom.id}
+                  classroom={classroom}
+                  onViewDetails={handleViewDetails}
+                  onUpdateRoom={handleEdit}
+                  onDeleteRoom={handleDelete}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
+              <p className="text-sm font-medium">No data for class...</p>
+            </div>
+          )}
+        </div>
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            perPage={8}
+            onPageChange={handlePageChange}
+          />
+        )}
+      </div>
     </div>
   );
 }

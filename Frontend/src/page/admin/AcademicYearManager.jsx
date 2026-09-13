@@ -192,7 +192,7 @@ export default function AcademicYearManager() {
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
+        <div className="overflow-x-auto ">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b text-xs font-bold uppercase tracking-wider border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 bg-slate-50/75 dark:bg-slate-800/40">
