@@ -84,7 +84,7 @@ export default function HostelForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto rounded-2xl p-6 bg-white border border-gray-200 shadow-sm text-gray-800 font-sans my-6 transition-colors duration-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100">
+    <div className="lg:min-w-160 mx-auto rounded-lg p-6 bg-white border border-gray-200 shadow-sm text-gray-800 font-sans my-6 transition-colors duration-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           <button
@@ -95,7 +95,7 @@ export default function HostelForm() {
             <ArrowLeft size={14} /> Back
           </button>
           <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 dark:text-slate-100">
-            <Building2 size={20} className="text-blue-600 dark:text-blue-400" />
+            <Building2 size={20} className="text-blue-500 dark:text-blue-400" />
             {isEdit ? "Edit Dormitory Building" : "Add New Dormitory Building"}
           </h3>
         </div>
@@ -162,7 +162,7 @@ export default function HostelForm() {
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <button
             type="button"
-            className="px-4 py-2 bg-gray-100 text-gray-600 rounded-xl text-xs font-semibold hover:bg-gray-200 border border-gray-200 transition-all cursor-pointer dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700"
+            className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold hover:bg-gray-200 border border-gray-200 transition-all cursor-pointer dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700"
             onClick={() => navigate(-1)}
           >
             Cancel
@@ -170,7 +170,7 @@ export default function HostelForm() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 shadow-sm transition-all cursor-pointer disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 shadow-sm transition-all cursor-pointer disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
           >
             <Save size={14} />{" "}
             {loading

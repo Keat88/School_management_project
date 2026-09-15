@@ -24,10 +24,12 @@ export default function HostelPage() {
       setHostels(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to load hostels", err);
-      setFeedback({
-        type: "error",
-        text: "Failed to load dormitory buildings.",
-      });
+      setTimeout(() => {
+        setFeedback({
+          type: "error",
+          text: "Failed to load dormitory buildings.",
+        });
+      }, 2000);
     } finally {
       setLoading(false);
     }
@@ -86,12 +88,11 @@ export default function HostelPage() {
         <button
           type="button"
           onClick={handleAddHostel}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 shadow-sm transition-all cursor-pointer dark:bg-blue-600 dark:hover:bg-blue-500"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-600 shadow-sm transition-all cursor-pointer dark:bg-blue-600 dark:hover:bg-blue-500"
         >
           <Plus size={16} /> Add Building
         </button>
       </div>
-
       {feedback && (
         <div
           className={`p-4 rounded-xl text-sm font-medium border ${
@@ -114,7 +115,9 @@ export default function HostelPage() {
             <p className="text-xs text-gray-400 font-semibold uppercase dark:text-slate-400">
               Total Buildings
             </p>
-            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">{hostels.length}</p>
+            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">
+              {hostels.length}
+            </p>
           </div>
         </div>
 
@@ -126,7 +129,9 @@ export default function HostelPage() {
             <p className="text-xs text-gray-400 font-semibold uppercase dark:text-slate-400">
               Male Dorms
             </p>
-            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">{totalMale}</p>
+            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">
+              {totalMale}
+            </p>
           </div>
         </div>
 
@@ -138,7 +143,9 @@ export default function HostelPage() {
             <p className="text-xs text-gray-400 font-semibold uppercase dark:text-slate-400">
               Female Dorms
             </p>
-            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">{totalFemale}</p>
+            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">
+              {totalFemale}
+            </p>
           </div>
         </div>
 
@@ -150,14 +157,19 @@ export default function HostelPage() {
             <p className="text-xs text-gray-400 font-semibold uppercase dark:text-slate-400">
               Other Dorms
             </p>
-            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">{totalOthers}</p>
+            <p className="text-xl font-bold text-gray-800 dark:text-slate-100">
+              {totalOthers}
+            </p>
           </div>
         </div>
       </div>
 
       {/* Search, Filter & Building Table Section */}
-      <div className="bg-white border border-gray-200 rounded-lg p-5 space-y-4 dark:bg-slate-900 dark:border-slate-800">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className=" space-y-5">
+        <div
+          className="flex flex-col md:flex-row md:items-center justify-between gap-3 border border-gray-100
+         p-2 rounded-lg bg-white  dark:bg-slate-900 dark:border-slate-800"
+        >
           <div className="relative flex-1">
             <Search
               size={16}
@@ -168,14 +180,13 @@ export default function HostelPage() {
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search building name or address..."
-              className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:bg-white focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-900 dark:focus:border-blue-500"
+              className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 outline-none focus:bg-white focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-900 dark:focus:border-blue-500"
             />
           </div>
-
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 outline-none focus:bg-white focus:border-blue-600 md:w-48 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:bg-slate-900 dark:focus:border-blue-500"
+            className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 outline-none focus:bg-white focus:border-blue-600 md:w-48 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:bg-slate-900 dark:focus:border-blue-500"
           >
             <option value="all">All Types</option>
             <option value="male">Male</option>
@@ -203,25 +214,41 @@ export default function HostelPage() {
               <tbody className="text-sm text-gray-700 divide-y divide-gray-100 dark:text-slate-300 dark:divide-slate-800">
                 {filteredHostels.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="text-center py-8 text-gray-400 dark:text-slate-500">
+                    <td
+                      colSpan="5"
+                      className="text-center py-8 text-gray-400 dark:text-slate-500"
+                    >
                       No dormitory buildings found.
                     </td>
                   </tr>
                 ) : (
                   filteredHostels.map((hostel, index) => (
-                    <tr key={hostel.id} className="hover:bg-gray-50 transition-colors dark:hover:bg-slate-800/50">
-                      <td className="p-3 text-center font-medium text-gray-500 dark:text-slate-400">{index + 1}</td>
-                      <td className="p-3 font-semibold text-gray-800 dark:text-slate-100">{hostel.name}</td>
+                    <tr
+                      key={hostel.id}
+                      className="hover:bg-gray-50 transition-colors dark:hover:bg-slate-800/50"
+                    >
+                      <td className="p-3 text-center font-medium text-gray-500 dark:text-slate-400">
+                        {index + 1}
+                      </td>
+                      <td className="p-3 font-semibold text-gray-800 dark:text-slate-100">
+                        {hostel.name}
+                      </td>
                       <td className="p-3 text-center capitalize">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          hostel.type === 'male' ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300' :
-                          hostel.type === 'female' ? 'bg-pink-50 text-pink-600 dark:bg-pink-500/15 dark:text-pink-300' :
-                          'bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-300'
-                        }`}>
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                            hostel.type === "male"
+                              ? "bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300"
+                              : hostel.type === "female"
+                                ? "bg-pink-50 text-pink-600 dark:bg-pink-500/15 dark:text-pink-300"
+                                : "bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-300"
+                          }`}
+                        >
                           {hostel.type}
                         </span>
                       </td>
-                      <td className="p-3 text-gray-500 dark:text-slate-400">{hostel.address || "—"}</td>
+                      <td className="p-3 text-gray-500 dark:text-slate-400">
+                        {hostel.address || "—"}
+                      </td>
                       <td className="p-3 text-center space-x-2">
                         <button
                           onClick={() => handleEdit(hostel)}

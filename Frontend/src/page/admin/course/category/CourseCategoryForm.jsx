@@ -148,7 +148,7 @@ export default function CourseCategoryForm({ onSuccess }) {
             type="button"
             onClick={() => navigate(-1)}
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-xs cursor-pointer disabled:opacity-50 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700/80"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-xs cursor-pointer disabled:opacity-50 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700/80"
           >
             <X size={16} />
             Cancel
@@ -156,7 +156,7 @@ export default function CourseCategoryForm({ onSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 dark:bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 dark:hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 dark:bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer disabled:opacity-50"
           >
             <Save size={16} />
             {loading

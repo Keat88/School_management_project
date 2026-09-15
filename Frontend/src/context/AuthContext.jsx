@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
     // Clean up partial leftover keys if one exists without the other
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("userAvatar");
     return null;
   });
 
@@ -33,6 +34,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("userAvatar");
     setCurrentUser(null);
   };
 

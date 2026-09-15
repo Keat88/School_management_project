@@ -127,7 +127,8 @@ function ClassroomDetail() {
         <div className="space-y-3">
           <Link
             to="/admin/classes"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-semibold bg-gray-400 text-white hover:bg-gray-500 text-white-50 dark:bg-gray-700 py-1
+            px-2 rounded-lg duration-200 transition-transform hover:"
           >
             <ArrowLeft size={14} />
             Back to Classes
@@ -151,7 +152,7 @@ function ClassroomDetail() {
 
         {/* Overview Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 shadow-xs">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 shadow-xs">
             <div className="h-11 w-11 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 border border-indigo-100 dark:border-indigo-500/20">
               <Users size={20} />
             </div>
@@ -163,7 +164,7 @@ function ClassroomDetail() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 shadow-xs">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 shadow-xs">
             <div className="h-11 w-11 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-100 dark:border-emerald-500/20">
               <BookOpen size={20} />
             </div>
@@ -175,7 +176,7 @@ function ClassroomDetail() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 shadow-xs">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 shadow-xs">
             <div className="h-11 w-11 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 border border-purple-100 dark:border-purple-500/20">
               <CalendarDays size={20} />
             </div>

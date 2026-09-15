@@ -227,7 +227,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{coursesModules}', [CoursesModulesController::class, 'update'])->name('update');
             Route::delete('/{coursesModules}', [CoursesModulesController::class, 'destroy'])->name('destroy');
         });
-
         // Lessons Management
         Route::prefix('lessons')->name('lessons.')->group(function () {
             Route::get('/', [LessonsController::class, 'index'])->name('index');
@@ -236,7 +235,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::put('/{lessons}', [LessonsController::class, 'update'])->name('update');
             Route::delete('/{lessons}', [LessonsController::class, 'destroy'])->name('destroy');
         });
-
         // Orders Management
         Route::prefix('orders')->name('orders.')->group(function () {
             Route::get('/', [OrdersController::class, 'index'])->name('index');
@@ -279,6 +277,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/classes/{classId}', [ClassController::class, 'showClassData']);
         Route::post('/classes/{classId}/attendance', [ClassController::class, 'updateAttendance']);
         Route::post('/classes/{classId}/scores', [ClassController::class, 'updateOrCreateScores']);
+        Route::get('/class-activeform',[ClassController::class,'getActiveClasses'])->name('class-activeform');
 
         Route::get('/dashboard', [TeacherController::class, 'dashboardSummary']);
         Route::get('/classes/{classId}/students', [TeacherController::class, 'getStudentsByClass']);

@@ -68,7 +68,7 @@ function ClassroomCard({
   return (
     <div className="group relative rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs hover:shadow-xl hover:border-gray-200 dark:hover:border-slate-700 transition-all duration-300 flex flex-col justify-between overflow-hidden">
       {/* Decorative Top Accent Bar */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 opacity-80 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute top-0 left-0 right-0 h-1 opacity-80 group-hover:opacity-100 transition-opacity" />
 
       <div>
         {/* Header Title & Academic Year Badge */}
@@ -91,7 +91,7 @@ function ClassroomCard({
 
         {/* Teacher Info */}
         <div className="mt-4 p-2.5 rounded-xl bg-gray-50/80 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-800 flex items-center gap-3">
-          <div className="h-9 w-9 rounded-lg bg-indigo-600 dark:bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs shrink-0 ring-2 ring-white dark:ring-slate-900">
+          <div className="h-9 w-9 rounded-lg bg-blue-500 dark:bg-blue-600 text-white flex items-center justify-center text-xs font-bold shadow-xs shrink-0 ring-2 ring-white dark:ring-slate-900">
             {teacherInitials ? teacherInitials : <User size={16} />}
           </div>
           <div className="min-w-0 flex-1">
@@ -119,7 +119,7 @@ function ClassroomCard({
           </div>
 
           <div className="rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 flex items-center gap-2.5 shadow-2xs">
-            <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 shrink-0">
+            <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/50 dark:text-blue-400 shrink-0">
               <BookOpen size={16} />
             </div>
             <div>
@@ -137,7 +137,7 @@ function ClassroomCard({
         <button
           type="button"
           onClick={handleViewDetails}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-gray-900 dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 text-white text-xs font-semibold transition-all duration-200 shadow-xs cursor-pointer active:scale-[0.98]"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-gray-700 dark:bg-slate-800 hover:bg-blue-600 dark:hover:bg-blue-600 text-white text-xs font-semibold transition-all duration-200 shadow-xs cursor-pointer active:scale-[0.98]"
         >
           View Details
           <ChevronRight size={14} />

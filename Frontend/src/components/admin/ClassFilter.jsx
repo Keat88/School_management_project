@@ -153,7 +153,7 @@ export default function ClassFilter({
       {/* Add Class Action */}
       <NavLink
         to="/admin/classes/add"
-        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white text-xs font-semibold px-4 py-2.5 transition-all duration-200 shadow-xs hover:shadow-md shrink-0 cursor-pointer"
+        className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 active:bg-indigo-600 text-white text-xs font-semibold px-4 py-2.5 transition-all duration-200 shadow-xs hover:shadow-md shrink-0 cursor-pointer"
       >
         <Plus size={15} />
         Add Class

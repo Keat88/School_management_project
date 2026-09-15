@@ -97,7 +97,7 @@ export default function BookCategoryForm() {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center space-x-1"
+          className="px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center space-x-1"
         >
           <span>← Back</span>
         </button>
@@ -118,7 +118,7 @@ export default function BookCategoryForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-indigo-600 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
+          <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-blue-600 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
             Category Information
           </h3>
           <div>
@@ -142,14 +142,14 @@ export default function BookCategoryForm() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
+            className="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
+            className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-blue-500 hover:bg-blue-600 shadow-indigo-100 dark:hover:bg-blue-500 dark:shadow-indigo-950/50"
           >
             {loading
               ? "Saving..."

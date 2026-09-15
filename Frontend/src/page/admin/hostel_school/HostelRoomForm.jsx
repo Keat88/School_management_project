@@ -362,14 +362,14 @@ export default function HostelRoomForm() {
         <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <Link
             to="/admin/hostel-rooms"
-            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 text-center transition-colors dark:bg-slate-800 dark:text-slate-300 dark:border dark:border-slate-700 dark:hover:bg-slate-700"
+            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 text-center transition-colors dark:bg-slate-800 dark:text-slate-300 dark:border dark:border-slate-700 dark:hover:bg-slate-700"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs dark:bg-blue-600 dark:hover:bg-blue-500"
+            className="w-full sm:w-auto px-6 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-700 active:bg-blue-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs dark:bg-blue-600 dark:hover:bg-blue-500"
           >
             <Save size={16} />
             {loading ? "Saving..." : isEditing ? "Update Room" : "Save Room"}

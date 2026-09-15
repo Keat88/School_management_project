@@ -138,7 +138,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
           >
             <ArrowLeft size={18} />
           </Link>
-          <h2 className={`text-xl font-extrabold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+          <h2 className={`text-lg font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
             {isEditing ? "Edit Subject" : "Add New Subject"}
           </h2>
         </div>
@@ -164,7 +164,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className={`p-6 sm:p-8 rounded-2xl border shadow-inner space-y-6 transition-colors ${
+        className={`p-6 sm:p-8 rounded-lg border shadow-inner space-y-6 transition-colors ${
           isDark ? "bg-slate-900/90 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"
         }`}
       >
@@ -247,7 +247,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
         <div className={`flex items-center justify-end gap-3 pt-5 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}>
           <Link
             to="/admin/subjects"
-            className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border active:scale-95 ${
+            className={`px-5 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border active:scale-95 ${
               isDark
                 ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white"
                 : "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900"
@@ -258,7 +258,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-semibold hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
           >
             <Save size={15} />
             {loading

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { studentData } from "../../data/StudentsApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { ImageIcon, AlertCircle } from "lucide-react";
-import { classRoomApi } from "../../data/classrooms";
+import { api } from "../../data/api";
 
 const INITIAL_FORM_STATE = {
   mother_name: "",
@@ -18,40 +18,19 @@ const INITIAL_FORM_STATE = {
   date_of_birth: "",
   student_phone: "",
 };
-
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
-
-export default function StudentForm({
-  student: propStudent = null,
-  onSuccess,
-}) {
+export default function StudentForm({ onSuccess }) {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [studentImage, setStudentImage] = useState(null);
   const [imagePreviewStudent, setImagePreviewStudent] = useState(null);
   const [parentImage, setParentImage] = useState(null);
   const [imagePreviewParent, setImagePreviewParent] = useState(null);
-
-  const [fetchedStudent, setFetchedStudent] = useState(null);
-  const currentStudent = propStudent || fetchedStudent;
-  const activeId = propStudent?.id || id;
-  const isEdit = Boolean(activeId);
-
+  const isEdit = Boolean(id);
   const [formData, setFormData] = useState(INITIAL_FORM_STATE);
   const [loading, setLoading] = useState(false);
-  const [fetchingStudent, setFetchingStudent] = useState(false);
   const [feedback, setFeedback] = useState(null);
-  const [classRoomm, setClassRoom] = useState([]);
-
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
+  const [currentStudent, setCurrentStudent] = useState([]);
   useEffect(() => {
     return () => {
       if (imagePreviewStudent?.startsWith("blob:"))
@@ -61,46 +40,39 @@ export default function StudentForm({
     };
   }, [imagePreviewStudent, imagePreviewParent]);
 
-  const fetchClass = useCallback(async () => {
-    try {
-      const response = await classRoomApi.getAll();
-      console.log("Classroom response:", response);
-      const payload = response?.data || response;
-      const classData =
-        payload?.data || 
-        payload?.classrooms || 
-        payload || 
-        [];
-
-      if (isMounted.current) {
-        setClassRoom(Array.isArray(classData) ? classData : []);
-      }
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-      if (isMounted.current) {
-        setClassRoom([]);
-      }
-    }
-  }, []);
-
+  // const fetchClass = useCallback(async () => {
+  //   try {
+  //     const response = await classRoomApi.getAll();
+  //     console.log("Classroom response:", response);
+  //     const payload = response?.data || response;
+  //     const classData = payload?.data || payload?.classrooms || payload || [];
+  //     if (isMounted.current) {
+  //       setClassRoom(Array.isArray(classData) ? classData : []);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching classes:", error);
+  //     if (isMounted.current) {
+  //       setClassRoom([]);
+  //     }
+  //   }
+  // }, []);
   useEffect(() => {
-    if (!propStudent && id) {
-      setFetchingStudent(true);
-      studentData
-        .getShow(id)
-        .then((response) => {
-          const studentRes = response?.data?.data || response?.data;
-          if (isMounted.current) {
-            setFetchedStudent(studentRes);
-          }
-        })
-        .catch((error) => console.error("Failed to load student data", error))
-        .finally(() => {
-          if (isMounted.current) setFetchingStudent(false);
-        });
+    if (isEdit) {
+      const fetchCurrentStudent = async () => {
+        try {
+          setLoading(true);
+          const res = await studentData.getShow(id);
+          const data = res?.data || res?.data?.data || res;
+          setCurrentStudent(data);
+        } catch (error) {
+          console.log("Error", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchCurrentStudent();
     }
-  }, [propStudent, id]);
-
+  }, [id]);
   useEffect(() => {
     if (currentStudent) {
       setFormData({
@@ -144,7 +116,6 @@ export default function StudentForm({
       setImagePreviewParent(null);
     }
   }, [currentStudent]);
-
   const handleImageValidation = (file, setImage, setPreview) => {
     if (!file) return;
 
@@ -164,7 +135,6 @@ export default function StudentForm({
     });
     setFeedback(null);
   };
-
   const handleImageChange = (e) => {
     handleImageValidation(
       e.target.files[0],
@@ -172,7 +142,6 @@ export default function StudentForm({
       setImagePreviewStudent,
     );
   };
-
   const handleImageParentChange = (e) => {
     handleImageValidation(
       e.target.files[0],
@@ -180,78 +149,82 @@ export default function StudentForm({
       setImagePreviewParent,
     );
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setFeedback(null);
-
-    const data = new FormData();
+    const formDataObj = new FormData();
     Object.keys(formData).forEach((key) => {
       if (formData[key] !== "" && formData[key] !== null) {
-        data.append(key, formData[key]);
+        formDataObj.append(key, formData[key]);
       }
     });
-
     if (parentImage instanceof File) {
-      data.append("parent_image", parentImage);
+      formDataObj.append("parent_image", parentImage);
     }
     if (studentImage instanceof File) {
-      data.append("student_image", studentImage);
+      formDataObj.append("student_image", studentImage);
     }
-
     if (isEdit) {
-      data.append("_method", "PUT");
+      formDataObj.append("_method", "PUT");
     }
 
     try {
       if (isEdit) {
-        await studentData.upDate(activeId, data);
-        if (isMounted.current) {
+        const res = await studentData.upDate(id, formDataObj);
+        const responseData = res?.data || res?.data?.data || res;
+        if (responseData) {
           setFeedback({
             type: "success",
-            text: "Student updated successfully!",
+            text: responseData.message,
           });
         }
       } else {
-        await studentData.addNew(data);
-        if (isMounted.current) {
-          setFeedback({ type: "success", text: "Student added successfully!" });
+        const res = await studentData.addNew(formDataObj);
+        const responseData = res?.data || res?.data?.data || res;
+        if (responseData) {
+          setFeedback({ type: "success", text: responseData.message });
         }
       }
-
       if (onSuccess) {
         onSuccess();
       } else {
         setTimeout(() => {
-          if (isMounted.current) navigate("/admin/students");
+          navigate("/admin/students");
         }, 1000);
       }
     } catch (error) {
-      if (isMounted.current) {
-        setFeedback({
-          type: "error",
-          text:
-            error.response?.data?.message ||
-            "Something went wrong. Please check your inputs.",
-        });
-      }
+      setFeedback({
+        type: "error",
+        text:
+          error.response?.data?.message ||
+          "Something went wrong. Please check your inputs.",
+      });
     } finally {
-      if (isMounted.current) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
-
+  const [classFilter, setClassFilter] = useState([]);
+  useEffect(() => {
+    const fetchClassFilter = async () => {
+      try {
+        const res = await api.get("/class-activeform");
+        const data = res?.data?.data || res?.data || res;
+        setClassFilter(data);
+      } catch (err) {
+        console.log("Error", err);
+      }
+    };
+    fetchClassFilter();
+  }, []);
   return (
     <>
-      {fetchingStudent && (
-        <div className="py-12 text-center text-gray-500 dark:text-slate-400">
+      {loading && (
+        <div className="py-12 min-h-screen flex justify-center items-center text-center text-gray-500 dark:text-slate-400">
           <div className="flex flex-col items-center justify-center gap-2">
             <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
             <span>Loading student...</span>
@@ -259,7 +232,7 @@ export default function StudentForm({
         </div>
       )}
 
-      <div className="mx-auto p-6 sm:p-8 rounded-2xl border shadow-sm transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
+      <div className="mx-auto p-6 sm:p-8 rounded-lg border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
         <h2 className="text-xl font-bold mb-6 tracking-tight text-gray-900 dark:text-slate-100">
           {isEdit ? "Edit Student" : "Add New Student"}
         </h2>
@@ -286,7 +259,7 @@ export default function StudentForm({
         >
           {/* Student Information Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-indigo-600 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
+            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
               Student Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -369,7 +342,7 @@ export default function StudentForm({
                   <option value="" className="dark:bg-slate-800">
                     --Select class--
                   </option>
-                  {classRoomm.map((item) => (
+                  {classFilter.map((item) => (
                     <option
                       key={item.id}
                       value={item.id}
@@ -457,7 +430,7 @@ export default function StudentForm({
 
           {/* Parent Information Section */}
           <div className="space-y-4 pt-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-indigo-600 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
+            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
               Parent Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -553,7 +526,7 @@ export default function StudentForm({
                     type="file"
                     accept="image/png, image/jpeg"
                     onChange={handleImageParentChange}
-                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-500/20 dark:file:text-indigo-300 dark:hover:file:bg-indigo-500/30 file:transition-colors"
+                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-indigo-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
                   />
                 </div>
               </div>
@@ -564,14 +537,14 @@ export default function StudentForm({
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
+              className="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
+              className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-blue-500 hover:bg-blue-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
             >
               {loading
                 ? "Saving..."

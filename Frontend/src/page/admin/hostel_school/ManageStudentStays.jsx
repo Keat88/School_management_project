@@ -136,7 +136,7 @@ export default function ManageStudentStays() {
   return (
     <div className="w-full mx-auto px-4 lg:min-w-160 py-6 space-y-6 font-sans dark:text-slate-100">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-xs dark:bg-slate-900 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-lg border border-gray-200 shadow-xs dark:bg-slate-900 dark:border-slate-800">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight dark:text-slate-100">
             Manage Hostel Student Stays
@@ -148,7 +148,7 @@ export default function ManageStudentStays() {
         </div>
         <Link
           to="/admin/hostel-stays/add"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 active:bg-blue-800 transition-all shadow-xs shrink-0 dark:bg-blue-600 dark:hover:bg-blue-500"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 active:bg-blue-800 transition-all shadow-xs shrink-0 dark:bg-blue-600 dark:hover:bg-blue-500"
         >
           <Plus size={18} />
           <span>Assign Bed / Room</span>
@@ -157,7 +157,7 @@ export default function ManageStudentStays() {
 
       {/* Overview Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-5 rounded-2xl border duration-200 transition-transform hover:-translate-y-0.5 border-gray-200 shadow-xs flex items-center justify-between dark:bg-slate-900 dark:border-slate-800">
+        <div className="bg-white p-5 rounded-lg border duration-200 transition-transform hover:-translate-y-0.5 border-gray-200 shadow-xs flex items-center justify-between dark:bg-slate-900 dark:border-slate-800">
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-slate-400">
               Total Allocations
@@ -171,7 +171,7 @@ export default function ManageStudentStays() {
           </div>
         </div>
 
-        <div className="bg-white p-5 transition-transform hover:-translate-y-0.5 rounded-2xl border border-gray-200 shadow-xs flex items-center justify-between dark:bg-slate-900 dark:border-slate-800">
+        <div className="bg-white p-5 transition-transform hover:-translate-y-0.5 rounded-lg border border-gray-200 shadow-xs flex items-center justify-between dark:bg-slate-900 dark:border-slate-800">
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-slate-400">
               Active Stays
@@ -185,7 +185,7 @@ export default function ManageStudentStays() {
           </div>
         </div>
 
-        <div className="bg-white p-5 transition-transform hover:-translate-y-0.5 rounded-2xl border border-gray-200 shadow-xs flex items-center justify-between dark:bg-slate-900 dark:border-slate-800">
+        <div className="bg-white p-5 transition-transform hover:-translate-y-0.5 rounded-lg border border-gray-200 shadow-xs flex items-center justify-between dark:bg-slate-900 dark:border-slate-800">
           <div>
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-slate-400">
               Vacated / Completed
@@ -262,14 +262,14 @@ export default function ManageStudentStays() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search student, roll #, phone, or room..."
-                className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 dark:focus:border-blue-500"
+                className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500/20  transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:bg-slate-800 dark:focus:border-blue-500"
               />
             </div>
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="p-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors shrink-0 dark:bg-slate-800 dark:text-slate-300 dark:border dark:border-slate-700 dark:hover:bg-slate-700"
+                className="p-2.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors shrink-0 dark:bg-slate-800 dark:text-slate-300 dark:border dark:border-slate-700 dark:hover:bg-slate-700"
                 title="Clear Search"
               >
                 <RotateCcw size={16} />
@@ -280,7 +280,7 @@ export default function ManageStudentStays() {
       </div>
 
       {/* Main Data Table */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4 dark:bg-slate-900 dark:border-slate-800">
+      <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm space-y-4 dark:bg-slate-900 dark:border-slate-800">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

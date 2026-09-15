@@ -49,25 +49,24 @@ function Sidebar() {
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem("token");
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("userAvatar");
       window.location.href = "/login";
       setLoading(false);
     }
   };
-
-  const fetchNameSchool = async () => {
-    try {
-      const response = await api.get("/settings");
-      if (response.data.status === "success" && response.data.settings) {
-        setNameSchool(response.data.settings.schoolName || "School Portal");
-      }
-    } catch (error) {
-      console.log("Fails to reload", error);
-    }
-  };
-
   useEffect(() => {
+    const fetchNameSchool = async () => {
+      try {
+        const response = await api.get("/settings");
+        if (response.data.status === "success" && response.data.settings) {
+          setNameSchool(response.data.settings.schoolName || "School Portal");
+        }
+      } catch (error) {
+        console.log("Fails to reload", error);
+      }
+    };
     fetchNameSchool();
   }, []);
 
@@ -80,7 +79,7 @@ function Sidebar() {
       />
       {/* Mobile Header Bar */}
       <div className="md:hidden flex items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-30 transition-colors">
-        <span className="text-xl font-bold text-gray-800 dark:text-white">
+        <span className="text-xl font-bold flex flex-col text-gray-800 dark:text-white">
           {nameSchool && (
             <div className="flex gap-x-1 items-center">
               <IoSchool size={20} />
@@ -89,6 +88,9 @@ function Sidebar() {
               </span>
             </div>
           )}
+          <p className="text-gray-500 text-sm font-medium">
+            school management system
+          </p>
         </span>
         <div className="flex items-center gap-x-1">
           {/* Mobile Theme Toggle Button */}
@@ -133,7 +135,7 @@ function Sidebar() {
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 h-[73px] border-b border-gray-200 dark:border-gray-800">
-          <span className="text-xl font-bold text-gray-800 dark:text-white">
+          <span className="text-xl flex flex-col font-bold text-gray-800 dark:text-white">
             {nameSchool && (
               <div className="flex gap-x-1 items-center">
                 <IoSchool size={20} />
@@ -142,6 +144,9 @@ function Sidebar() {
                 </span>
               </div>
             )}
+            <p className="text-gray-500 text-sm font-medium">
+              school management system
+            </p>
           </span>
           <div className="flex items-center gap-x-1">
             <button

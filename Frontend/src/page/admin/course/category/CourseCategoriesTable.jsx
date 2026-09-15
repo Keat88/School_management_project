@@ -66,7 +66,7 @@ export default function CourseCategoriesTable() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 text-slate-900 dark:text-slate-100">
-            <Layers className="text-blue-600 dark:text-indigo-400" size={22} />
+            <Layers className="text-blue-500 dark:text-indigo-400" size={22} />
             Course Categories
           </h2>
           <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
@@ -86,12 +86,12 @@ export default function CourseCategoriesTable() {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full sm:w-64 pl-9 pr-4 py-2 rounded-xl border text-sm focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-100 dark:focus:ring-blue-900 focus:border-blue-600 dark:focus:border-blue-500"
+              className="w-full sm:w-64 pl-9 pr-4 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-100 dark:focus:ring-blue-900 focus:border-blue-600 dark:focus:border-blue-500"
             />
           </div>
           <Link
             to={"/admin/course/category/add"}
-            className="bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-xl border border-gray-50 dark:border-slate-700 px-3 py-2 duration-200 transition-transform cursor-pointer font-medium"
+            className="bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg border border-gray-50 dark:border-slate-700 px-3 py-2 duration-200 transition-transform cursor-pointer font-medium"
           >
             + Add Category
           </Link>

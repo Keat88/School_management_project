@@ -2,41 +2,49 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { studentData } from "../../data/StudentsApi";
 
-export default function StudentView({ student: propStudent = null }) {
+export default function StudentView() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [fetchedStudent, setFetchedStudent] = useState(null);
-  const [loading, setLoading] = useState(!propStudent && Boolean(id));
-
+  const [loading, setLoading] = useState(false);
+  const [student, setStudent] = useState([]);
   const isMounted = useRef(true);
-
+  // useEffect(() => {
+  //   return () => {
+  //     isMounted.current = false;
+  //   };
+  // }, []);
   useEffect(() => {
-    return () => {
-      isMounted.current = false;
+    const studentViewFetch = async () => {
+      try {
+        setLoading(true);
+        const response = await studentData.getShow(id);
+        const data = response?.data || response?.data?.data || response;
+        setStudent(data);
+      } catch (error) {
+        console.log("Error", error);
+      } finally {
+        setLoading(false);
+      }
     };
-  }, []);
-
-  const student = propStudent || fetchedStudent;
-
-  useEffect(() => {
-    if (!propStudent && id) {
-      studentData
-        .getShow(id)
-        .then((response) => {
-          if (isMounted.current) {
-            setFetchedStudent(response.data?.data || response.data);
-            setLoading(false);
-          }
-        })
-        .catch((error) => {
-          console.error("Failed to load student details", error);
-          if (isMounted.current) {
-            setLoading(false);
-          }
-        });
-    }
-  }, [propStudent, id]);
-
+    // if (!propStudent && id) {
+    //   studentData
+    //     .getShow(id)
+    //     .then((response) => {
+    //       if (isMounted.current) {
+    //         setFetchedStudent(response.data?.data || response.data);
+    //         setLoading(false);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.error("Failed to load student details", error);
+    //       if (isMounted.current) {
+    //         setLoading(false);
+    //       }
+    //     });
+    // }
+    studentViewFetch();
+  }, [id]);
+  console.log(student);
   if (loading) {
     return (
       <div className="py-12 text-center text-gray-500 dark:text-slate-400">
@@ -78,7 +86,9 @@ export default function StudentView({ student: propStudent = null }) {
   return (
     <div className="lg:min-w-160 mx-auto p-6 rounded-lg border space-y-6 transition-colors bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-100">
       <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-slate-800">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-slate-100">Student Details</h2>
+        <h2 className="text-xl font-bold text-gray-800 dark:text-slate-100">
+          Student Details
+        </h2>
         <button
           onClick={() => navigate(-1)}
           className="px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 border border-transparent dark:border-slate-700"
@@ -107,7 +117,9 @@ export default function StudentView({ student: propStudent = null }) {
             <h4 className="text-sm font-semibold text-gray-700 dark:text-slate-200">
               Student Photo
             </h4>
-            <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">Profile snapshot</p>
+            <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">
+              Profile snapshot
+            </p>
           </div>
         </div>
 
@@ -129,7 +141,9 @@ export default function StudentView({ student: propStudent = null }) {
             <h4 className="text-sm font-semibold text-gray-700 dark:text-slate-200">
               Parent Photo
             </h4>
-            <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">Guardian snapshot</p>
+            <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">
+              Guardian snapshot
+            </p>
           </div>
         </div>
       </div>
@@ -153,7 +167,9 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">
               Roll Number
             </span>
-            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">{data.roll_number}</p>
+            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">
+              {data.roll_number}
+            </p>
           </div>
 
           <div>
@@ -178,7 +194,9 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">
               Class
             </span>
-            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">{data.class_id}</p>
+            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">
+              {data.class_id}
+            </p>
           </div>
 
           <div>
@@ -203,7 +221,9 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">
               Address
             </span>
-            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">{data.address}</p>
+            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">
+              {data.address}
+            </p>
           </div>
         </div>
       </div>
@@ -218,14 +238,18 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">
               Father Name
             </span>
-            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">{data.father_name}</p>
+            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">
+              {data.father_name}
+            </p>
           </div>
 
           <div>
             <span className="block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">
               Mother Name
             </span>
-            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">{data.mother_name}</p>
+            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">
+              {data.mother_name}
+            </p>
           </div>
 
           <div>
@@ -250,7 +274,9 @@ export default function StudentView({ student: propStudent = null }) {
             <span className="block text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-slate-500">
               Occupation
             </span>
-            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">{data.occupation}</p>
+            <p className="font-medium mt-1 text-gray-800 dark:text-slate-200">
+              {data.occupation}
+            </p>
           </div>
         </div>
       </div>

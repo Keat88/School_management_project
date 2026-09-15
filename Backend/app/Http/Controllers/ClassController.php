@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Student\ClassRoomForm;
 use App\Http\Resources\Student\ClassRoomResource;
 use App\Models\Attendance;
 use App\Models\ClassRoom;
@@ -12,10 +13,14 @@ use Illuminate\Support\Facades\Validator;
 
 class ClassController extends Controller
 {
+    public function getActiveClasses()
+    {
+        $activeclass = ClassRoom::all();
+        return $this->success('class recive sucessfully', ClassRoomForm::collection($activeclass), 200);
+    }
     public function showClassData($classId, Request $request)
     {
         $date = $request->input('date', now()->toDateString());
-
         $class = ClassRoom::with([
             'students.scores' => fn($q) => $q->where('class_id', $classId),
             'students.attendances' => fn($q) => $q->where('attendance_date', $date)
@@ -26,7 +31,6 @@ class ClassController extends Controller
             'class' => $class
         ]);
     }
-
     public function updateAttendance(Request $request, $classId)
     {
         $request->validate([
@@ -36,7 +40,6 @@ class ClassController extends Controller
             'attendances.*.status' => 'nullable|in:P,A,PM',
             'attendances.*.reason' => 'nullable|string',
         ]);
-
         foreach ($request->attendances as $attData) {
             $existing = Attendance::where('class_id', $classId)
                 ->where('student_id', $attData['student_id'])
@@ -47,7 +50,6 @@ class ClassController extends Controller
             if ($existing && $existing->is_locked) {
                 continue;
             }
-
             Attendance::updateOrCreate(
                 [
                     'class_id' => $classId,
@@ -60,7 +62,6 @@ class ClassController extends Controller
                 ]
             );
         }
-
         return response()->json([
             'success' => true,
             'message' => 'Attendance synchronized successfully!'
@@ -100,9 +101,7 @@ class ClassController extends Controller
         if ($request->filled('class_id') && $request->class_id !== 'all') {
             $query->where('id', $request->class_id);
         }
-
         $classrooms = $query->paginate($request->get('per_page', 8));
-
         $grades = ClassRoom::whereNotNull('grade')->distinct()->pluck('grade');
         $sections = ClassRoom::whereNotNull('section')->distinct()->pluck('section');
         $classes = ClassRoom::select('id', 'grade', 'section')->get()->map(function ($c) {
@@ -111,14 +110,12 @@ class ClassController extends Controller
                 'name' => "Grade {$c->grade} - {$c->section}"
             ];
         });
-
         return ClassRoomResource::collection($classrooms)->additional([
             'grades'   => $grades,
             'sections' => $sections,
             'classes'  => $classes,
         ]);
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -145,7 +142,6 @@ class ClassController extends Controller
             return $this->error('Something went wrong while creating the class', null, 500);
         }
     }
-
     /**
      * Display the specified resource.
      */

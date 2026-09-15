@@ -160,7 +160,7 @@ export default function StudentStayForm() {
           <button
             onClick={() => navigate(-1)}
             type="button"
-            className="p-2.5 border border-gray-200 bg-white rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white shadow-xs transition-all shrink-0"
+            className="p-2.5 border border-gray-200 bg-white rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white shadow-xs transition-all shrink-0"
             title="Back"
           >
             <ArrowLeft size={18} />
@@ -369,14 +369,14 @@ export default function StudentStayForm() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 text-center transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 text-center transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs"
+            className="w-full sm:w-auto px-6 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs"
           >
             <Save size={16} />
             {loading ? "Saving..." : isEditing ? "Update Stay" : "Assign Bed"}

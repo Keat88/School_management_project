@@ -59,6 +59,7 @@ export default function Navbar({ title, notificationCount = 0 }) {
       if (response.status === "success") {
         localStorage.removeItem("user");
         localStorage.removeItem("token");
+        localStorage.removeItem("Avatar");
         navigate("/");
       }
     } catch (error) {
@@ -75,10 +76,10 @@ export default function Navbar({ title, notificationCount = 0 }) {
         title="Completing Logout..."
         subtitle="Finalizing your request"
       />
-      <header className="max-md:hidden w-full bg-white/80 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 sticky top-0 z-20 transition-colors">
+      <header className="max-md:hidden  w-full bg-white/50 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 sticky top-0 z-20 transition-colors">
         <div className="flex items-center justify-between px-6 md:px-8 h-18">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm">
+            <div className="h-10 w-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-blue-500 dark:text-blue-400 shadow-sm">
               <SiAdminer size={22} />
             </div>
             <div>

@@ -117,7 +117,7 @@ export default function ManageHostelRooms() {
         </div>
         <Link
           to="/admin/hostel-rooms/add"
-          className="px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs dark:bg-blue-600 dark:hover:bg-blue-500"
+          className="px-4 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs dark:bg-blue-600 dark:hover:bg-blue-500"
         >
           <Plus size={16} />
           <span>Add Room</span>
