@@ -269,6 +269,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // ==========================================
     Route::middleware('role:admin,staff')->group(function () {
         Route::post('/unlockattendance/{id}', [UnBlockAttendance::class, 'unlockAttendance'])->name('unlockattendance');
+        Route::post('/getattendance', [UnBlockAttendance::class, 'getBlockAttendance'])->name('getBlockAttendance');
     });
 
     // ==========================================

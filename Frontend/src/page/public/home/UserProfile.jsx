@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { AuthApi } from "../../data/AuthApi";
-import LoadingModal from "../../hooks/LoadingModal";
+
 import { FaUser, FaEnvelope, FaShield, FaKey } from "react-icons/fa6";
+import { AuthApi } from "../../../data/AuthApi";
 
 export default function UserProfile() {
   const { currentUser, login } = useAuth();

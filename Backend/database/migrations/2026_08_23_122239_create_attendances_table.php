@@ -18,9 +18,10 @@ return new class extends Migration
             $table->date('date');
             $table->boolean('is_blocked')->default(false);
             $table->boolean('is_unlocked')->nullable();
-            $table->string('status');
-            $table->string('message');
+            $table->string('status'); // e.g., present, absent, late, excused
+            $table->string('message')->nullable();
             $table->timestamps();
+            $table->unique(['class_id', 'student_id', 'date']);
         });
     }
 

@@ -11,22 +11,18 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ClassRoomFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     protected $model = ClassRoom::class;
 
     public function definition(): array
     {
-        $grade = $this->faker->randomElement(['10', '11', '12']);
-        $section = $this->faker->randomElement(['A', 'B', 'C', 'E']);
+        // Finds the existing "2026-2027" academic year or creates it if missing
+        $academicYear = Academic_years::firstOrCreate([
+            'name' => '2026-2027' // Replace 'year' with 'name' or 'title' if your database column uses that name
+        ]);
 
         return [
-            'academic_year_id' => Academic_years::factory(),
+            'academic_year_id' => $academicYear->id,
             'grade'            => $this->faker->randomElement(['10', '11', '12']),
-
             'section'          => $this->faker->randomElement(['A', 'B', 'C']),
         ];
     }

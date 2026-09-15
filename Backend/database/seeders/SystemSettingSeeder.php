@@ -12,7 +12,7 @@ class SystemSettingSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
+    {    
         $defaults = [
             'schoolName' => 'My School Management System',
             'academicYear' => '2026-2027',

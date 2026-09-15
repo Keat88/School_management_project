@@ -36,11 +36,7 @@ export default function Navbar({ title, notificationCount = 0 }) {
   const dropdownRef = useRef(null);
 
   // Safely consume global theme and accent color states
-  const {
-    isDarkMode,
-    toggleTheme,
-    accentColor = "#2563EC",
-  } = useTheme() || {};
+  const { isDarkMode, toggleTheme, accentColor = "#2563EC" } = useTheme() || {};
 
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
@@ -54,7 +50,8 @@ export default function Navbar({ title, notificationCount = 0 }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
+  const currentSetting =
+    currentUser?.role === "admin" ? "/admin/settings" : "/teacher/setting";
   const handleLogout = async () => {
     try {
       setLoading(true);
@@ -135,10 +132,7 @@ export default function Navbar({ title, notificationCount = 0 }) {
                   <span className="text-sm font-bold text-slate-700 dark:text-slate-100 truncate uppercase max-w-[140px]">
                     {currentUser?.name || "User"}
                   </span>
-                  <span
-                    className="mt-0.5 inline-flex w-fit items-center text-gray-500 rounded-md text-[10px] font-bold tracking-wide"
-                  >
-            
+                  <span className="mt-0.5 inline-flex w-fit items-center text-gray-500 rounded-md text-[10px] font-bold tracking-wide">
                     {currentUser.email}
                   </span>
                 </div>
@@ -158,10 +152,8 @@ export default function Navbar({ title, notificationCount = 0 }) {
                     <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
                       {currentUser?.name || "User"}
                     </p>
-                    <span
-                      className="mt-1 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase"
-                    >
-                    {currentUser.email}
+                    <span className="mt-1 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase">
+                      {currentUser.email}
                     </span>
                   </div>
 
@@ -172,15 +164,21 @@ export default function Navbar({ title, notificationCount = 0 }) {
                       className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                     >
                       <span>Profile</span>
-                      <User size={16} className="text-slate-400 dark:text-slate-400" />
+                      <User
+                        size={16}
+                        className="text-slate-400 dark:text-slate-400"
+                      />
                     </NavLink>
                     <NavLink
-                      to="/admin/settings"
+                      to={currentSetting}
                       onClick={() => setOpen(false)}
                       className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
                     >
                       <span>Settings</span>
-                      <Settings size={16} className="text-slate-400 dark:text-slate-400" />
+                      <Settings
+                        size={16}
+                        className="text-slate-400 dark:text-slate-400"
+                      />
                     </NavLink>
                   </div>
 
@@ -195,7 +193,10 @@ export default function Navbar({ title, notificationCount = 0 }) {
                     className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                   >
                     <span>Logout</span>
-                    <LogOut size={16} className="text-rose-500 dark:text-rose-400" />
+                    <LogOut
+                      size={16}
+                      className="text-rose-500 dark:text-rose-400"
+                    />
                   </button>
                 </div>
               )}

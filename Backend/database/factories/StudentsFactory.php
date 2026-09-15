@@ -18,16 +18,17 @@ class StudentsFactory extends Factory
      */
     public function definition(): array
     {
+
         return [
-            'parent_id'     => Parents::factory(),
-            'class_id'      => ClassRoom::factory(),
             'student_name'  => $this->faker->name(),
-            'email'         => $this->faker->unique()->safeEmail(),
-            'gender'        => $this->faker->randomElement(['male', 'female']),
-            'address'       => $this->faker->address(),
-            'date_of_birth' => $this->faker->date('Y-m-d', '-15 years'),
-            'roll_number'   => $this->faker->unique()->numerify('STU-#####'),
+            'class_id'      => ClassRoom::factory(),
+            'parent_id'     => Parents::factory(),
+            'roll_number'   => 'RN-' . $this->faker->unique()->numerify('#####'),
             'student_phone' => $this->faker->phoneNumber(),
+            'email'         => $this->faker->unique()->safeEmail(),
+            'date_of_birth' => $this->faker->date('Y-m-d', '-12 years'),
+            'gender'        => $this->faker->randomElement(['male', 'female', 'other']),
+            'address'       => $this->faker->address(),
             'student_image' => null,
         ];
     }

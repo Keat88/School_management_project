@@ -10,16 +10,46 @@ import {
   LuFileSpreadsheet,
   LuSettings,
   LuSquareCheck,
-
+  LuBookOpen,
 } from "react-icons/lu";
-import { FaUser } from "react-icons/fa6";
-import { FaBookOpen, FaBookBookmark } from "react-icons/fa6";
+import { FaUser, FaBookOpen as FaBookOpenFa6, FaBookBookmark } from "react-icons/fa6";
 import { HiMiniBuildingOffice2 } from "react-icons/hi2";
 import {
   MdCategory,
   MdOutlineAssignmentReturn,
   MdAssignmentTurnedIn,
 } from "react-icons/md";
+
+export const sidebarTeacherMenu = [
+  {
+    id: 1,
+    title: "Home",
+    path: "/teacher/dashboard",
+    icon: LuLayoutDashboard,
+    roles: ["admin", "teacher"],
+  },
+  {
+    id: 2,
+    title: "Class",
+    path: "/teacher/class",
+    icon: LuBookOpen,
+    roles: ["admin", "teacher"],
+  },
+  {
+    id: 3,
+    title: "Setting",
+    path: "/teacher/setting",
+    icon: LuSettings,
+    roles: ["admin", "teacher"],
+  },
+  {
+    id: 4,
+    title: "Reports",
+    path: "/teacher/report",
+    icon: LuFileSpreadsheet,
+    roles: ["admin", "teacher"],
+  },
+];
 
 const sidebarMenu = [
   {
@@ -79,7 +109,7 @@ const sidebarMenu = [
     id: 5,
     title: "Subjects",
     path: "/admin/subjects",
-    icon: FaBookOpen,
+    icon: FaBookOpenFa6,
     roles: ["admin", "teacher"],
   },
   {
@@ -99,7 +129,7 @@ const sidebarMenu = [
   {
     id: 8,
     title: "Library",
-    icon: FaBookOpen,
+    icon: FaBookOpenFa6,
     child: [
       {
         id: 1,
@@ -157,7 +187,7 @@ const sidebarMenu = [
   {
     id: 10,
     title: "Course",
-    icon: FaBookOpen,
+    icon: FaBookOpenFa6,
     child: [
       {
         id: 1,
@@ -169,24 +199,17 @@ const sidebarMenu = [
         id: 2,
         title: "Course",
         path: "/admin/course",
-        icon: FaBookOpen,
+        icon: FaBookOpenFa6,
       },
       {
         id: 3,
         title: "Contact",
         path: "/admin/course/contact",
-        icon: FaBookOpen,
+        icon: FaBookOpenFa6,
       },
     ],
     roles: ["admin", "teacher"],
   },
-  // {
-  //   id: 11,
-  //   title: "Notices",
-  //   path: "/admin/notices",
-  //   icon: LuMegaphone,
-  //   roles: ["admin", "teacher"],
-  // },
   {
     id: 12,
     title: "Reports",

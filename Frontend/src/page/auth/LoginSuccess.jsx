@@ -10,17 +10,14 @@ export default function LoginSuccess() {
   useEffect(() => {
     const token = searchParams.get("token");
     const avatar = searchParams.get("avatar");
-
     if (!token) {
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
       return;
     }
-
     localStorage.setItem("token", token);
     if (avatar) {
       localStorage.setItem("userAvatar", decodeURIComponent(avatar));
     }
-
     fetch("http://localhost:8000/api/user", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -33,10 +30,11 @@ export default function LoginSuccess() {
       })
       .then((userData) => {
         login(userData, token);
-
         // Dynamically route based on role if applicable
         if (userData?.role === "admin") {
           navigate("/admin/dashboard", { replace: true });
+        } else if (userData?.role === "teacher") {
+          navigate("/teacher/dashboard", { replace: true });
         } else {
           navigate("/", { replace: true });
         }

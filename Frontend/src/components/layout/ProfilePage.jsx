@@ -9,14 +9,17 @@ import {
   MapPin,
   Lock,
   Camera,
+  ShieldCheck,
+  Calendar,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import LoadingModal from "../../hooks/LoadingModal";
 
 const inputClass =
-  "w-full rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50/50 dark:bg-gray-800 px-3.5 py-2.5 text-sm md:text-base text-slate-800 dark:text-gray-100 placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-gray-800 transition-all";
+  "w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 px-3.5 py-2.5 text-sm md:text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-2xs";
 const labelClass =
-  "block text-xs md:text-sm font-semibold text-slate-700 dark:text-gray-300 mb-1.5";
+  "block text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5";
 
 function Field({ label, icon: Icon, className = "", ...props }) {
   return (
@@ -26,7 +29,7 @@ function Field({ label, icon: Icon, className = "", ...props }) {
         {Icon && (
           <Icon
             size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 shrink-0"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 shrink-0"
           />
         )}
         <input className={`${inputClass} ${Icon ? "pl-11" : ""}`} {...props} />
@@ -38,14 +41,14 @@ function Field({ label, icon: Icon, className = "", ...props }) {
 function InfoItem({ icon: Icon, label, value }) {
   return (
     <div className="flex items-center gap-3 min-w-0">
-      <div className="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100/60 dark:border-indigo-800/60 shrink-0 shadow-2xs">
+      <div className="p-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100/80 dark:border-indigo-900/50 shrink-0 shadow-2xs">
         <Icon size={16} className="md:w-4 md:h-4" />
       </div>
       <div className="min-w-0">
-        <p className="text-[10px] md:text-xs text-slate-400 dark:text-gray-500 uppercase tracking-wider font-semibold">
+        <p className="text-[10px] md:text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider font-semibold">
           {label}
         </p>
-        <p className="text-xs md:text-sm font-medium text-slate-700 dark:text-gray-200 truncate">
+        <p className="text-xs md:text-sm font-medium text-slate-700 dark:text-slate-200 truncate">
           {value || "N/A"}
         </p>
       </div>
@@ -57,7 +60,7 @@ export default function ProfilePage() {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState({
-    name: currentUser?.name || "Keat Kun",
+    name: currentUser?.name || "Keng Keat",
     email: currentUser?.email || "keatkeng88@gmail.com",
     role: currentUser?.role || "admin",
     phone: currentUser?.phone || "+855 12 345 678",
@@ -123,22 +126,28 @@ export default function ProfilePage() {
         subtitle="Finalizing your request"
       />
 
-      <div className="min-h-screen bg-slate-100/60 dark:bg-gray-950 flex justify-center p-4 sm:p-6 md:p-10 transition-colors">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex justify-center p-4 sm:p-6 md:p-10 transition-colors">
         <div className="w-full max-w-5xl space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Profile Settings
-              </h1>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-gray-400">
-                Manage your personal information and security preferences
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                  Profile Settings
+                </h1>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Live Sync
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                Manage your personal credentials, workspace security, and preferences.
               </p>
             </div>
             <button
               type="button"
               onClick={handleLogOut}
-              className="self-start sm:self-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-800 hover:text-rose-600 dark:hover:text-rose-400 transition-all cursor-pointer shadow-2xs active:scale-95"
+              className="self-start sm:self-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-rose-600 dark:hover:text-rose-400 transition-all cursor-pointer shadow-2xs active:scale-95"
             >
               <LogOut size={16} />
               <span>Sign Out</span>
@@ -146,15 +155,20 @@ export default function ProfilePage() {
           </div>
 
           {/* Banner and User Header Card */}
-          <div className="rounded-3xl bg-white dark:bg-gray-900 shadow-xs border border-slate-200/80 dark:border-gray-800 overflow-hidden transition-colors">
-            <div className="h-28 sm:h-36 bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 relative">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/10 via-transparent to-transparent pointer-events-none" />
+          <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-hidden transition-colors">
+            <div className="h-32 sm:h-40 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/15 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute right-6 top-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-white text-xs font-medium">
+                <Sparkles size={14} className="text-indigo-400" />
+                <span>Verified Workspace User</span>
+              </div>
             </div>
+
             <div className="px-5 sm:px-8 pb-6 -mt-12 sm:-mt-14">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
                 {/* Avatar Container */}
                 <div className="relative shrink-0">
-                  <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-white dark:bg-gray-800 p-1 shadow-md ring-1 ring-slate-900/10 dark:ring-gray-700">
+                  <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-white dark:bg-slate-900 p-1 shadow-xl ring-2 ring-slate-900/10 dark:ring-slate-800">
                     {avatar ? (
                       <img
                         src={avatar}
@@ -162,7 +176,7 @@ export default function ProfilePage() {
                         className="h-full w-full rounded-xl object-cover"
                       />
                     ) : (
-                      <div className="h-full w-full rounded-xl bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl sm:text-4xl font-bold">
+                      <div className="h-full w-full rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl sm:text-4xl font-bold">
                         {avatarInitial}
                       </div>
                     )}
@@ -178,7 +192,7 @@ export default function ProfilePage() {
                     type="button"
                     aria-label="Change photo"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute -bottom-1 -right-1 p-2.5 rounded-xl bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition-all cursor-pointer active:scale-95"
+                    className="absolute -bottom-1 -right-1 p-2.5 rounded-xl bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-all cursor-pointer active:scale-95 ring-4 ring-white dark:ring-slate-900"
                   >
                     <Camera size={14} />
                   </button>
@@ -190,11 +204,12 @@ export default function ProfilePage() {
                     <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white truncate">
                       {profile.name}
                     </h2>
-                    <span className="self-center sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800">
-                      <User size={12} /> {profile.role}
+                    <span className="self-center sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/60">
+                      <ShieldCheck size={13} className="text-indigo-500" /> {profile.role}
                     </span>
                   </div>
-                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-gray-800">
+                  
+                  <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                     <InfoItem icon={Mail} label="Email" value={profile.email} />
                     <InfoItem
                       icon={Phone}
@@ -217,14 +232,14 @@ export default function ProfilePage() {
             {/* Main Form */}
             <form
               onSubmit={handleSave}
-              className="rounded-3xl bg-white dark:bg-gray-900 shadow-xs border border-slate-200/80 dark:border-gray-800 p-5 sm:p-8 lg:col-span-2 space-y-6 transition-colors"
+              className="rounded-3xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-8 lg:col-span-2 space-y-6 transition-colors"
             >
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Personal Information
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-gray-400">
-                  Update your identity and demographic information.
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  Update your official identity and demographic details.
                 </p>
               </div>
 
@@ -259,11 +274,14 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-slate-100 dark:border-gray-800">
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1">
                   Contact Details
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-3">
+                  How system alerts and team members can reach you.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field
                     label="Email Address"
                     name="email"
@@ -294,10 +312,10 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end pt-4 border-t border-slate-100 dark:border-gray-800">
+              <div className="flex items-center justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="submit"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700 shadow-sm transition-all cursor-pointer active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-500 shadow-md shadow-indigo-600/20 transition-all cursor-pointer active:scale-95"
                 >
                   <Save size={16} /> Save Changes
                 </button>
@@ -305,32 +323,31 @@ export default function ProfilePage() {
             </form>
 
             {/* Sidebar Account Summary */}
-            <div className="rounded-3xl bg-white dark:bg-gray-900 shadow-xs border border-slate-200/80 dark:border-gray-800 p-5 sm:p-6 h-fit space-y-5 transition-colors">
+            <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 h-fit space-y-5 transition-colors">
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Account Overview
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-gray-400">
-                  System access status and security.
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  System access status & security credentials.
                 </p>
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-gray-800 px-4 py-3 border border-slate-200/60 dark:border-gray-700">
-                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-gray-300 font-medium">
-                    <Lock size={16} className="text-slate-400 dark:text-gray-400 shrink-0" /> Role
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950/60 px-4 py-3 border border-slate-200/60 dark:border-slate-800">
+                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+                    <Lock size={16} className="text-indigo-500 shrink-0" /> Role Level
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-gray-100 capitalize">
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 capitalize">
                     {profile.role}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-gray-800 px-4 py-3 border border-slate-200/60 dark:border-gray-700">
-                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-gray-300 font-medium">
-                    <User size={16} className="text-slate-400 dark:text-gray-400 shrink-0" />{" "}
-                    Member since
+                <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950/60 px-4 py-3 border border-slate-200/60 dark:border-slate-800">
+                  <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
+                    <Calendar size={16} className="text-indigo-500 shrink-0" /> Member Since
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-gray-100">
+                  <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                     {memberSince}
                   </span>
                 </div>
@@ -338,7 +355,7 @@ export default function ProfilePage() {
 
               <button
                 type="button"
-                className="w-full rounded-xl border border-slate-200 dark:border-gray-700 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer active:scale-95 shadow-2xs"
+                className="w-full rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer active:scale-95 shadow-2xs"
               >
                 Change Password
               </button>

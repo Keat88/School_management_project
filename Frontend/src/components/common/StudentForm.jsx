@@ -54,19 +54,24 @@ export default function StudentForm({
 
   useEffect(() => {
     return () => {
-      if (imagePreviewStudent?.startsWith("blob:")) URL.revokeObjectURL(imagePreviewStudent);
-      if (imagePreviewParent?.startsWith("blob:")) URL.revokeObjectURL(imagePreviewParent);
+      if (imagePreviewStudent?.startsWith("blob:"))
+        URL.revokeObjectURL(imagePreviewStudent);
+      if (imagePreviewParent?.startsWith("blob:"))
+        URL.revokeObjectURL(imagePreviewParent);
     };
   }, [imagePreviewStudent, imagePreviewParent]);
 
   const fetchClass = useCallback(async () => {
     try {
       const response = await classRoomApi.getAll();
+      console.log("Classroom response:", response);
+      const payload = response?.data || response;
       const classData =
-        response?.data?.data?.data ||
-        response?.data?.data ||
-        response?.data ||
+        payload?.data || 
+        payload?.classrooms || 
+        payload || 
         [];
+
       if (isMounted.current) {
         setClassRoom(Array.isArray(classData) ? classData : []);
       }
@@ -77,10 +82,6 @@ export default function StudentForm({
       }
     }
   }, []);
-
-  useEffect(() => {
-    fetchClass();
-  }, [fetchClass]);
 
   useEffect(() => {
     if (!propStudent && id) {
@@ -148,7 +149,10 @@ export default function StudentForm({
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
-      setFeedback({ type: "error", text: "Image file is too large. Max size is 2MB." });
+      setFeedback({
+        type: "error",
+        text: "Image file is too large. Max size is 2MB.",
+      });
       return;
     }
 
@@ -162,11 +166,19 @@ export default function StudentForm({
   };
 
   const handleImageChange = (e) => {
-    handleImageValidation(e.target.files[0], setStudentImage, setImagePreviewStudent);
+    handleImageValidation(
+      e.target.files[0],
+      setStudentImage,
+      setImagePreviewStudent,
+    );
   };
 
   const handleImageParentChange = (e) => {
-    handleImageValidation(e.target.files[0], setParentImage, setImagePreviewParent);
+    handleImageValidation(
+      e.target.files[0],
+      setParentImage,
+      setImagePreviewParent,
+    );
   };
 
   const handleChange = (e) => {
@@ -201,7 +213,10 @@ export default function StudentForm({
       if (isEdit) {
         await studentData.upDate(activeId, data);
         if (isMounted.current) {
-          setFeedback({ type: "success", text: "Student updated successfully!" });
+          setFeedback({
+            type: "success",
+            text: "Student updated successfully!",
+          });
         }
       } else {
         await studentData.addNew(data);
@@ -257,7 +272,9 @@ export default function StudentForm({
                 : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40"
             }`}
           >
-            {feedback.type === "error" && <AlertCircle size={18} className="shrink-0" />}
+            {feedback.type === "error" && (
+              <AlertCircle size={18} className="shrink-0" />
+            )}
             <span>{feedback.text}</span>
           </div>
         )}
@@ -284,7 +301,7 @@ export default function StudentForm({
                   onChange={handleChange}
                   required
                   placeholder="Enter full name"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -312,7 +329,7 @@ export default function StudentForm({
                   value={formData.date_of_birth}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:[color-scheme:dark]"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:[color-scheme:dark]"
                 />
               </div>
 
@@ -324,11 +341,17 @@ export default function StudentForm({
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
                 >
-                  <option value="male" className="dark:bg-slate-800">Male</option>
-                  <option value="female" className="dark:bg-slate-800">Female</option>
-                  <option value="other" className="dark:bg-slate-800">Other</option>
+                  <option value="male" className="dark:bg-slate-800">
+                    Male
+                  </option>
+                  <option value="female" className="dark:bg-slate-800">
+                    Female
+                  </option>
+                  <option value="other" className="dark:bg-slate-800">
+                    Other
+                  </option>
                 </select>
               </div>
 
@@ -341,11 +364,17 @@ export default function StudentForm({
                   value={formData.class_id}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
                 >
-                  <option value="" className="dark:bg-slate-800">--Select class--</option>
+                  <option value="" className="dark:bg-slate-800">
+                    --Select class--
+                  </option>
                   {classRoomm.map((item) => (
-                    <option key={item.id} value={item.id} className="dark:bg-slate-800">
+                    <option
+                      key={item.id}
+                      value={item.id}
+                      className="dark:bg-slate-800"
+                    >
                       {item.grade && item.section
                         ? `${item.grade}-${item.section}`
                         : item.name}
@@ -356,7 +385,8 @@ export default function StudentForm({
 
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Student Phone <span className="font-normal opacity-70">(Optional)</span>
+                  Student Phone{" "}
+                  <span className="font-normal opacity-70">(Optional)</span>
                 </label>
                 <input
                   type="text"
@@ -364,7 +394,7 @@ export default function StudentForm({
                   value={formData.student_phone}
                   onChange={handleChange}
                   placeholder="e.g. +123456789"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -379,7 +409,7 @@ export default function StudentForm({
                   onChange={handleChange}
                   required
                   placeholder="student@example.com"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -394,7 +424,7 @@ export default function StudentForm({
                   onChange={handleChange}
                   required
                   placeholder="Enter full address"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 ></textarea>
               </div>
 
@@ -442,10 +472,9 @@ export default function StudentForm({
                   onChange={handleChange}
                   required
                   placeholder="Father's full name"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
-
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
                   Mother Name
@@ -457,7 +486,7 @@ export default function StudentForm({
                   onChange={handleChange}
                   required
                   placeholder="Mother's full name"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -471,7 +500,7 @@ export default function StudentForm({
                   value={formData.email_parent}
                   onChange={handleChange}
                   placeholder="parent@example.com"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -486,7 +515,7 @@ export default function StudentForm({
                   onChange={handleChange}
                   required
                   placeholder="e.g. +123456789"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -500,7 +529,7 @@ export default function StudentForm({
                   value={formData.occupation}
                   onChange={handleChange}
                   placeholder="Parent's occupation"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 

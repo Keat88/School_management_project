@@ -64,7 +64,7 @@ function SchedulePage() {
     navigate('/admin/schedulte-manyform')
   }
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-gray-800">Schedule</h2>
         <span className="text-sm text-gray-500">

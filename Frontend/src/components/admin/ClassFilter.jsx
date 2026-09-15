@@ -33,7 +33,7 @@ export default function ClassFilter({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-lg border border-gray-100 dark:border-slate-800 shadow-xs">
+    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3.5 rounded-lg border border-gray-100 dark:border-slate-800 ">
       {/* Search & Select Filters */}
       <div className="flex flex-1 flex-col sm:flex-row flex-wrap items-center gap-2.5">
         {/* Search Bar Input */}

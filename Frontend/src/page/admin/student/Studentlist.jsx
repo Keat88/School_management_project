@@ -145,7 +145,7 @@ function StudentList({ isDark = false }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Header Section */}
       <div className="flex items-center justify-between">
         <h2 className={`text-xl font-semibold ${isDark ? "text-slate-100" : "text-gray-800"}`}>

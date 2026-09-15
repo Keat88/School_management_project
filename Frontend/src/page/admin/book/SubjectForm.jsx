@@ -123,7 +123,7 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
   }
 
   return (
-    <div className={`max-w-3xl mx-auto space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-slate-900"}`}>
+    <div className={` mx-auto space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-slate-900"}`}>
       {/* Header */}
       <div className={`flex items-center justify-between pb-4 border-b ${isDark ? "border-slate-800" : "border-slate-200"}`}>
         <div className="flex items-center gap-3">

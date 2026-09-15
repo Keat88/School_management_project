@@ -156,7 +156,7 @@ export default function HostelPage() {
       </div>
 
       {/* Search, Filter & Building Table Section */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4 dark:bg-slate-900 dark:border-slate-800">
+      <div className="bg-white border border-gray-200 rounded-lg p-5 space-y-4 dark:bg-slate-900 dark:border-slate-800">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="relative flex-1">
             <Search
@@ -191,7 +191,7 @@ export default function HostelPage() {
         ) : (
           <div className="overflow-x-auto rounded-lg bg-white border border-gray-100 dark:bg-slate-900 dark:border-slate-800">
             <table className="w-full text-left border-collapse">
-              <thead className="bg-slate-600 text-white font-bold text-center text-sm dark:bg-slate-800 dark:text-slate-200">
+              <thead className="bg-gray-100 text-slate-700 font-bold text-center text-sm dark:bg-slate-800 dark:text-slate-200">
                 <tr>
                   <th className="p-3">#N</th>
                   <th className="p-3">Building</th>

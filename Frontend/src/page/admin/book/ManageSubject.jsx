@@ -114,7 +114,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
   };
 
   return (
-    <div className={`space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-gray-900"}`}>
+    <div className={`space-y-6  transition-colors ${isDark ? "text-slate-100" : "text-gray-900"}`}>
       <div className="flex items-center justify-between">
         <h2 className={`text-xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
           Manage Subjects
@@ -147,7 +147,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
       {/* Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className={`p-4 rounded-xl border flex gap-3 shadow-md transition-colors ${
+        className={`p-4 rounded-lg border flex gap-3  transition-colors ${
           isDark ? "bg-slate-900 border-slate-800" : "bg-white border-gray-200"
         }`}
       >
@@ -190,7 +190,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
       </form>
 
       {/* Subject List Table */}
-      <div className={`border rounded-2xl p-5 shadow-sm space-y-4 transition-colors ${
+      <div className={`border rounded-lg p-5  space-y-4 transition-colors ${
         isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
       }`}>
         <div className="overflow-x-auto">

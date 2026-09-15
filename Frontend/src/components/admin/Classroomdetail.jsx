@@ -59,10 +59,10 @@ function ClassroomDetail() {
             <ArrowLeft size={14} />
             Back to Classes
           </Link>
-          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 flex flex-col items-center justify-center gap-3 text-slate-500 dark:text-slate-400 shadow-xs">
+          <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 flex flex-col items-center justify-center gap-3 text-slate-500 dark:text-slate-400 shadow-xs">
             <Loader2 size={24} className="animate-spin text-indigo-600 dark:text-indigo-400" />
             <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-              កំពុងទាញយកព័ត៌មានថ្នាក់រៀន...
+              Loading data class...
             </span>
           </div>
         </div>
@@ -189,7 +189,7 @@ function ClassroomDetail() {
         </div>
 
         {/* Subjects */}
-        <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs space-y-3">
+        <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5  space-y-3">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white">Subjects</h3>
           {subjectList.length > 0 ? (
             <div className="flex flex-wrap gap-2">

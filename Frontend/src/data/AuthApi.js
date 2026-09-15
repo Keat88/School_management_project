@@ -17,6 +17,7 @@ export const AuthApi = {
       throw error;
     }
   },
+
   Logout: async () => {
     try {
       const response = await api.get("/logout");

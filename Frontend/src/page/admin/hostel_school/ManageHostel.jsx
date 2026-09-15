@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Trash2, Edit, Search, Building2, RotateCcw } from "lucide-react";
+import { Plus, Search, Building2, Home, Users } from "lucide-react";
 import { hostelRoomApi } from "../../../data/Hostel";
 import Pagination from "../../../hooks/Pagination";
 
@@ -9,227 +9,267 @@ export default function ManageHostel() {
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
   const [search, setSearch] = useState("");
+  const [selectedType, setSelectedType] = useState("All");
 
-  // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const perPage = 10;
 
-  const fetchHostels = useCallback(async (page = 1, searchQuery = "") => {
-    setLoading(true);
-    try {
-      // Clean query parameters before passing to Axios
-      const params = {
-        page,
-        per_page: perPage,
-      };
+  // Real-time stat counts from fetched list
+  const maleDorms = hostels.filter(
+    (h) => h.type?.toLowerCase() === "male",
+  ).length;
+  const femaleDorms = hostels.filter(
+    (h) => h.type?.toLowerCase() === "female",
+  ).length;
+  const otherDorms = hostels.filter(
+    (h) => !["male", "female"].includes(h.type?.toLowerCase()),
+  ).length;
 
-      if (searchQuery.trim()) {
-        params.search = searchQuery.trim();
+  const fetchHostels = useCallback(
+    async (page = 1, searchQuery = "", typeQuery = "") => {
+      setLoading(true);
+      try {
+        const params = { page, per_page: perPage };
+        if (searchQuery.trim()) params.search = searchQuery.trim();
+        if (typeQuery && typeQuery !== "All") params.type = typeQuery;
+
+        const response = await hostelRoomApi.getAll({ params });
+        const result = response.data?.data || response.data || [];
+        const meta = response.data?.meta || response.data;
+
+        setHostels(Array.isArray(result) ? result : []);
+
+        if (meta && typeof meta === "object" && meta.current_page) {
+          setCurrentPage(meta.current_page || page);
+          setTotalPages(meta.last_page || 1);
+          setTotalItems(meta.total || result.length || 0);
+        } else {
+          setCurrentPage(page);
+          setTotalPages(1);
+          setTotalItems(result.length || 0);
+        }
+      } catch (error) {
+        if (error.response?.status === 404) {
+          setHostels([]);
+          setTotalPages(1);
+          setTotalItems(0);
+        } else {
+          console.error("Error fetching hostels:", error);
+        }
+      } finally {
+        setLoading(false);
       }
-
-      // Pass query parameters inside the `params` property
-      const response = await hostelRoomApi.getAll({ params });
-
-      const result = response.data?.data || response.data || [];
-      const meta = response.data?.meta || response.data;
-
-      setHostels(Array.isArray(result) ? result : []);
-
-      // Extract pagination details safely
-      if (meta && typeof meta === "object" && meta.current_page) {
-        setCurrentPage(meta.current_page || page);
-        setTotalPages(meta.last_page || 1);
-        setTotalItems(meta.total || result.length || 0);
-      } else {
-        setCurrentPage(page);
-        setTotalPages(1);
-        setTotalItems(result.length || 0);
-      }
-    } catch (error) {
-      if (error.response?.status === 404) {
-        setHostels([]);
-        setTotalPages(1);
-        setTotalItems(0);
-      } else {
-        console.error("Error fetching hostels:", error);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   useEffect(() => {
-    fetchHostels(currentPage, search);
-  }, [currentPage, fetchHostels]);
+    fetchHostels(currentPage, search, selectedType);
+  }, [currentPage, fetchHostels, selectedType]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setCurrentPage(1);
-    fetchHostels(1, search);
-  };
-
-  const handleResetSearch = () => {
-    setSearch("");
-    setCurrentPage(1);
-    fetchHostels(1, "");
-  };
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+    fetchHostels(1, search, selectedType);
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this hostel?")) return;
+    if (!window.confirm("Are you sure you want to delete this building?"))
+      return;
     try {
       await hostelRoomApi.delete(id);
-      setFeedback({ type: "success", text: "Hostel deleted successfully!" });
-      fetchHostels(currentPage, search);
+      setFeedback({ type: "success", text: "Building deleted successfully!" });
+      fetchHostels(currentPage, search, selectedType);
     } catch (error) {
       setFeedback({
         type: "error",
-        text: error.response?.data?.message || "Failed to delete hostel.",
+        text: error.response?.data?.message || "Failed to delete building.",
       });
     }
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 py-6 font-sans dark:text-slate-100">
-      {/* Header */}
+    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 py-6 font-sans text-slate-800 dark:text-slate-100">
+      {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-slate-100">
-            Manage Hostels
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            Dormitory Buildings Management
           </h2>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">
-            View and handle hostel buildings and details
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+            Manage campus dormitory buildings, categories, and locations.
           </p>
         </div>
         <Link
           to="/admin/hostels/add"
-          className="px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs dark:bg-blue-600 dark:hover:bg-blue-500"
+          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
         >
           <Plus size={16} />
-          <span>Add Hostel</span>
+          <span>Add Building</span>
         </Link>
       </div>
 
-      {/* Feedback Message */}
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+            <Building2 size={22} />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Total Buildings
+            </p>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
+              {totalItems}
+            </h3>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+            <Users size={22} />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Male Dorms
+            </p>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
+              {maleDorms}
+            </h3>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+            <Users size={22} />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Female Dorms
+            </p>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
+              {femaleDorms}
+            </h3>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+            <Home size={22} />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Other Dorms
+            </p>
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
+              {otherDorms}
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      {/* Feedback Notification */}
       {feedback && (
         <div
-          className={`p-4 rounded-xl text-sm font-medium border ${
-            feedback.type === "success"
-              ? "bg-green-50 text-green-700 border-green-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30"
-              : "bg-red-50 text-red-700 border-red-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/30"
-          }`}
+          className={`p-4 rounded-xl text-sm font-medium ${feedback.type === "success" ? "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20" : "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-500/10 dark:text-rose-300 dark:border-rose-500/20"}`}
         >
           {feedback.text}
         </div>
       )}
 
-      {/* Search Bar */}
+      {/* Search & Filter Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className="bg-white p-3.5 sm:p-4 rounded-xl border border-gray-200 shadow-xs flex flex-col sm:flex-row gap-3 dark:bg-slate-900 dark:border-slate-800"
+        className="bg-white dark:bg-slate-900 p-4 rounded-lg border border-slate-200/80 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row gap-3"
       >
         <div className="relative flex-1">
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 dark:text-slate-500">
-            <Search size={16} />
+          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <Search size={18} />
           </span>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by hostel name, type or address..."
-            className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
+            placeholder="Search building name or address..."
+            className="w-full pl-10 pr-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50/50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all text-slate-800 dark:text-slate-100"
           />
         </div>
-        <div className="flex items-center gap-2 justify-end">
-          <button
-            type="button"
-            onClick={handleResetSearch}
-            className="flex-1 sm:flex-none px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center justify-center gap-1.5 dark:bg-slate-800 dark:text-slate-300 dark:border dark:border-slate-700 dark:hover:bg-slate-700"
-          >
-            <RotateCcw size={14} />
-            Reset
-          </button>
-          <button
-            type="submit"
-            className="flex-1 sm:flex-none px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors dark:bg-blue-600 dark:hover:bg-blue-500"
-          >
-            Search
-          </button>
-        </div>
+        <select
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm bg-slate-50/50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+        >
+          <option value="All">All Types</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
       </form>
 
-      {/* Hostel Table with Loading Overlay */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden relative min-h-[300px] dark:bg-slate-900 dark:border-slate-800">
+      {/* Table Container */}
+      <div className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden relative border border-slate-200/80 dark:border-slate-800 shadow-xs">
         {loading && (
-          <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center transition-all dark:bg-slate-900/70">
-            <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin dark:border-blue-500"></div>
-            <span className="text-xs font-medium text-gray-600 mt-2 dark:text-slate-400">
-              Loading hostels...
+          <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-10 flex flex-col items-center justify-center">
+            <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2">
+              Loading buildings...
             </span>
           </div>
         )}
-
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[600px]">
+          <table className="w-full text-left border-collapse min-w-[650px]">
             <thead>
-              <tr className="bg-gray-50/80 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider dark:bg-slate-800/80 dark:border-slate-800 dark:text-slate-400">
-                <th className="px-4 py-3.5">Hostel Name</th>
-                <th className="px-4 py-3.5">Type</th>
-                <th className="px-4 py-3.5">Address</th>
-                <th className="px-4 py-3.5 text-right">Actions</th>
+              <tr className="bg-slate-800 text-white text-xs font-semibold tracking-wider">
+                <th className="px-5 py-3.5 w-20">#N</th>
+                <th className="px-5 py-3.5">Building</th>
+                <th className="px-5 py-3.5">Type</th>
+                <th className="px-5 py-3.5">Address</th>
+                <th className="px-5 py-3.5 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-sm dark:divide-slate-800 dark:text-slate-300">
-              {!loading && hostels.length === 0 ? (
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm text-slate-700 dark:text-slate-300">
+              {hostels.length === 0 && !loading ? (
                 <tr>
                   <td
-                    colSpan={4}
-                    className="px-4 py-12 text-center text-gray-400 dark:text-slate-500"
+                    colSpan={5}
+                    className="px-6 py-12 text-center text-slate-400"
                   >
-                    No hostels found.
+                    No buildings found.
                   </td>
                 </tr>
               ) : (
-                hostels.map((hostel) => (
+                hostels.map((hostel, index) => (
                   <tr
                     key={hostel.id}
-                    className="hover:bg-gray-50/60 transition-colors dark:hover:bg-slate-800/50"
+                    className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
                   >
-                    <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap dark:text-slate-100">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 dark:bg-blue-500/15 dark:text-blue-400">
-                          <Building2 size={16} />
-                        </div>
-                        <span>{hostel.name}</span>
-                      </div>
+                    <td className="px-5 py-4 font-medium">
+                      {(currentPage - 1) * perPage + index + 1}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap dark:text-slate-400">
-                      <span className="px-2.5 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-700 capitalize dark:bg-slate-800 dark:text-slate-300">
+                    <td className="px-5 py-4 font-semibold text-slate-900 dark:text-slate-100">
+                      {hostel.name}
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold capitalize bg-blue-50 text-blue-600 border border-blue-200 dark:bg-blue-500/10 dark:text-blue-300 dark:border-blue-500/20">
                         {hostel.type}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600 max-w-xs truncate dark:text-slate-400">
+                    <td className="px-5 py-4 text-slate-500 dark:text-slate-400">
                       {hostel.address}
                     </td>
-                    <td className="px-4 py-3 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <td className="px-5 py-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/admin/hostels/edit/${hostel.id}`}
-                          className="p-1.5 text-blue-600 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors dark:border-slate-700 dark:text-blue-400 dark:hover:bg-slate-800"
-                          title="Edit"
+                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold transition-colors"
                         >
-                          <Edit size={16} />
+                          Edit
                         </Link>
                         <button
-                          type="button"
                           onClick={() => handleDelete(hostel.id)}
-                          className="p-1.5 text-red-500 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors dark:border-slate-700 dark:text-rose-400 dark:hover:bg-slate-800"
-                          title="Delete"
+                          className="px-3 py-1.5 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
                         >
                           Delete
                         </button>
@@ -243,13 +283,12 @@ export default function ManageHostel() {
         </div>
       </div>
 
-      {/* Pagination Component */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         totalItems={totalItems}
         perPage={perPage}
-        onPageChange={handlePageChange}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

@@ -149,7 +149,7 @@ export default function AcademicYearManager() {
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-6  shadow-slate-200/50 dark:shadow-none space-y-6 transition-all">
+    <div className="bg-white lg:min-w-160 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-6 dark:shadow-none space-y-6 transition-all">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-5 border-b border-slate-100 dark:border-slate-800 gap-4">
         <div>
@@ -162,7 +162,7 @@ export default function AcademicYearManager() {
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer text-white bg-indigo-600 hover:bg-indigo-500 shadow-sm active:scale-95"
+          className="px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-white bg-blue-600 hover:bg-blue-500 shadow-sm active:scale-95"
         >
           + Add Academic Year
         </button>
@@ -206,7 +206,10 @@ export default function AcademicYearManager() {
             <tbody className="divide-y text-sm font-medium divide-slate-100 dark:divide-slate-800">
               {currentAcademicYears.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-12 text-slate-400 dark:text-slate-500">
+                  <td
+                    colSpan="5"
+                    className="text-center py-12 text-slate-400 dark:text-slate-500"
+                  >
                     No academic years found.
                   </td>
                 </tr>
@@ -227,7 +230,7 @@ export default function AcademicYearManager() {
                     </td>
                     <td className="px-5 py-4">
                       {year.is_current ? (
-                        <span className="px-3 py-1 text-xs font-bold rounded-full border bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20">
+                        <span className="px-3 py-1 text-xs font-bold rounded-full border bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
                           Current Active
                         </span>
                       ) : (
@@ -272,7 +275,7 @@ export default function AcademicYearManager() {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
-          <div className="rounded-2xl max-w-md w-full p-6 shadow-2xl border transition-all bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-900 dark:text-slate-100">
+          <div className="rounded-lg max-w-md w-full p-6  border transition-all bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-900 dark:text-slate-100">
             <h3 className="text-lg font-extrabold mb-5 text-slate-900 dark:text-slate-100">
               {editingId ? "Edit Academic Year" : "Add New Academic Year"}
             </h3>
@@ -303,7 +306,7 @@ export default function AcademicYearManager() {
                   value={formData.start_date}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                 />
               </div>
 
@@ -317,7 +320,7 @@ export default function AcademicYearManager() {
                   value={formData.end_date}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
                 />
               </div>
 
@@ -328,7 +331,7 @@ export default function AcademicYearManager() {
                     name="is_current"
                     checked={formData.is_current}
                     onChange={handleChange}
-                    className="w-4 h-4 rounded focus:ring-indigo-500 cursor-pointer text-indigo-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
+                    className="w-4 h-4 rounded focus:ring-indigo-500 cursor-pointer text-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800"
                   />
                   <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
                     Set as Current Active Year
@@ -346,7 +349,7 @@ export default function AcademicYearManager() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all cursor-pointer bg-indigo-600 hover:bg-indigo-500 shadow-sm active:scale-95"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-white transition-all cursor-pointer bg-blue-600 hover:bg-blue-500 shadow-sm active:scale-95"
                 >
                   {editingId ? "Update" : "Save"}
                 </button>

@@ -105,7 +105,7 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
 
   if (fetching) {
     return (
-      <div className="max-w-2xl+ mx-auto py-16 text-center text-gray-500 dark:text-slate-400 font-sans">
+      <div className="max-w-2xl mx-auto py-16 text-center text-gray-500 dark:text-slate-400 font-sans">
         <div className="flex flex-col items-center justify-center gap-3 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 p-8 rounded-3xl shadow-xl">
           <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
           <span className="text-sm font-medium tracking-wide">Loading class details...</span>

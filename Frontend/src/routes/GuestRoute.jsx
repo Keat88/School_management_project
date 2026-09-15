@@ -5,15 +5,18 @@ export default function GuestRoute() {
   const userString = localStorage.getItem("user");
 
   if (token) {
-    // If token exists but user object is missing, clear token to prevent broken states
     if (!userString) {
       localStorage.removeItem("token");
       return <Outlet />;
     }
-
     try {
       const user = JSON.parse(userString);
-      const destination = user?.role === "admin" ? "/admin/dashboard" : "/";
+      const destination =
+        user?.role === "admin"
+          ? "/admin/dashboard"
+          : user?.role === "teacher"
+            ? "/teacher/dashboard"
+            : "/";
       return <Navigate to={destination} replace />;
     } catch (error) {
       console.error("Failed to parse user data:", error);

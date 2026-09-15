@@ -10,13 +10,11 @@ class ClassRoom extends Model
     use HasFactory;
 
     protected $fillable = ['academic_year_id', 'grade', 'section', 'teacher_id'];
-
     // Direct relationship to Teachers model
     public function teacher()
     {
         return $this->belongsTo(Teachers::class, 'teacher_id');
     }
-
     public function academicYear()
     {
         return $this->belongsTo(Academic_years::class);

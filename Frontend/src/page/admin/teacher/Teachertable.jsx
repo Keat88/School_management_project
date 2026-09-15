@@ -4,7 +4,7 @@ function initials(name = "") {
 
 function TeacherTable({ teachers = [], onEditId, onDeleteId }) {
   return (
-    <div className=" dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 overflow-hidden shadow-sm transition-all">
+    <div className=" dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 overflow-hidden transition-all">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[720px] text-sm text-left">
           <thead>

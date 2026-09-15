@@ -30,8 +30,8 @@ export default function StudentAttendance() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6 bg-slate-100/60 min-h-screen">
-      <div className="bg-white rounded-3xl shadow-xs border border-slate-200/80 overflow-hidden">
+    <div className="lg:min-w-160 mx-auto p-4 bg-slate-100/60 min-h-screen">
+      <div className="bg-white rounded-lg border border-slate-200/80 overflow-hidden">
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

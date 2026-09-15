@@ -6,7 +6,7 @@ function initials(name = "") {
 
 export default function StudentTable({ students = [], onView, onEdit, onDelete, loading }) {
   return (
-    <div className="border border-gray-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4 bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 transition-colors">
+    <div className="border border-gray-200 dark:border-slate-800 rounded-lg p-5  space-y-4 bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 transition-colors">
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm text-left">
           <thead>

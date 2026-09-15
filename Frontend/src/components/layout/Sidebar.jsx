@@ -2,6 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, ChevronDown, Sun, Moon } from "lucide-react";
 import sidebarMenu from "../../data/sideBar";
+import { sidebarTeacherMenu } from "../../data/sideBar";
 import { AuthContext } from "../../context/AuthContext";
 import { AuthApi } from "../../data/AuthApi";
 import LoadingModal from "../../hooks/LoadingModal";
@@ -11,17 +12,14 @@ import { api } from "../../data/api";
 function Sidebar() {
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
-
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [loading, setLoading] = useState(false);
   const [nameSchool, setNameSchool] = useState("School Portal");
-
   // Dark/Light mode state initialized from localStorage
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
-
   // Apply or remove 'dark' class on root document and persist preference
   useEffect(() => {
     if (isDarkMode) {
@@ -32,18 +30,16 @@ function Sidebar() {
       localStorage.setItem("theme", "light");
     }
   }, [isDarkMode]);
-
   const toggleTheme = () => setIsDarkMode((prev) => !prev);
-
-  const visibleMenu = sidebarMenu.filter((menu) =>
+  const currentSidebar =
+    currentUser?.role === "admin" ? sidebarMenu : sidebarTeacherMenu;
+  const visibleMenu = currentSidebar.filter((menu) =>
     menu.roles?.includes(currentUser?.role),
   );
   const closeMobile = () => setIsMobileOpen(false);
-
   const toggleDropdown = (id) => {
     setOpenDropdown((prev) => (prev === id ? null : id));
   };
-
   const handleLogout = async () => {
     try {
       setLoading(true);
@@ -88,7 +84,9 @@ function Sidebar() {
           {nameSchool && (
             <div className="flex gap-x-1 items-center">
               <IoSchool size={20} />
-              <span className="text-blue-600 dark:text-blue-400">{nameSchool}</span>
+              <span className="text-blue-600 dark:text-blue-400">
+                {nameSchool}
+              </span>
             </div>
           )}
         </span>
@@ -139,12 +137,13 @@ function Sidebar() {
             {nameSchool && (
               <div className="flex gap-x-1 items-center">
                 <IoSchool size={20} />
-                <span className="text-blue-600 dark:text-blue-400">{nameSchool}</span>
+                <span className="text-blue-600 dark:text-blue-400">
+                  {nameSchool}
+                </span>
               </div>
             )}
           </span>
           <div className="flex items-center gap-x-1">
-
             <button
               type="button"
               onClick={closeMobile}

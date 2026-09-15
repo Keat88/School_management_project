@@ -11,7 +11,7 @@ function StudentFilters({
   classOptions = [],
 }) {
   return (
-    <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 rounded-xl shadow-sm transition-colors">
+    <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2 rounded-lg transition-colors">
       {/* Search */}
       <div className="relative flex-1 min-w-0">
         <Search

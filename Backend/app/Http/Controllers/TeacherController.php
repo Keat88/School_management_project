@@ -41,7 +41,6 @@ class TeacherController extends Controller
         try {
             $user = $request->user();
             $teacherProfile = $user->teacher;
-
             if (!$teacherProfile) {
                 return $this->error('Teacher profile not found', null, 404);
             }
@@ -84,7 +83,6 @@ class TeacherController extends Controller
             return $this->error('Something went wrong while retrieving teacher notices', $e->getMessage(), 500);
         }
     }
-
     /**
      * Display a listing of the resource.
      */

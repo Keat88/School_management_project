@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { AuthApi } from "../../data/AuthApi";
 import { FaArrowLeft, FaGithub, FaGoogle } from "react-icons/fa6";
 import LoadingModal from "../../hooks/LoadingModal";
+import { useAuth } from "../../context/AuthContext";
 
 export default function LoginForm() {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,24 +22,27 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
     setFeedback(null);
-
     try {
-      const response = await AuthApi.Login(formData);
-      const token = response.token || response.access_token;
-      const user = response.user;
+      const res = await AuthApi.Login(formData);
+      // If AuthApi returns the raw axios response, use res.data.token
+      // If AuthApi already returns response.data, use res.token
+      const responseData = res?.data || res;
+      const token = responseData.token || responseData.access_token;
+      const user = responseData.user;
       if (token) {
-        localStorage.setItem("token", token);
-        if (user) {
-          localStorage.setItem("user", JSON.stringify(user));
-        }
+        login(user, token);
         setFeedback({ type: "success", text: "Login successful!" });
         setTimeout(() => {
           if (user?.role === "admin") {
             window.location.href = "/admin/dashboard";
+          } else if (user?.role === "teacher") {
+            window.location.href = "/teacher/dashboard";
           } else {
             window.location.href = "/";
           }
         }, 500);
+      } else {
+        window.location.href = "/";
       }
     } catch (error) {
       console.log("Login error:", error);
