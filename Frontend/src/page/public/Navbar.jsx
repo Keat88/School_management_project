@@ -9,15 +9,17 @@ import {
   FaMoon,
   FaSearch,
 } from "react-icons/fa";
+import { PiStudentFill } from "react-icons/pi";
 import { FaGauge } from "react-icons/fa6";
 import { useTheme } from "../../context/ThemeContext";
 import LoadingModal from "../../hooks/LoadingModal";
 import { AuthApi } from "../../data/AuthApi";
+import { api } from "../../data/api";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdown, setDropdown] = useState(false);
-
+  const [schoolName, setSchoolName] = useState([]);
   // Destructure user and token from your AuthContext to make the navbar reactive
   const { logout, currentUser, token: contextToken } = useAuth();
 
@@ -72,9 +74,18 @@ export default function Navbar() {
     if (user?.role === "teacher") return "/teacher/dashboard";
     return null;
   };
-
   const currentDashboard = getDashboardPath();
-  console.log(token)
+  useEffect(() => {
+    const fetchNameSchool = async () => {
+      try {
+        const res = await api.get("/settings");
+        setSchoolName(res?.data?.settings);
+      } catch (error) {
+        console.log("Error", error);
+      }
+    };
+    fetchNameSchool();
+  }, []);
   return (
     <>
       <LoadingModal
@@ -89,14 +100,12 @@ export default function Navbar() {
             to="/"
             className="flex items-center space-x-3 focus:outline-none min-w-0"
           >
-            <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-xl flex items-center justify-center font-bold shadow-sm shrink-0">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
+            <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
+             <PiStudentFill/>
             </div>
             <div className="truncate">
               <span className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-none block truncate">
-                Learnova
+                {schoolName.schoolName}
               </span>
               <p className="text-[10px] text-gray-400 dark:text-slate-400 mt-0.5 hidden xs:block">
                 Learn. Grow. Succeed.
@@ -210,7 +219,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-blue-700 transition shadow-sm shrink-0"
+                className="bg-blue-500 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-sm shrink-0"
               >
                 Log In
               </Link>

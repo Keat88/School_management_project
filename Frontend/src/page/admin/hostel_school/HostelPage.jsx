@@ -78,7 +78,7 @@ export default function HostelPage() {
     <div className="space-y-6 font-sans dark:text-slate-100">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-slate-100">
+          <h1 className="text-lg font-bold text-gray-800 dark:text-slate-100">
             Dormitory Buildings Management
           </h1>
           <p className="text-xs text-gray-500 mt-1 dark:text-slate-400">

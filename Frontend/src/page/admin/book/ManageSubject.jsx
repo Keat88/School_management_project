@@ -13,7 +13,8 @@ import Pagination from "../../../hooks/Pagination";
 
 export default function ManageSubject({ isDark: propIsDark = false }) {
   const [isDark, setIsDark] = useState(() => {
-    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    const savedTheme =
+      localStorage.getItem("theme") || localStorage.getItem("darkMode");
     if (savedTheme !== null) {
       return savedTheme === "dark" || savedTheme === "true";
     }
@@ -32,7 +33,8 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
   // Sync with localStorage changes across components/tabs if theme toggles elsewhere
   useEffect(() => {
     const handleStorageChange = () => {
-      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      const savedTheme =
+        localStorage.getItem("theme") || localStorage.getItem("darkMode");
       if (savedTheme !== null) {
         setIsDark(savedTheme === "dark" || savedTheme === "true");
       }
@@ -114,18 +116,30 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
   };
 
   return (
-    <div className={`space-y-6  transition-colors ${isDark ? "text-slate-100" : "text-gray-900"}`}>
-      <div className="flex items-center justify-between">
-        <h2 className={`text-xl font-bold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
-          Manage Subjects
-        </h2>
-        <Link
-          to="/admin/subjects/add"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1.5"
-        >
-          <Plus size={16} />
-          Add Subject
-        </Link>
+    <div
+      className={`space-y-6 w-full lg:min-w-160 mx-auto  transition-colors ${
+        isDark ? "text-slate-100" : "text-gray-900"
+      }`}
+    >
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2
+            className={`text-lg font-bold tracking-tight ${
+              isDark ? "text-slate-100" : "text-gray-800"
+            }`}
+          >
+            Manage Subjects
+          </h2>
+          <p className="text-xs sm:text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
+            Configure and manage school subjects and course codes.
+          </p>
+        </div>
+        <div className="self-start sm:self-auto">
+          <span className="inline-flex items-center text-xs font-semibold px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20">
+            {totalItems} subjects found
+          </span>
+        </div>
       </div>
 
       {feedback && (
@@ -147,14 +161,16 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
       {/* Search Bar */}
       <form
         onSubmit={handleSearchSubmit}
-        className={`p-4 rounded-lg border flex gap-3  transition-colors ${
+        className={`p-4 rounded-lg border flex flex-col md:flex-row gap-3 transition-colors ${
           isDark ? "bg-slate-900 border-slate-800" : "bg-white border-gray-200"
         }`}
       >
         <div className="relative flex-1">
-          <span className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${
-            isDark ? "text-slate-500" : "text-gray-400"
-          }`}>
+          <span
+            className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${
+              isDark ? "text-slate-500" : "text-gray-400"
+            }`}
+          >
             <Search size={16} />
           </span>
           <input
@@ -169,51 +185,83 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
             }`}
           />
         </div>
-        <button
-          type="button"
-          onClick={handleResetSearch}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
-            isDark
-              ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          <RotateCcw size={14} />
-          Reset
-        </button>
-        <button
-          type="submit"
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-        >
-          Search
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleResetSearch}
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
+              isDark
+                ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            <RotateCcw size={14} />
+            Reset
+          </button>
+          <button
+            type="submit"
+            className="flex-1 sm:flex-initial px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
+          >
+            Search
+          </button>
+          <Link
+            to="/admin/subjects/add"
+            className="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5"
+          >
+            <Plus size={16} />
+            Add Subject
+          </Link>
+        </div>
       </form>
 
       {/* Subject List Table */}
-      <div className={`border rounded-lg p-5  space-y-4 transition-colors ${
-        isDark ? "bg-slate-900 border-slate-800 text-slate-100" : "bg-white border-gray-200 text-gray-800"
-      }`}>
+      <div
+        className={`border rounded-lg p-3 sm:p-5 space-y-4 transition-colors ${
+          isDark
+            ? "bg-slate-900 border-slate-800 text-slate-100"
+            : "bg-white border-gray-200 text-gray-800"
+        }`}
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
-              <tr className={`border-b text-xs font-semibold uppercase tracking-wider ${
-                isDark ? "border-slate-800 bg-slate-800/60 text-slate-400" : "border-gray-200 bg-gray-50/70 text-gray-500"
-              }`}>
+              <tr
+                className={`border-b text-xs font-semibold uppercase tracking-wider ${
+                  isDark
+                    ? "border-slate-800 bg-slate-800/60 text-slate-400"
+                    : "border-gray-200 bg-gray-50/70 text-gray-500"
+                }`}
+              >
                 <th className="px-4 py-3">Image</th>
                 <th className="px-4 py-3">Subject Name</th>
                 <th className="px-4 py-3">Code</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className={`divide-y text-sm ${isDark ? "divide-slate-800" : "divide-gray-100"}`}>
+            <tbody
+              className={`divide-y text-sm ${
+                isDark ? "divide-slate-800" : "divide-gray-100"
+              }`}
+            >
               {loading ? (
                 <tr>
-                  <td colSpan="4" className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-400"}`}>
+                  <td
+                    colSpan="4"
+                    className={`py-12 text-center ${
+                      isDark ? "text-slate-400" : "text-gray-400"
+                    }`}
+                  >
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
-                        isDark ? "border-indigo-400" : "border-indigo-300"
-                      }`}></div>
-                      <span className={isDark ? "text-slate-400" : "text-gray-500"}>Loading subjects...</span>
+                      <div
+                        className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+                          isDark ? "border-indigo-400" : "border-indigo-300"
+                        }`}
+                      ></div>
+                      <span
+                        className={isDark ? "text-slate-400" : "text-gray-500"}
+                      >
+                        Loading subjects...
+                      </span>
                     </div>
                   </td>
                 </tr>
@@ -221,7 +269,9 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                 <tr>
                   <td
                     colSpan={4}
-                    className={`px-4 py-10 text-center ${isDark ? "text-slate-400" : "text-gray-400"}`}
+                    className={`px-4 py-10 text-center ${
+                      isDark ? "text-slate-400" : "text-gray-400"
+                    }`}
                   >
                     No subjects found.
                   </td>
@@ -244,24 +294,32 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                           }`}
                         />
                       ) : (
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center border ${
-                          isDark ? "bg-slate-800 border-slate-700 text-slate-500" : "bg-gray-100 border-gray-200 text-gray-400"
-                        }`}>
+                        <div
+                          className={`w-10 h-10 rounded-lg flex items-center justify-center border ${
+                            isDark
+                              ? "bg-slate-800 border-slate-700 text-slate-500"
+                              : "bg-gray-100 border-gray-200 text-gray-400"
+                          }`}
+                        >
                           <ImageIcon size={18} />
                         </div>
                       )}
                     </td>
-                    <td className={`px-4 py-3 font-medium whitespace-nowrap ${
-                      isDark ? "text-slate-200" : "text-gray-800"
-                    }`}>
+                    <td
+                      className={`px-4 py-3 font-medium whitespace-nowrap ${
+                        isDark ? "text-slate-200" : "text-gray-800"
+                      }`}
+                    >
                       {sub.subject_name}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className={`px-2 py-1 rounded text-xs font-mono font-medium border ${
-                        isDark 
-                          ? "bg-slate-800 border-slate-700 text-slate-300" 
-                          : "bg-gray-100 border-gray-200 text-gray-600"
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-mono font-medium border ${
+                          isDark
+                            ? "bg-slate-800 border-slate-700 text-slate-300"
+                            : "bg-gray-100 border-gray-200 text-gray-600"
+                        }`}
+                      >
                         {sub.code}
                       </span>
                     </td>

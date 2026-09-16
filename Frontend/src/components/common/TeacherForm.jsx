@@ -320,7 +320,7 @@ export default function TeacherForm({ teacher: propTeacher = null, onSuccess }) 
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 cursor-pointer bg-blue-600 dark:bg-indigo-600 hover:bg-blue-700 dark:hover:bg-indigo-500 shadow-lg shadow-indigo-500/20"
+            className="px-6 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 cursor-pointer bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-500"
           >
             {loading
               ? "Saving..."

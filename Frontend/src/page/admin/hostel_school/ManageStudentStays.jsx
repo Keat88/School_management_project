@@ -121,7 +121,7 @@ export default function ManageStudentStays() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredStays.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredStays, currentPage, itemsPerPage]);
-  
+
   const stats = useMemo(() => {
     const total = stays.length;
     const active = stays.filter((s) =>
@@ -134,11 +134,11 @@ export default function ManageStudentStays() {
   }, [stays]);
 
   return (
-    <div className="w-full mx-auto px-4 lg:min-w-160 py-6 space-y-6 font-sans dark:text-slate-100">
+    <div className="w-full mx-auto  lg:min-w-160  space-y-6 font-sans dark:text-slate-100">
       {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-lg border border-gray-200 shadow-xs dark:bg-slate-900 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight dark:text-slate-100">
+          <h2 className="text-lg font-bold text-gray-950 tracking-tight dark:text-slate-100">
             Manage Hostel Student Stays
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 mt-0.5 dark:text-slate-400">
@@ -211,9 +211,15 @@ export default function ManageStudentStays() {
         >
           <div className="flex items-center gap-2.5">
             {feedback.type === "success" ? (
-              <CheckCircle2 size={18} className="shrink-0 text-green-600 dark:text-emerald-400" />
+              <CheckCircle2
+                size={18}
+                className="shrink-0 text-green-600 dark:text-emerald-400"
+              />
             ) : (
-              <AlertCircle size={18} className="shrink-0 text-red-600 dark:text-rose-400" />
+              <AlertCircle
+                size={18}
+                className="shrink-0 text-red-600 dark:text-rose-400"
+              />
             )}
             <span>{feedback.text}</span>
           </div>
@@ -314,7 +320,10 @@ export default function ManageStudentStays() {
                     className="px-5 py-12 text-center text-gray-400 dark:text-slate-500"
                   >
                     <div className="flex flex-col items-center justify-center space-y-2">
-                      <BedDouble size={32} className="text-gray-300 stroke-1 dark:text-slate-600" />
+                      <BedDouble
+                        size={32}
+                        className="text-gray-300 stroke-1 dark:text-slate-600"
+                      />
                       <p className="text-gray-500 text-sm font-medium dark:text-slate-400">
                         No stay records found
                       </p>
@@ -379,7 +388,10 @@ export default function ManageStudentStays() {
                       <td className="px-5 py-4 whitespace-nowrap">
                         <div className="flex flex-col gap-0.5">
                           <div className="flex items-center gap-1.5 text-gray-800 font-medium dark:text-slate-200">
-                            <Home size={14} className="text-gray-400 dark:text-slate-500" />
+                            <Home
+                              size={14}
+                              className="text-gray-400 dark:text-slate-500"
+                            />
                             <span>
                               Room #
                               {stay.room?.room_number ||
@@ -390,7 +402,10 @@ export default function ManageStudentStays() {
                           </div>
                           {stay.bed_number && (
                             <div className="flex items-center gap-1 text-xs text-gray-500 font-mono dark:text-slate-400">
-                              <Hash size={12} className="text-gray-400 dark:text-slate-500" />
+                              <Hash
+                                size={12}
+                                className="text-gray-400 dark:text-slate-500"
+                              />
                               <span>Bed: {stay.bed_number}</span>
                             </div>
                           )}
@@ -407,7 +422,9 @@ export default function ManageStudentStays() {
                           <span>
                             {stay.start_date || stay.assigned_date || "N/A"}
                           </span>
-                          <span className="text-gray-300 dark:text-slate-600">&rarr;</span>
+                          <span className="text-gray-300 dark:text-slate-600">
+                            &rarr;
+                          </span>
                           <span
                             className={
                               !stay.end_date

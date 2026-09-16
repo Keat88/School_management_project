@@ -17,6 +17,17 @@ class SettingController extends Controller
             'settings' => $settings
         ], 200);
     }
+    public function getInderUser()
+    {
+        // Fetch only the specific keys you need from the database
+        $settings = SystemSetting::whereIn('setting_key', ['academicYear', 'schoolName'])
+            ->pluck('setting_value', 'setting_key');
+
+        return response()->json([
+            'status' => 'success',
+            'settings' => $settings
+        ], 200);
+    }
     public function update(Request $request)
     {
         // Extract the nested settings array from the request payload

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LuUsers,
   LuBookOpen,
@@ -9,57 +9,37 @@ import {
   LuArrowRight,
 } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-
+import { api } from "../../data/api";
 export default function TeacherClassManagement({ onSelectAction }) {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const [classes] = useState([
-    {
-      id: 1,
-      name: "Grade 12A - Full-Stack Web",
-      subject: "Web Development (React & Laravel)",
-      room: "Lab 3",
-      schedule: "Mon, Wed, Fri (08:00 AM - 09:30 AM)",
-      totalStudents: 32,
-      attendanceRate: "95%",
-    },
-    {
-      id: 2,
-      name: "Grade 11B - OOP Concepts",
-      subject: "Object-Oriented Programming (Java)",
-      room: "Room 204",
-      schedule: "Tue, Thu (10:00 AM - 11:30 AM)",
-      totalStudents: 38,
-      attendanceRate: "92%",
-    },
-    {
-      id: 3,
-      name: "Grade 12B - Database Design",
-      subject: "MySQL & Relational Architecture",
-      room: "Lab 1",
-      schedule: "Mon, Wed (01:30 PM - 03:00 PM)",
-      totalStudents: 35,
-      attendanceRate: "97%",
-    },
-  ]);
-  const filteredClasses = classes.filter(
+  const [TeacherClass, setTeacherClass] = useState([]);
+  const filteredClasses = TeacherClass.filter(
     (c) =>
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.subject.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-  const handleToAttendance = () => {
-    navigate("/teacher/attendance");
-  };
+
   const handleToScore = () => {
     navigate("/teacher/score");
   };
-
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await api.get("/classes/student-attendance");
+        setTeacherClass(res?.data?.data);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    fetch();
+  }, []);
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 font-sans text-slate-800 dark:text-slate-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950  font-sans text-slate-800 dark:text-slate-100">
       {/* Header & Search */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">My Classes</h1>
+          <h1 className="text-lg font-bold tracking-tight">My Classes</h1>
           <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
             Manage your assigned classrooms, track student attendance, and input
             scores.
@@ -76,7 +56,7 @@ export default function TeacherClassManagement({ onSelectAction }) {
             placeholder="Search classes or subjects..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all shadow-xs"
+            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all shadow-xs"
           />
         </div>
       </div>
@@ -133,8 +113,8 @@ export default function TeacherClassManagement({ onSelectAction }) {
             {/* Quick Actions */}
             <div className="grid grid-cols-2 gap-2 mt-5">
               <button
-                onClick={handleToAttendance}
-                className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                onClick={() => navigate(`/teacher/attendance/${cls.id}`)}
+                className="w-full py-2 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
                 <LuSquareCheck size={14} />
                 <span>Attendance</span>
@@ -142,7 +122,7 @@ export default function TeacherClassManagement({ onSelectAction }) {
 
               <button
                 onClick={handleToScore}
-                className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
               >
                 <LuClipboardList size={14} />
                 <span>Scores</span>

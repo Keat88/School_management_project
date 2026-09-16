@@ -194,19 +194,19 @@ function ClassroomList() {
   };
 
   return (
-    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen  transition-colors duration-300">
+      <div className="lg:min-w-160 mx-auto space-y-6">
         {/* Header Section */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
               Classes
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Manage and view classroom records
             </p>
           </div>
-          <span className="text-xs font-semibold px-3 py-1 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 rounded-full border border-indigo-100 dark:border-indigo-500/20">
+          <span className="text-xs font-semibold px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20">
             Total: {totalItems} classes
           </span>
         </div>

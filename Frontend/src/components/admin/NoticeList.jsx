@@ -3,7 +3,7 @@ import NoticeCard from "./NoticeCard";
 function NoticeList({ notices = [], onEdit, onDelete }) {
   if (notices.length === 0) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center text-sm text-gray-400">
+      <div className="rounded-lg border border-gray-200 bg-white p-10 text-center text-sm text-gray-400">
         No notices match your search or filter.
       </div>
     );

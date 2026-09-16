@@ -115,38 +115,35 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
+    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
           <div className="space-y-1">
-            <span className="text-xs font-bold text-blue-600 dark:text-indigo-400 tracking-wider uppercase bg-blue-50 dark:bg-indigo-950/60 px-3 py-1 rounded-full border border-blue-100 dark:border-indigo-900/50">
-              Admin Portal
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-lg sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight">
               User Management
             </h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm">
               Manage user accounts, permissions, and system roles.
             </p>
           </div>
-          <button
-            onClick={openCreateModal}
-            className="bg-blue-600 dark:bg-indigo-600 hover:bg-blue-700 dark:hover:bg-indigo-700 text-white font-semibold text-xs px-5 py-2.5 rounded-2xl transition shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer"
-          >
-            <span>+ Add New User</span>
-          </button>
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-slate-900 rounded-lg p-5 shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4">
+        <div className="bg-white dark:bg-slate-900 rounded-lg p-3 shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4">
           <input
             type="text"
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
           />
+          <button
+            onClick={openCreateModal}
+            className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-lg transition shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer"
+          >
+            <span>+ Add User</span>
+          </button>
           {/* Role Filter Select (Uncomment if needed) */}
           {/* <select
                         value={roleFilter}
@@ -162,7 +159,7 @@ export default function UserManagement() {
 
         {/* Users Table */}
         <div className="bg-white dark:bg-slate-900 shadow-xs rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
-          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+          <table className="min-w-full overflow-x-scroll overflow-auto divide-y divide-slate-200 dark:divide-slate-800">
             <thead className="bg-slate-50 dark:bg-slate-950/50">
               <tr>
                 <th className="px-6 py-3.5 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -255,7 +252,7 @@ export default function UserManagement() {
           <button
             disabled={pagination.current_page === 1}
             onClick={() => fetchUsers(pagination.current_page - 1)}
-            className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl disabled:opacity-50 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+            className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-lg disabled:opacity-50 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
           >
             Previous
           </button>
@@ -265,7 +262,7 @@ export default function UserManagement() {
           <button
             disabled={pagination.current_page === pagination.last_page}
             onClick={() => fetchUsers(pagination.current_page + 1)}
-            className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-xl disabled:opacity-50 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
+            className="px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 rounded-lg disabled:opacity-50 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
           >
             Next
           </button>

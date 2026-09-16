@@ -9,12 +9,12 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext, useAuth } from "../../context/AuthContext";
 import { AuthApi } from "../../data/AuthApi";
 import { useTheme } from "../../context/ThemeContext";
 import LoadingModal from "../../hooks/LoadingModal";
 import { SiAdminer } from "react-icons/si";
-
+import { CgWebsite } from "react-icons/cg";
 const roleBadgeStyles = {
   admin:
     "bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:ring-blue-900",
@@ -34,10 +34,8 @@ export default function Navbar({ title, notificationCount = 0 }) {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
-
   // Safely consume global theme and accent color states
   const { isDarkMode, toggleTheme, accentColor = "#2563EC" } = useTheme() || {};
-
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   // Close dropdown when clicking outside
@@ -68,7 +66,8 @@ export default function Navbar({ title, notificationCount = 0 }) {
       setLoading(false);
     }
   };
-
+  const WebsitePage =
+    currentUser?.role === "admin" || currentUser?.user === "teacher";
   return (
     <>
       <LoadingModal
@@ -79,9 +78,6 @@ export default function Navbar({ title, notificationCount = 0 }) {
       <header className="max-md:hidden  w-full bg-white/50 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 sticky top-0 z-20 transition-colors">
         <div className="flex items-center justify-between px-6 md:px-8 h-18">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-blue-500 dark:text-blue-400 shadow-sm">
-              <SiAdminer size={22} />
-            </div>
             <div>
               <h1 className="text-base md:text-lg font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
                 <span>Welcome</span>
@@ -166,6 +162,17 @@ export default function Navbar({ title, notificationCount = 0 }) {
                     >
                       <span>Profile</span>
                       <User
+                        size={16}
+                        className="text-slate-400 dark:text-slate-400"
+                      />
+                    </NavLink>
+                    <NavLink
+                      to={"/"}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                    >
+                      <span>Website</span>
+                      <CgWebsite
                         size={16}
                         className="text-slate-400 dark:text-slate-400"
                       />

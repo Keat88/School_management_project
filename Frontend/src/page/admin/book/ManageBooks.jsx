@@ -107,11 +107,11 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
   };
 
   return (
-    <div className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6 px-4 py-4 text-gray-900 dark:text-slate-100 transition-colors duration-200`}>
+    <div className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors duration-200`}>
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-slate-100">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">
             Manage Books
           </h2>
           <p className="text-xs sm:text-sm mt-1 text-gray-500 dark:text-slate-400">

@@ -101,8 +101,9 @@ function App() {
             <Route path="class" element={<TeacherClassManagement />} />
             <Route path="report" element={<ManageTeacherReports />} />
             <Route path="setting" element={<TeacherSettings />} />{" "}
-            <Route path="score" element={<StudentAttendance />} />
-            <Route path="attendance" element={<ClassScoreTable />} />
+            <Route path="score" element={<ClassScoreTable/>} />
+            <Route path="attendance" element={<StudentAttendance />} />
+            <Route path="attendance/:id" element={<StudentAttendance />} />
           </Route>
         </Route>
         {/* Protected Routes (Only accessible when logged in) */}

@@ -104,11 +104,11 @@ export default function ManageHostelRooms() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl lg:min-w-160 mx-auto px-4 sm:px-6 py-6 font-sans dark:text-slate-100">
+    <div className="space-y-6 lg:min-w-160 mx-auto font-sans dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-slate-100">
+          <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">
             Manage Hostel Rooms
           </h2>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">

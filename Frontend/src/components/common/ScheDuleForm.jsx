@@ -128,11 +128,11 @@ export default function ScheduleForm() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-300 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer border border-gray-200 dark:border-slate-700/60 mb-3 shadow-xs active:scale-95"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-300 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer border border-gray-200 dark:border-slate-700/60 mb-3 shadow-xs active:scale-95"
           >
             <ArrowLeft size={14} /> Back
           </button>
-          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2.5">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
               <Calendar size={22} />
             </div>
@@ -159,21 +159,21 @@ export default function ScheduleForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-gray-50/60 dark:bg-slate-950/40 p-5 rounded-2xl border border-gray-100 dark:border-slate-800/80 space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800/80 flex items-center gap-2">
-            <GraduationCap size={15} className="text-indigo-600 dark:text-indigo-400" /> Timetable Parameters
+            <GraduationCap size={15} className="text-blue-600 dark:text-blue-400" /> Timetable Parameters
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Class Room Selection */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <GraduationCap size={13} className="text-indigo-600 dark:text-indigo-400" /> Class Room
+                <GraduationCap size={13} className="text-blue-600 dark:text-blue-400" /> Class Room
               </label>
               <select
                 name="class_id"
                 value={formData.class_id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
               >
                 <option value="">Select Class Room</option>
                 {dropdowns.classes.map((cls) => (
@@ -187,14 +187,14 @@ export default function ScheduleForm() {
             {/* Subject Selection */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <BookOpen size={13} className="text-indigo-600 dark:text-indigo-400" /> Subject
+                <BookOpen size={13} className="text-blue-500 dark:text-blue-400" /> Subject
               </label>
               <select
                 name="subject_id"
                 value={formData.subject_id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
               >
                 <option value="">Select Subject</option>
                 {dropdowns.subjects.map((sub) => (
@@ -215,7 +215,7 @@ export default function ScheduleForm() {
                 value={formData.teacher_id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-blue-500 cursor-pointer transition-all"
               >
                 <option value="">Select Teacher</option>
                 {dropdowns.teachers.map((teacher) => (
@@ -229,14 +229,14 @@ export default function ScheduleForm() {
             {/* Day Selection */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Calendar size={13} className="text-indigo-600 dark:text-indigo-400" /> Day of the Week
+                <Calendar size={13} className="text-blue-500 dark:text-blue-400" /> Day of the Week
               </label>
               <select
                 name="day"
                 value={formData.day}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer transition-all"
               >
                 <option value="">Select Day</option>
                 {daysOfWeek.map((d) => (
@@ -250,7 +250,7 @@ export default function ScheduleForm() {
             {/* Start Time */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Clock size={13} className="text-indigo-600 dark:text-indigo-400" /> Start Time
+                <Clock size={13} className="text-blue-500 dark:text-blue-400" /> Start Time
               </label>
               <input
                 type="time"
@@ -258,14 +258,14 @@ export default function ScheduleForm() {
                 value={formData.start_time}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-500 transition-all"
               />
             </div>
 
             {/* End Time */}
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Clock size={13} className="text-indigo-600 dark:text-indigo-400" /> End Time
+                <Clock size={13} className="text-blue-500 dark:text-blue-400" /> End Time
               </label>
               <input
                 type="time"
@@ -273,7 +273,7 @@ export default function ScheduleForm() {
                 value={formData.end_time}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-blue-500/20 focus:border-blue-500 transition-all"
               />
             </div>
           </div>
@@ -284,7 +284,7 @@ export default function ScheduleForm() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-3 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
+            className="px-5 py-3 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
           >
             Cancel
           </button>
@@ -292,7 +292,7 @@ export default function ScheduleForm() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
           >
             <Save size={15} /> {loading ? "Saving..." : IsEdit ? "Update Schedule" : "Save Schedule"}
           </button>

@@ -47,7 +47,7 @@ export default function ClassFilter({
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search class or teacher..."
-            className="w-full rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 pl-9 pr-8 py-2 text-xs font-medium text-gray-800 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all"
+            className="w-full rounded-lg border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 pl-9 pr-8 py-2 text-xs font-medium text-gray-800 dark:text-slate-100 placeholder-gray-400 dark:placeholder-slate-500 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all"
           />
           {searchValue && (
             <button
@@ -66,7 +66,7 @@ export default function ClassFilter({
           <select
             value={gradeFilter}
             onChange={(e) => onGradeChange(e.target.value)}
-            className="w-full appearance-none rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
+            className="w-full appearance-none rounded-lg border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
           >
             <option value="all">All Grades</option>
             {Array.isArray(gradeOptions) &&
@@ -91,7 +91,7 @@ export default function ClassFilter({
           <select
             value={sectionFilter}
             onChange={(e) => onSectionChange(e.target.value)}
-            className="w-full appearance-none rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
+            className="w-full appearance-none rounded-lg border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
           >
             <option value="all">All Sections</option>
             {Array.isArray(sectionOptions) &&
@@ -117,7 +117,7 @@ export default function ClassFilter({
           <select
             value={classFilter}
             onChange={(e) => onClassChange(e.target.value)}
-            className="w-full appearance-none rounded-xl border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
+            className="w-full appearance-none rounded-lg border border-gray-200 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 py-2 pl-3 pr-8 text-xs font-medium text-gray-700 dark:text-slate-200 outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50 transition-all cursor-pointer"
           >
             <option value="all">All Classes</option>
             {Array.isArray(classOptions) &&
@@ -142,7 +142,7 @@ export default function ClassFilter({
           <button
             type="button"
             onClick={handleReset}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium text-gray-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors cursor-pointer"
           >
             <RotateCcw size={13} />
             Reset

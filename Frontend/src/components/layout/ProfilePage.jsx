@@ -17,7 +17,7 @@ import { useAuth } from "../../context/AuthContext";
 import LoadingModal from "../../hooks/LoadingModal";
 
 const inputClass =
-  "w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 px-3.5 py-2.5 text-sm md:text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-2xs";
+  "w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 px-3.5 py-2.5 text-sm md:text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-2xs";
 const labelClass =
   "block text-xs md:text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5";
 
@@ -126,8 +126,8 @@ export default function ProfilePage() {
         subtitle="Finalizing your request"
       />
 
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex justify-center p-4 sm:p-6 md:p-10 transition-colors">
-        <div className="w-full max-w-5xl space-y-6">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex justify-center transition-colors">
+        <div className="w-full lg:min-w-160 space-y-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -155,15 +155,14 @@ export default function ProfilePage() {
           </div>
 
           {/* Banner and User Header Card */}
-          <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-hidden transition-colors">
+          <div className="rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-hidden transition-colors">
             <div className="h-32 sm:h-40 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/15 via-transparent to-transparent pointer-events-none" />
               <div className="absolute right-6 top-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-white text-xs font-medium">
-                <Sparkles size={14} className="text-indigo-400" />
+                <Sparkles size={14} className="text-blue-400" />
                 <span>Verified Workspace User</span>
               </div>
             </div>
-
             <div className="px-5 sm:px-8 pb-6 -mt-12 sm:-mt-14">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
                 {/* Avatar Container */}
@@ -176,7 +175,7 @@ export default function ProfilePage() {
                         className="h-full w-full rounded-xl object-cover"
                       />
                     ) : (
-                      <div className="h-full w-full rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl sm:text-4xl font-bold">
+                      <div className="h-full w-full rounded-xl bg-indigo-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl sm:text-4xl font-bold">
                         {avatarInitial}
                       </div>
                     )}
@@ -192,7 +191,7 @@ export default function ProfilePage() {
                     type="button"
                     aria-label="Change photo"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute -bottom-1 -right-1 p-2.5 rounded-xl bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-all cursor-pointer active:scale-95 ring-4 ring-white dark:ring-slate-900"
+                    className="absolute -bottom-1 -right-1 p-2.5 rounded-lg bg-blue-500 text-white shadow-lg hover:bg-blue-700 transition-all cursor-pointer active:scale-95 ring-4 ring-white dark:ring-slate-900"
                   >
                     <Camera size={14} />
                   </button>
@@ -205,7 +204,7 @@ export default function ProfilePage() {
                       {profile.name}
                     </h2>
                     <span className="self-center sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/60">
-                      <ShieldCheck size={13} className="text-indigo-500" /> {profile.role}
+                      <ShieldCheck size={13} className="text-blue-500" /> {profile.role}
                     </span>
                   </div>
                   
@@ -226,16 +225,15 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-
           {/* Content Layout Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Form */}
             <form
               onSubmit={handleSave}
-              className="rounded-3xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-8 lg:col-span-2 space-y-6 transition-colors"
+              className="rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-8 lg:col-span-2 space-y-6 transition-colors"
             >
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base  font-bold text-slate-900 dark:text-white">
                   Personal Information
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
@@ -315,7 +313,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="submit"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-500 shadow-md shadow-indigo-600/20 transition-all cursor-pointer active:scale-95"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700 shadow-md shadow-indigo-600/20 transition-all cursor-pointer active:scale-95"
                 >
                   <Save size={16} /> Save Changes
                 </button>
@@ -323,7 +321,7 @@ export default function ProfilePage() {
             </form>
 
             {/* Sidebar Account Summary */}
-            <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 h-fit space-y-5 transition-colors">
+            <div className="rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 h-fit space-y-5 transition-colors">
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Account Overview
@@ -336,7 +334,7 @@ export default function ProfilePage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950/60 px-4 py-3 border border-slate-200/60 dark:border-slate-800">
                   <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
-                    <Lock size={16} className="text-indigo-500 shrink-0" /> Role Level
+                    <Lock size={16} className="text-blue-500 shrink-0" /> Role Level
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 capitalize">
                     {profile.role}
@@ -345,7 +343,7 @@ export default function ProfilePage() {
 
                 <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950/60 px-4 py-3 border border-slate-200/60 dark:border-slate-800">
                   <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
-                    <Calendar size={16} className="text-indigo-500 shrink-0" /> Member Since
+                    <Calendar size={16} className="text-blue-500 shrink-0" /> Member Since
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                     {memberSince}

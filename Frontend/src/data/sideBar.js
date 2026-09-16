@@ -12,8 +12,13 @@ import {
   LuSquareCheck,
   LuBookOpen,
 } from "react-icons/lu";
-import { FaUser, FaBookOpen as FaBookOpenFa6, FaBookBookmark } from "react-icons/fa6";
+import {
+  FaUser,
+  FaBookOpen as FaBookOpenFa6,
+  FaBookBookmark,
+} from "react-icons/fa6";
 import { HiMiniBuildingOffice2 } from "react-icons/hi2";
+import { FaRegStickyNote } from "react-icons/fa";
 import {
   MdCategory,
   MdOutlineAssignmentReturn,
@@ -212,13 +217,20 @@ const sidebarMenu = [
   },
   {
     id: 12,
+    title: "Event",
+    path: "/admin/notices",
+    icon: FaRegStickyNote,
+    roles: ["admin"],
+  },
+  {
+    id: 13,
     title: "Reports",
     path: "/admin/reports",
     icon: LuFileSpreadsheet,
     roles: ["admin"],
   },
   {
-    id: 13,
+    id: 14,
     title: "Settings",
     path: "/admin/settings",
     icon: LuSettings,

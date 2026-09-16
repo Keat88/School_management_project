@@ -7,29 +7,35 @@ export default function WelcomeBanner({ name }) {
   });
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const avatar = localStorage.getItem("userAvatar") || user?.avatar || user?.avatarUrl;
+  const avatar =
+    localStorage.getItem("userAvatar") || user?.avatar || user?.avatarUrl;
   const displayName = name || user?.name || "User";
 
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 md:p-8 flex items-center justify-between shadow-xl shadow-slate-200/50 dark:bg-slate-900 dark:border-slate-800 dark:shadow-none transition-all">
-      <div>
-        <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
-          Welcome back, {displayName}
-        </h2>
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
-          {today}
-        </p>
-      </div>
-      <div className="hidden sm:flex h-14 w-14 rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 items-center justify-center font-bold text-xl shadow-sm overflow-hidden">
-        {avatar ? (
-          <img
-            src={avatar}
-            alt={displayName}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <span>{displayName?.charAt(0) || "A"}</span>
-        )}
+    <div className="relative overflow-hidden rounded-2xl p-5 sm:p-6 mb-6 shadow-sm transition-all bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white dark:from-slate-900 dark:via-slate-900 dark:to-indigo-950 dark:border dark:border-slate-800">
+      <div className="flex items-center justify-between gap-4">
+        {/* Welcome Text & Date */}
+        <div className="space-y-1 min-w-0">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-white truncate">
+            Welcome back, {displayName} 👋
+          </h2>
+          <p className="text-xs sm:text-sm font-medium text-blue-100 dark:text-slate-400">
+            {today}
+          </p>
+        </div>
+
+        {/* User Avatar / Initials Badge */}
+        <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-2xl bg-white/10 dark:bg-slate-800 text-white border border-white/20 dark:border-slate-700 items-center justify-center font-bold text-lg sm:text-xl shadow-inner overflow-hidden">
+          {avatar ? (
+            <img
+              src={avatar}
+              alt={displayName}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span>{displayName?.charAt(0) || "A"}</span>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -136,14 +136,12 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
 
   return (
     <>
-      <div className="lg:min-w-160 mx-auto  p-6 sm:p-8 font-sans ">
+      <div className="lg:min-w-160 mx-auto  font-sans ">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800 lg:min-w-160">
           <div>
             <h2 className="text-lg font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-white">
-              <div className="p-2.5 rounded-xl border bg-blue-100 border-blue-200 text-blue-600 dark:bg-cyan-500/10 dark:border-cyan-500/20">
-                <BookOpen size={22} />
-              </div>
+              
               Student Book Issue Management
             </h2>
             <p className="text-xs sm:text-sm mt-1.5 text-slate-500 dark:text-slate-400">
@@ -155,7 +153,7 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
             <button
               type="button"
               onClick={() => navigate("/admin/library/bookissue/add")}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-xs font-semibold shadow-lg transition-all cursor-pointer active:scale-95 bg-blue-500 text-white hover:bg-blue-700   dark:to-blue-600  dark:hover:to-blue-500  "
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-xs font-semibold  transition-all cursor-pointer active:scale-95 bg-blue-500 text-white hover:bg-blue-700   dark:to-blue-600  dark:hover:to-blue-500  "
             >
               <Plus size={16} />
               Issue New Book

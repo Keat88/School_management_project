@@ -81,7 +81,7 @@ export default function ClassScoreTable() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 p-4 sm:p-6 md:p-8 font-sans transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100  font-sans transition-colors">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Top Navigation & Back Button */}
         <div>
@@ -95,7 +95,7 @@ export default function ClassScoreTable() {
         </div>
 
         {/* Class Details Banner Card */}
-        <div className="bg-white dark:bg-slate-900/80 backdrop-blur-md rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div className="bg-white dark:bg-slate-900/80 backdrop-blur-md rounded-lg p-5 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-xl flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
@@ -115,7 +115,7 @@ export default function ClassScoreTable() {
               <p className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
                 Total Students
               </p>
-              <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+              <p className="text-sm font-bold text-blue-600 dark:text-indigo-400">
                 {classData.totalStudents} Students
               </p>
             </div>
@@ -132,7 +132,7 @@ export default function ClassScoreTable() {
         </div>
 
         {/* Action Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-100/70 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-100/70 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-200 dark:border-slate-800">
           <div>
             <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">
               Student Scoring & Evaluation
@@ -145,26 +145,26 @@ export default function ClassScoreTable() {
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
             >
               <RefreshCw size={14} /> Refresh Table
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
             >
               <Users size={14} /> Group
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
             >
               <FileText size={14} /> Request Certificate
             </button>
             <button
               type="button"
               onClick={handleSaveScores}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-950 text-xs font-semibold hover:bg-slate-800 dark:hover:bg-white shadow-sm transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-950 text-xs font-semibold hover:bg-slate-800 dark:hover:bg-white shadow-sm transition-all cursor-pointer"
             >
               <Save size={14} /> Save Score
             </button>
@@ -172,7 +172,7 @@ export default function ClassScoreTable() {
         </div>
 
         {/* Main Data Table Container */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-xl">
+        <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm dark:shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -202,7 +202,7 @@ export default function ClassScoreTable() {
                       <div className="font-bold text-slate-900 dark:text-slate-100">
                         {student.name}
                       </div>
-                      <div className="text-xs text-indigo-600 dark:text-indigo-400 font-mono mt-0.5">
+                      <div className="text-xs text-blue-600 dark:text-blue-400 font-mono mt-0.5">
                         ID: {student.studentId}
                       </div>
                     </td>
@@ -217,7 +217,7 @@ export default function ClassScoreTable() {
                             e.target.value,
                           )
                         }
-                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                       />
                     </td>
                     <td className="py-4 px-4 text-center">
@@ -231,7 +231,7 @@ export default function ClassScoreTable() {
                             e.target.value,
                           )
                         }
-                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                       />
                     </td>
                     <td className="py-4 px-4 text-center">
@@ -245,11 +245,11 @@ export default function ClassScoreTable() {
                             e.target.value,
                           )
                         }
-                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
                       />
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <div className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-950/60 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
+                      <div className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-950/60 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
                         <button
                           type="button"
                           aria-label="View Details"

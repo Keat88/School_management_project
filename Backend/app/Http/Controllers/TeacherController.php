@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NoticeResource;
+use App\Http\Resources\TeacherClassRoomResource;
 use App\Http\Resources\TeacherResource;
+use App\Models\ClassRoom;
 use App\Models\Notice;
+use App\Models\Scores;
 use App\Models\Teachers;
+use App\Models\TimeTables;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,47 +20,135 @@ use Illuminate\Support\Str;
 
 class TeacherController extends Controller
 {
+    public function teacherSetting(Request $request)
+    {
+        try {
+            $user = $request->user();
+
+            // ទាញយក Profile របស់គ្រូ រួមទាំង Relation ផ្សេងៗបើត្រូវការ (ឧទាហរណ៍: user)
+            $teacherProfile = $user->teacher;
+
+            if (!$teacherProfile) {
+                return $this->error('Teacher profile not found for this user', null, 404);
+            }
+
+            return $this->success('Teacher settings retrieved successfully', [
+                'user' => $user,
+                'teacher' => $teacherProfile,
+            ]);
+        } catch (\Exception $e) {
+            return $this->error('Something went wrong while retrieving teacher settings', $e->getMessage(), 500);
+        }
+    }
     public function dashboardSummary(Request $request)
     {
         try {
             $user = $request->user();
             $teacherProfile = $user->teacher;
+
             if (!$teacherProfile) {
                 return $this->error('Teacher profile not found for this user', null, 404);
             }
-            $classes = $teacherProfile->classes()->withCount('students')->get();
+            $classIds = $teacherProfile->timeTables()->pluck('class_id')->unique();
+            $classes = ClassRoom::whereIn('id', $classIds)
+                ->withCount('students')
+                ->get();
+            $schedules = $teacherProfile->timeTables()
+                ->with(['classRoom', 'subject']) // 💡 1. Load relation subject មកជាមួយ
+                ->get()
+                ->map(function ($schedule) {
+                    $subjectName = $schedule->subject ? $schedule->subject->subject_name : '';
+                    $grade = $schedule->classRoom->grade ?? '';
+                    $section = $schedule->classRoom->section ?? '';
+                    $classNameText = "Grade {$grade} - {$section}" . ($subjectName ? " ({$subjectName})" : "");
+
+                    return [
+                        'id' => $schedule->id,
+                        'time' => date('h:i A', strtotime($schedule->start_time)) . ' - ' . date('h:i A', strtotime($schedule->end_time)),
+                        'className' => $classNameText,
+                        'room' => $schedule->room ?? 'Lab 1',
+                        'status' => 'Upcoming',
+                    ];
+                });
+            // ៣. ส่งទិន្នន័យត្រឡប់ទៅ Frontend
             return $this->success('Teacher dashboard summary retrieved successfully', [
+                'stats' => [
+                    'totalClasses' => $classes->count(),
+                    'totalStudents' => $classes->sum('students_count'),
+                    'attendanceRate' => '96.4%',
+                    'pendingGrades' => 0,
+                ],
+                'todaySchedule' => $schedules,
                 'teacher_name' => $user->name,
-                'total_classes' => $classes->count(),
-                'total_students' => $classes->sum('students_count'),
-                'classes' => $classes,
             ]);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving dashboard summary', $e->getMessage(), 500);
         }
     }
 
-    public function getStudentsByClass($classId, Request $request)
+    public function getStudentsByClass(Request $request)
     {
         try {
             $user = $request->user();
-            $teacherProfile = $user->teacher;
-            if (!$teacherProfile) {
-                return $this->error('Teacher profile not found', null, 404);
+            $teacher = $user->teacher;
+            if (!$teacher) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Teacher profile not found for this user.'
+                ], 404);
             }
-            $class = $teacherProfile->classes()->where('id', $classId)->first();
-
-            if (!$class) {
-                return $this->error('Class not found or unauthorized access', null, 403);
-            }
-
-            $students = $class->students()->with(['attendanceRecords' => function ($query) {
-                $query->latest();
-            }])->get();
-
-            return $this->success('Class students retrieved successfully', $students);
+            $classes = TimeTables::where('teacher_id', $teacher->id)
+                ->with(['classRoom', 'subject', 'teacher']) // ទំនាក់ទំនងបើមាន
+                ->get();
+            return response()->json([
+                'success' => true,
+                'data' => TeacherClassRoomResource::collection($classes)
+            ]);
         } catch (\Exception $e) {
-            return $this->error('Something went wrong while retrieving class students', $e->getMessage(), 500);
+            return response()->json([
+                'message' => 'Something went wrong while retrieving class data',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+    public function saveScores($classId, Request $request)
+    {
+        try {
+            $teacher = $request->user()->teacher;
+            $class = $teacher->classRooms()->where('id', $classId)->firstOrFail();
+
+            $request->validate([
+                'students' => 'required|array',
+                'students.*.id' => 'required|exists:students,id',
+                'students.*.attendanceScore' => 'nullable|numeric',
+                'students.*.activityScore' => 'nullable|numeric',
+                'students.*.examScore' => 'nullable|numeric',
+            ]);
+
+            foreach ($request->students as $studentData) {
+                Scores::updateOrCreate(
+                    [
+                        'class_id'   => $classId,
+                        'student_id' => $studentData['id'],
+                    ],
+                    [
+                        'attendance_score' => $studentData['attendanceScore'] ?? 0,
+                        'activity_score'   => $studentData['activityScore'] ?? 0,
+                        'exam_score'       => $studentData['examScore'] ?? 0,
+                    ]
+                );
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Scores saved successfully!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to save scores',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
     public function getTeacherNotices($teacherId)

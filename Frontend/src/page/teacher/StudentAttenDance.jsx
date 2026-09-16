@@ -1,86 +1,136 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, X, Clock, Lock, Save, AlertCircle } from "lucide-react";
-
-const initialStudents = [
-  { id: 1, name: "Taing Daniel", gender: "Male", status: "P", reason: "", locked: false },
-  { id: 2, name: "Svay Champey", gender: "Male", status: "P", reason: "", locked: false },
-  { id: 3, name: "khin Utdom", gender: "Male", status: "", reason: "", locked: true },
-  { id: 4, name: "SEN THING", gender: "Male", status: "", reason: "", locked: true },
-  { id: 5, name: "Oeu Lina", gender: "Female", status: "P", reason: "", locked: false },
-  { id: 6, name: "Thorn SopheakTra", gender: "Male", status: "P", reason: "Family event", locked: false },
-];
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../data/api";
 
 export default function StudentAttendance() {
-  const [students, setStudents] = useState(initialStudents);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-  const handleStatusChange = (id, newStatus) => {
-    setStudents(prev =>
-      prev.map(s => (s.id === id && !s.locked ? { ...s, status: newStatus } : s))
-    );
+  // 💡 ប្តូរឈ្មោះ state ឱ្យត្រូវ ព្រោះវាជា Object ថ្នាក់រៀន មិនមែនជា Array របស់សិស្សសុទ្ធទេ
+  const [classData, setClassData] = useState(null);
+
+  // មុខងារដូរ Status (P, A, PM) សម្រាប់សិស្សម្នាក់ៗ
+  const handleStatusChange = (studentId, newStatus) => {
+    setClassData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        students: prev.students.map((s) =>
+          s.id === studentId && !s.locked ? { ...s, status: newStatus } : s,
+        ),
+      };
+    });
   };
 
-  const handleReasonChange = (id, newReason) => {
-    setStudents(prev =>
-      prev.map(s => (s.id === id && !s.locked ? { ...s, reason: newReason } : s))
-    );
+  // មុខងារកែ Reason/Note
+  const handleReasonChange = (studentId, newReason) => {
+    setClassData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        students: prev.students.map((s) =>
+          s.id === studentId && !s.locked ? { ...s, reason: newReason } : s,
+        ),
+      };
+    });
   };
 
-  const handleSave = () => {
-    alert("Attendance saved successfully!");
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const res = await api.get(`classes/${id}`);
+        // 💡 ទាញយកយក Object ខាងក្នុង data មកเก็บទុកក្នុង State
+        const data = res?.data?.data || res?.data;
+        setClassData(data);
+      } catch (error) {
+        console.log("Error", error);
+      }
+    };
+    fetchStudent();
+  }, [id]);
+
+  const handleSave = async () => {
+    try {
+      // 1. រៀបចំទម្រង់ Data ឱ្យត្រូវទៅនឹង Backend Validation
+      const payload = {
+        attendance_date: new Date().toISOString().split("T")[0], // យកថ្ងៃខែបច្ចុប្បន្ន (ឬបងអាចដាក់ State ថ្ងៃខែផ្សេងបាន)
+        attendances:
+          classData?.students.map((student) => ({
+            student_id: student.id,
+            status: student.status || null,
+            reason: student.reason || null,
+          })) || [],
+      };
+
+      // 2. ផ្ញើសំណើ POST ទៅកាន់ Backend API តាមរយៈ Route របស់ថ្នាក់
+      const res = await api.post(`classes/${id}/attendance`, payload);
+
+      if (res?.data?.success) {
+        alert("Attendance saved successfully!");
+        navigate(-1); // ត្រឡប់ក្រោយវិញក្រោយពេល Save រួច
+      }
+    } catch (error) {
+      console.error("Error saving attendance:", error);
+      alert("Failed to save attendance. Please check your connection.");
+    }
   };
 
   return (
-    <div className="lg:min-w-160 mx-auto p-4 bg-slate-100/60 min-h-screen">
-      <div className="bg-white rounded-lg border border-slate-200/80 overflow-hidden">
+    <div className="w-full lg:min-w-160 mx-auto transition-colors">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Track Attendance</h2>
-            <p className="text-xs sm:text-sm text-slate-500">PHP + Laravel • Total Students: {students.length}</p>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+              Track Attendance
+            </h2>
+            <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+              {/* 💡 បង្ហាញ Grade និង Section មកពី API */}
+              Grade {classData?.grade} - Section {classData?.section} • Total
+              Students: {classData?.students?.length || 0}
+            </p>
           </div>
-          <button
-            type="button"
-            onClick={handleSave}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 shadow-sm transition-all cursor-pointer active:scale-95"
-          >
-            <Save size={16} /> Save Attendance
-          </button>
         </div>
 
         {/* Table View */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200 text-slate-600 text-xs font-semibold uppercase tracking-wider">
+              <tr className="bg-slate-50/70 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
                 <th className="py-3 px-4 sm:px-6">Name</th>
                 <th className="py-3 px-4">Gender</th>
                 <th className="py-3 px-4 text-center">Attendance Status</th>
                 <th className="py-3 px-4 sm:px-6">Reason / Note</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
-              {students.map((student) => (
-                <tr key={student.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="py-4 px-4 sm:px-6 font-semibold text-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+              {/* 💡 Loop យកទិន្នន័យពី classData.students */}
+              {classData?.students?.map((student) => (
+                <tr
+                  key={student.id}
+                  className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors"
+                >
+                  <td className="py-4 px-4 sm:px-6 font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">
                     {student.name}
                   </td>
-                  <td className="py-4 px-4 text-slate-600 text-xs font-medium">
+                  <td className="py-4 px-4 text-slate-600 dark:text-slate-400 text-xs font-medium whitespace-nowrap">
                     {student.gender}
                   </td>
-                  <td className="py-4 px-4 text-center">
+                  <td className="py-4 px-4 text-center whitespace-nowrap">
                     {student.locked ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-rose-50 text-rose-600 border border-rose-200">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60">
                         <Lock size={12} /> Locked by Admin
                       </span>
                     ) : (
-                      <div className="inline-flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+                      <div className="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
                         <button
                           type="button"
                           onClick={() => handleStatusChange(student.id, "P")}
                           className={`w-8 h-8 rounded-lg font-bold text-xs transition-all cursor-pointer ${
                             student.status === "P"
                               ? "bg-emerald-600 text-white shadow-xs"
-                              : "text-slate-600 hover:bg-white"
+                              : "text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700"
                           }`}
                         >
                           P
@@ -91,7 +141,7 @@ export default function StudentAttendance() {
                           className={`w-8 h-8 rounded-lg font-bold text-xs transition-all cursor-pointer ${
                             student.status === "A"
                               ? "bg-rose-600 text-white shadow-xs"
-                              : "text-slate-600 hover:bg-white"
+                              : "text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700"
                           }`}
                         >
                           A
@@ -102,7 +152,7 @@ export default function StudentAttendance() {
                           className={`w-8 h-8 rounded-lg font-bold text-xs transition-all cursor-pointer ${
                             student.status === "PM"
                               ? "bg-amber-500 text-white shadow-xs"
-                              : "text-slate-600 hover:bg-white"
+                              : "text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-700"
                           }`}
                         >
                           PM
@@ -112,16 +162,18 @@ export default function StudentAttendance() {
                   </td>
                   <td className="py-4 px-4 sm:px-6">
                     {student.locked ? (
-                      <span className="text-xs text-rose-500 font-medium italic">
+                      <span className="text-xs text-rose-500 dark:text-rose-400 font-medium italic">
                         Attendance locked. Please meet admin for approval.
                       </span>
                     ) : (
                       <input
                         type="text"
-                        value={student.reason}
-                        onChange={(e) => handleReasonChange(student.id, e.target.value)}
+                        value={student.reason || ""}
+                        onChange={(e) =>
+                          handleReasonChange(student.id, e.target.value)
+                        }
                         placeholder="Reason..."
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white transition-all"
+                        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 px-3.5 py-2 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-800 transition-all"
                       />
                     )}
                   </td>
@@ -129,6 +181,24 @@ export default function StudentAttendance() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Action Buttons Footer */}
+        <div className="px-4 sm:px-6 py-4 bg-slate-50/50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-gray-500 text-white text-sm font-semibold hover:bg-gray-700 shadow-sm transition-all cursor-pointer active:scale-95"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 shadow-sm transition-all cursor-pointer active:scale-95"
+          >
+            <Save size={16} /> Save Attendance
+          </button>
         </div>
       </div>
     </div>

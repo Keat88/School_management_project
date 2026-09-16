@@ -182,7 +182,7 @@ export default function NoticeForm({ notice: propNotice = null }) {
           <span>Loading {id ? "update..." : "create..."}</span>
         </div>
       ) : (
-        <div className="min-w-160 mx-auto p-6 rounded-xl border border-gray-200 space-y-6">
+        <div className="min-w-160 mx-auto p-6 rounded-lg border border-gray-200 space-y-6">
           <div className="flex justify-between items-center pb-4 border-b border-gray-100">
             <h2 className="text-xl font-bold text-gray-800">
               {isEdit ? "Edit Notice" : "Create New Notice"}

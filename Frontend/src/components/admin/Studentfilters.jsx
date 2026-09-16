@@ -31,44 +31,46 @@ function StudentFilters({
       </div>
 
       {/* Class filter */}
-      <select
-        value={classFilter}
-        onChange={(e) => onClassChange(e.target.value)}
-        className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm text-gray-700 dark:text-slate-200
+      <div className="flex gap-x-0.5">
+        <select
+          value={classFilter}
+          onChange={(e) => onClassChange(e.target.value)}
+          className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm text-gray-700 dark:text-slate-200
           outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-950/40
           transition-colors w-full md:w-44"
-      >
-        <option value="all">All Classes</option>
-        {classOptions.map((cls) => (
-          <option key={cls} value={cls}>
-            {cls}
-          </option>
-        ))}
-      </select>
+        >
+          <option value="all">All Classes</option>
+          {classOptions.map((cls) => (
+            <option key={cls} value={cls}>
+              {cls}
+            </option>
+          ))}
+        </select>
 
-      {/* Gender filter */}
-      <select
-        value={genderFilter}
-        onChange={(e) => onGenderChange(e.target.value)}
-        className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm text-gray-700 dark:text-slate-200
+        {/* Gender filter */}
+        <select
+          value={genderFilter}
+          onChange={(e) => onGenderChange(e.target.value)}
+          className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm text-gray-700 dark:text-slate-200
           outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-950/40
           transition-colors w-full md:w-36"
-      >
-        <option value="">All Genders</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
+        >
+          <option value="">All Genders</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
 
-      {/* Add student */}
-      <NavLink
-        to={"/admin/students/add"}
-        type="button"
-        className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm
+        {/* Add student */}
+        <NavLink
+          to={"/admin/students/add"}
+          type="button"
+          className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm
           font-medium px-4 py-2 transition-colors shrink-0"
-      >
-        <Plus size={16} />
-        Add Student
-      </NavLink>
+        >
+          <Plus size={16} />
+          Add Student
+        </NavLink>
+      </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ class Scores extends Model
     {
         return $this->belongsTo(Students::class, 'student_id');
     }
-    public function classes()
+    public function classRoom()
     {
         return $this->belongsTo(ClassRoom::class, 'class_id');
     }

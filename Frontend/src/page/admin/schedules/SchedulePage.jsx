@@ -17,7 +17,9 @@ function SchedulePage() {
       const response = await SchedultApi.getAll(filters);
       const data = response.data || [];
       setSchedules(data);
-      const uniqueClasses = [...new Set(data.map((s) => s.class_room).filter(Boolean))].sort();
+      const uniqueClasses = [
+        ...new Set(data.map((s) => s.class_room).filter(Boolean)),
+      ].sort();
       if (classFilter === "all" && uniqueClasses.length > 0) {
         setClassOptions(uniqueClasses);
       }
@@ -35,7 +37,9 @@ function SchedulePage() {
 
   // Since backend handles filtering, schedules are already filtered
   const classes = useMemo(() => {
-    return [...new Set(schedules.map((s) => s.class_room).filter(Boolean))].sort();
+    return [
+      ...new Set(schedules.map((s) => s.class_room).filter(Boolean)),
+    ].sort();
   }, [schedules]);
 
   // Group backend data by class and day for the grid
@@ -60,20 +64,25 @@ function SchedulePage() {
   const handleAddSchedule = () => {
     navigate("/admin/schedule-form");
   };
-  const handleManySchedult = ()=>{
-    navigate('/admin/schedulte-manyform')
-  }
+  const handleManySchedult = () => {
+    navigate("/admin/schedulte-manyform");
+  };
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-gray-800">Schedule</h2>
-        <span className="text-sm text-gray-500">
-          {schedules.length} scheduled periods
-        </span>
+    <div className="space-y-6 ">
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Schedule</h2>
+          <span className="text-sm text-gray-500">
+            {schedules.length} scheduled periods
+          </span>
+        </div>
+          <p className="text-xs sm:text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
+            Configure and manage school attendance  codes.
+          </p>
       </div>
 
       <ScheduleFilters
-      onManySchedule={handleManySchedult}
+        onManySchedule={handleManySchedult}
         classFilter={classFilter}
         onClassChange={setClassFilter}
         dayFilter={dayFilter}

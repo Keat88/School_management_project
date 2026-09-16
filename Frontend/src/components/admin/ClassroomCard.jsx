@@ -1,5 +1,12 @@
 import React, { useMemo } from "react";
-import { Users, BookOpen, Edit2, Trash2, ChevronRight, User } from "lucide-react";
+import {
+  Users,
+  BookOpen,
+  Edit2,
+  Trash2,
+  ChevronRight,
+  User,
+} from "lucide-react";
 
 function ClassroomCard({
   classroom = {},
@@ -38,7 +45,9 @@ function ClassroomCard({
 
     const words = teacher.trim().split(/\s+/);
     if (words.length >= 2) {
-      return (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+      return (
+        words[0].charAt(0) + words[words.length - 1].charAt(0)
+      ).toUpperCase();
     }
     return words[0].charAt(0).toUpperCase();
   }, [teacher]);
@@ -66,7 +75,7 @@ function ClassroomCard({
   };
 
   return (
-    <div className="group relative rounded-2xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs hover:shadow-xl hover:border-gray-200 dark:hover:border-slate-700 transition-all duration-300 flex flex-col justify-between overflow-hidden">
+    <div className="group relative rounded-xl border border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs hover:shadow-xl hover:border-gray-200 dark:hover:border-slate-700 transition-all duration-300 flex flex-col justify-between overflow-hidden">
       {/* Decorative Top Accent Bar */}
       <div className="absolute top-0 left-0 right-0 h-1 opacity-80 group-hover:opacity-100 transition-opacity" />
 
@@ -80,7 +89,9 @@ function ClassroomCard({
             {section && (
               <p className="text-xs font-medium text-gray-400 dark:text-slate-500 mt-0.5">
                 Section{" "}
-                <span className="text-gray-600 dark:text-slate-300 font-semibold">{section}</span>
+                <span className="text-gray-600 dark:text-slate-300 font-semibold">
+                  {section}
+                </span>
               </p>
             )}
           </div>
@@ -111,7 +122,9 @@ function ClassroomCard({
               <Users size={16} />
             </div>
             <div>
-              <p className="text-xs text-gray-400 dark:text-slate-500 font-medium">Students</p>
+              <p className="text-xs text-gray-400 dark:text-slate-500 font-medium">
+                Students
+              </p>
               <p className="text-sm font-bold text-gray-800 dark:text-slate-100 leading-none mt-0.5">
                 {students_count}
               </p>
@@ -123,7 +136,9 @@ function ClassroomCard({
               <BookOpen size={16} />
             </div>
             <div>
-              <p className="text-xs text-gray-400 dark:text-slate-500 font-medium">Subjects</p>
+              <p className="text-xs text-gray-400 dark:text-slate-500 font-medium">
+                Subjects
+              </p>
               <p className="text-sm font-bold text-gray-800 dark:text-slate-100 leading-none mt-0.5">
                 {subjects_count}
               </p>

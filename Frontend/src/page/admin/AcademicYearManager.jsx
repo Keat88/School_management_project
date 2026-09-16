@@ -149,11 +149,11 @@ export default function AcademicYearManager() {
   };
 
   return (
-    <div className="bg-white lg:min-w-160 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-lg p-6 dark:shadow-none space-y-6 transition-all">
+    <div className=" lg:min-w-160  dark:shadow-none space-y-6 transition-all">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-5 border-b border-slate-100 dark:border-slate-800 gap-4">
         <div>
-          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+          <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
             Academic Years Management
           </h2>
           <p className="text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
@@ -192,7 +192,7 @@ export default function AcademicYearManager() {
           </div>
         </div>
       ) : (
-        <div className="overflow-x-auto ">
+        <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b text-xs font-bold uppercase tracking-wider border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 bg-slate-50/75 dark:bg-slate-800/40">

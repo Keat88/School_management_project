@@ -29,16 +29,13 @@ function ClassroomDetail() {
       setError(null);
 
       const response = await classRoomApi.getById(id);
-      
+
       // Fully unwrap Laravel API Resource response ({ data: { data: { ... } } })
       const rawData = response?.data?.data || response?.data || response;
       setClassroom(rawData);
     } catch (err) {
       console.error("Error fetching classroom details:", err);
-      setError(
-        err.response?.data?.message ||
-          "បរាជ័យក្នុងការទាញយកព័ត៌មានលម្អិតនៃថ្នាក់រៀន។"
-      );
+      setError(err.response?.data?.message || "fail for access class data !");
     } finally {
       setLoading(false);
     }
@@ -50,17 +47,13 @@ function ClassroomDetail() {
 
   if (loading) {
     return (
-      <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto space-y-4">
-          <Link
-            to="/admin/classes"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
-          >
-            <ArrowLeft size={14} />
-            Back to Classes
-          </Link>
+      <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen w-full flex items-center justify-center transition-colors duration-300 p-4">
+        <div className="w-full min-h-screen">
           <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-12 flex flex-col items-center justify-center gap-3 text-slate-500 dark:text-slate-400 shadow-xs">
-            <Loader2 size={24} className="animate-spin text-indigo-600 dark:text-indigo-400" />
+            <Loader2
+              size={28}
+              className="animate-spin text-blue-500 dark:text-blue-400"
+            />
             <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
               Loading data class...
             </span>
@@ -73,7 +66,7 @@ function ClassroomDetail() {
   if (error || !classroom) {
     return (
       <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto space-y-4">
+        <div className="lg:min-w-160 mx-auto space-y-4">
           <Link
             to="/admin/classes"
             className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
@@ -82,7 +75,9 @@ function ClassroomDetail() {
             Back to Classes
           </Link>
           <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-10 text-center text-xs font-medium text-slate-500 dark:text-slate-400 shadow-xs space-y-3">
-            <p className="text-slate-700 dark:text-slate-300">{error || "រកមិនឃើញថ្នាក់រៀននេះឡើយ។"}</p>
+            <p className="text-slate-700 dark:text-slate-300">
+              {error || "រកមិនឃើញថ្នាក់រៀននេះឡើយ។"}
+            </p>
             <button
               type="button"
               onClick={fetchClassDetail}
@@ -108,26 +103,28 @@ function ClassroomDetail() {
       ? classroom.academic_year?.name || classroom.academic_year?.year
       : classroom.academic_year || "N/A";
 
-  const studentList = Array.isArray(classroom.students) ? classroom.students : [];
-  
+  const studentList = Array.isArray(classroom.students)
+    ? classroom.students
+    : [];
+
   // Extract subjects from timetables or subjects direct key
   const subjectList = classroom.timetables
     ? [...new Set(classroom.timetables.map((t) => t.subject).filter(Boolean))]
     : Array.isArray(classroom.subjects)
-    ? classroom.subjects
-    : [];
+      ? classroom.subjects
+      : [];
 
   const studentCount = classroom.students_count ?? studentList.length;
   const subjectCount = classroom.subjects_count ?? subjectList.length;
 
   return (
-    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen py-10 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen  transition-colors duration-300">
+      <div className="lg:min-w-160 mx-auto space-y-6">
         {/* Header */}
         <div className="space-y-3">
           <Link
             to="/admin/classes"
-            className="inline-flex items-center gap-2 text-xs font-semibold bg-gray-400 text-white hover:bg-gray-500 text-white-50 dark:bg-gray-700 py-1
+            className="inline-flex items-center gap-2 text-xs font-bold bg-gray-400 text-white hover:bg-gray-500 text-white-50 dark:bg-gray-700 py-2
             px-2 rounded-lg duration-200 transition-transform hover:"
           >
             <ArrowLeft size={14} />
@@ -136,15 +133,18 @@ function ClassroomDetail() {
 
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                {classroom.name || `Grade ${classroom.grade} - ${classroom.section}`}
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
+                {classroom.name ||
+                  `Grade ${classroom.grade} - ${classroom.section}`}
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 Class Teacher:{" "}
-                <span className="font-semibold text-slate-700 dark:text-slate-200">{teacherName}</span>
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
+                  {teacherName}
+                </span>
               </p>
             </div>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-500/10 text-blue-700 dark:text-blue-400 border border-indigo-100 dark:border-blue-500/20">
               {academicYearLabel}
             </span>
           </div>
@@ -157,7 +157,9 @@ function ClassroomDetail() {
               <Users size={20} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Students</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                Total Students
+              </p>
               <p className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
                 {studentCount}
               </p>
@@ -169,7 +171,9 @@ function ClassroomDetail() {
               <BookOpen size={20} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Subjects</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                Total Subjects
+              </p>
               <p className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
                 {subjectCount}
               </p>
@@ -181,7 +185,9 @@ function ClassroomDetail() {
               <CalendarDays size={20} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Academic Year</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                Academic Year
+              </p>
               <p className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">
                 {academicYearLabel}
               </p>
@@ -191,7 +197,9 @@ function ClassroomDetail() {
 
         {/* Subjects */}
         <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5  space-y-3">
-          <h3 className="text-sm font-bold text-slate-900 dark:text-white">Subjects</h3>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+            Subjects
+          </h3>
           {subjectList.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {subjectList.map((subject, index) => {
@@ -202,7 +210,7 @@ function ClassroomDetail() {
                 return (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                    className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                   >
                     {name}
                   </span>

@@ -45,7 +45,7 @@ class User extends Authenticatable
     }
     public function enrollments()
     {
-        return $this->hasMany(Inrollments::class, 'user_id'); // Matches your Inrollments controller
+        return $this->hasMany(Enrollment::class, 'user_id'); // Matches your Inrollments controller
     }
     public function admin()
     {

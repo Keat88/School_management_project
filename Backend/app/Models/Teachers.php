@@ -22,12 +22,9 @@ class Teachers extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-
-
     public function timeTables()
     {
-        return $this->hasMany(TimeTables::class);
+        return $this->hasMany(TimeTables::class,'teacher_id');
     }
     public function classRooms()
     {

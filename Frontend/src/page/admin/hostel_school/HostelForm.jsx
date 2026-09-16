@@ -87,14 +87,7 @@ export default function HostelForm() {
     <div className="lg:min-w-160 mx-auto rounded-lg p-6 bg-white border border-gray-200 shadow-sm text-gray-800 font-sans my-6 transition-colors duration-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 text-gray-600 text-xs font-semibold hover:bg-gray-100 transition-all cursor-pointer border border-gray-200 mb-2 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-700"
-          >
-            <ArrowLeft size={14} /> Back
-          </button>
-          <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2 dark:text-slate-100">
+          <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 dark:text-slate-100">
             <Building2 size={20} className="text-blue-500 dark:text-blue-400" />
             {isEdit ? "Edit Dormitory Building" : "Add New Dormitory Building"}
           </h3>
@@ -120,7 +113,7 @@ export default function HostelForm() {
           <input
             type="text"
             name="name"
-            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
+            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
             placeholder="e.g. Building A - North Wing"
             value={formData.name}
             onChange={handleChange}
@@ -134,7 +127,7 @@ export default function HostelForm() {
           </label>
           <select
             name="type"
-            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all capitalize dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
+            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all capitalize dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
             value={formData.type}
             onChange={handleChange}
             required
@@ -152,7 +145,7 @@ export default function HostelForm() {
           <textarea
             name="address"
             rows="3"
-            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
+            className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-100 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-blue-500 dark:focus:ring-blue-900/40"
             placeholder="Enter building address or location notes..."
             value={formData.address}
             onChange={handleChange}

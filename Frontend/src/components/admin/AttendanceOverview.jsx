@@ -1,6 +1,6 @@
 export default function AttendanceOverview({ overallRate, byClass = [] }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-200/50 dark:bg-slate-900 dark:border-slate-800 dark:shadow-none transition-all">
+    <div className="rounded-lg border border-slate-100 bg-white p-6 shadow-xl shadow-slate-200/50 dark:bg-slate-900 dark:border-slate-800 dark:shadow-none transition-all">
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
           Attendance Overview

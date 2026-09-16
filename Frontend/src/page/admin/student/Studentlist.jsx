@@ -145,15 +145,26 @@ function StudentList({ isDark = false }) {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 w-full lg:min-w-160 mx-auto ">
       {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <h2 className={`text-xl font-semibold ${isDark ? "text-slate-100" : "text-gray-800"}`}>
-          Students
-        </h2>
-        <span className={`text-sm ${isDark ? "text-slate-400" : "text-gray-500"}`}>
-          {totalItems} students found
-        </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2
+            className={`text-lg  font-bold tracking-tight ${isDark ? "text-slate-100" : "text-gray-800"}`}
+          >
+            Students
+          </h2>
+          <p className="text-xs sm:text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
+            Configure school years and active session status.
+          </p>
+        </div>
+        <div className="self-start sm:self-auto">
+          <span
+            className={`inline-flex items-center text-xs font-semibold px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20`}
+          >
+            {totalItems} students found
+          </span>
+        </div>
       </div>
 
       {/* Filters Component */}
@@ -170,12 +181,16 @@ function StudentList({ isDark = false }) {
 
       {/* Table Component */}
       {loading && students.length === 0 ? (
-        <div className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-500"}`}>
+        <div
+          className={`py-12 text-center ${isDark ? "text-slate-400" : "text-gray-500"}`}
+        >
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
-              isDark ? "border-indigo-400" : "border-indigo-300"
-            }`}></div>
-            <span>Loading student...</span>
+            <div
+              className={`w-6 h-6 border-2 border-t-transparent rounded-full animate-spin ${
+                isDark ? "border-indigo-400" : "border-indigo-300"
+              }`}
+            ></div>
+            <span className="text-sm">Loading student...</span>
           </div>
         </div>
       ) : (

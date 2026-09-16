@@ -25,16 +25,21 @@ export default function SystemSettings() {
   });
 
   useEffect(() => {
-    api.get("/settings")
+    api
+      .get("/settings")
       .then((res) => {
         if (res.data.status === "success" && res.data.settings) {
           const fetched = res.data.settings;
           setSettings({
             schoolName: fetched.schoolName || "",
             academicYear: fetched.academicYear || "",
-            emailAlerts: fetched.emailAlerts === "true" || fetched.emailAlerts === true,
-            smsGateway: fetched.smsGateway === "true" || fetched.smsGateway === true,
-            twoFactorAuth: fetched.twoFactorAuth === "true" || fetched.twoFactorAuth === true,
+            emailAlerts:
+              fetched.emailAlerts === "true" || fetched.emailAlerts === true,
+            smsGateway:
+              fetched.smsGateway === "true" || fetched.smsGateway === true,
+            twoFactorAuth:
+              fetched.twoFactorAuth === "true" ||
+              fetched.twoFactorAuth === true,
             sessionTimeout: fetched.sessionTimeout || "30",
             gradingScale: fetched.gradingScale || "percentage",
             libraryMaxBooks: fetched.libraryMaxBooks || "5",
@@ -62,12 +67,12 @@ export default function SystemSettings() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl lg:min-w-160 mx-auto text-slate-900 dark:text-slate-100">
+    <div className="space-y-6  lg:min-w-160 mx-auto text-slate-900 dark:text-slate-100">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-extrabold tracking-tight flex items-center gap-2 text-slate-900 dark:text-slate-100">
-            <Settings className="text-blue-600 dark:text-blue-500" size={22} />
+          <h2 className="text-lg font-bold tracking-tight flex items-center gap-2 text-slate-900 dark:text-slate-100">
+            <Settings className="text-blue-500 dark:text-blue-500" size={22} />
             System Settings & Control Panel
           </h2>
           <p className="text-sm mt-0.5 text-slate-500 dark:text-slate-400">
@@ -85,7 +90,7 @@ export default function SystemSettings() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Sidebar Navigation */}
-        <div className="md:col-span-1 space-y-1">
+        <div className="md:col-span-1 flex max-md:flex-row max-md:overflow-x-auto md:flex-col gap-2 pb-2 md:pb-0">
           {[
             { id: "general", label: "General Setup", icon: Settings },
             { id: "notifications", label: "Notifications", icon: Bell },
@@ -99,24 +104,23 @@ export default function SystemSettings() {
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer ${
+                className={`flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-lg text-sm font-medium transition-colors cursor-pointer shrink-0 md:w-full whitespace-nowrap ${
                   isActive
                     ? "bg-blue-600 text-white shadow-xs"
                     : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                 }`}
               >
                 <Icon size={16} />
-                {tab.label}
+                <span>{tab.label}</span>
               </button>
             );
           })}
         </div>
-
         {/* Content Area */}
         <div className="md:col-span-3">
           <form
             onSubmit={handleSave}
-            className="rounded-2xl border p-6 space-y-6 shadow-xs bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100"
+            className="rounded-lg border p-6 space-y-6 shadow-xs bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100"
           >
             {activeTab === "general" && (
               <div className="space-y-4">
@@ -132,7 +136,7 @@ export default function SystemSettings() {
                     value={settings.schoolName}
                     onChange={(e) => handleChange("schoolName", e.target.value)}
                     placeholder="Enter institution name"
-                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-500"
+                    className="w-full px-3.5 py-2.5 rounded-lg border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -142,9 +146,11 @@ export default function SystemSettings() {
                   <input
                     type="text"
                     value={settings.academicYear}
-                    onChange={(e) => handleChange("academicYear", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("academicYear", e.target.value)
+                    }
                     placeholder="e.g. 2026-2027"
-                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-500"
+                    className="w-full px-3.5 py-2.5 rounded-lg border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -167,7 +173,9 @@ export default function SystemSettings() {
                   <input
                     type="checkbox"
                     checked={settings.emailAlerts}
-                    onChange={(e) => handleChange("emailAlerts", e.target.checked)}
+                    onChange={(e) =>
+                      handleChange("emailAlerts", e.target.checked)
+                    }
                     className="w-4 h-4 rounded cursor-pointer text-blue-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-blue-500"
                   />
                 </div>
@@ -177,13 +185,16 @@ export default function SystemSettings() {
                       SMS Gateway Integration
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Broadcast text alerts for urgent school closures or notices.
+                      Broadcast text alerts for urgent school closures or
+                      notices.
                     </p>
                   </div>
                   <input
                     type="checkbox"
                     checked={settings.smsGateway}
-                    onChange={(e) => handleChange("smsGateway", e.target.checked)}
+                    onChange={(e) =>
+                      handleChange("smsGateway", e.target.checked)
+                    }
                     className="w-4 h-4 rounded cursor-pointer text-blue-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-blue-500"
                   />
                 </div>
@@ -207,7 +218,9 @@ export default function SystemSettings() {
                   <input
                     type="checkbox"
                     checked={settings.twoFactorAuth}
-                    onChange={(e) => handleChange("twoFactorAuth", e.target.checked)}
+                    onChange={(e) =>
+                      handleChange("twoFactorAuth", e.target.checked)
+                    }
                     className="w-4 h-4 rounded cursor-pointer text-blue-600 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-blue-500"
                   />
                 </div>
@@ -217,8 +230,10 @@ export default function SystemSettings() {
                   </label>
                   <select
                     value={settings.sessionTimeout}
-                    onChange={(e) => handleChange("sessionTimeout", e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleChange("sessionTimeout", e.target.value)
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-lg border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
                   >
                     <option value="15">15 Minutes</option>
                     <option value="30">30 Minutes</option>
@@ -240,8 +255,10 @@ export default function SystemSettings() {
                   </label>
                   <select
                     value={settings.gradingScale}
-                    onChange={(e) => handleChange("gradingScale", e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleChange("gradingScale", e.target.value)
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-lg border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
                   >
                     <option value="percentage">Percentage (0 - 100%)</option>
                     <option value="gpa">GPA Scale (0.0 - 4.0)</option>
@@ -255,8 +272,10 @@ export default function SystemSettings() {
                   <input
                     type="number"
                     value={settings.libraryMaxBooks}
-                    onChange={(e) => handleChange("libraryMaxBooks", e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
+                    onChange={(e) =>
+                      handleChange("libraryMaxBooks", e.target.value)
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-lg border text-sm font-medium focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -266,7 +285,7 @@ export default function SystemSettings() {
             <div className="pt-4 border-t flex justify-end border-slate-100 dark:border-slate-800">
               <button
                 type="submit"
-                className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
               >
                 <Save size={16} />
                 Save Changes

@@ -18,13 +18,24 @@ function AttendancePage() {
   const [blockFilter, setBlockFilter] = useState("all");
 
   const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [classOptions, setClassOptions] = useState([]); // 💡 1. បន្ថែម State សម្រាប់เก็บបញ្ជីថ្នាក់
   const [loading, setLoading] = useState(false);
-  const [pagination, setPagination] = useState({
-    current_page: 1,
-    last_page: 1,
-  });
 
-  // Fetch data from Laravel API matching UnBlockAttendance controller
+  // 💡 2. Fetch បញ្ជីថ្នាក់សម្រាប់ Dropdown Filter
+  useEffect(() => {
+    const fetchClassFilter = async () => {
+      try {
+        const res = await api.get("/class-activeform");
+        const data = res?.data?.data || res?.data || res;
+        setClassOptions(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.log("Error fetching classes:", err);
+      }
+    };
+    fetchClassFilter();
+  }, []);
+
+  // Fetch data from Laravel API
   useEffect(() => {
     const fetchAttendance = async () => {
       setLoading(true);
@@ -35,11 +46,9 @@ function AttendancePage() {
           ...(sectionFilter !== "all" && { section: sectionFilter }),
           ...(studentSearch.trim() !== "" && { student_name: studentSearch }),
           ...(blockFilter !== "all" && { is_blocked: blockFilter }),
-          all: true, // Fetching all for client calculations or use pagination
         };
 
-        const response = await api.get("/block-attendance", { params });
-        // Handling Laravel response structure: { status: 'success', data: [...] or paginated object }
+        const response = await api.get("/attendance/index", { params });
         const resData = response.data.data;
         setAttendanceRecords(
           Array.isArray(resData) ? resData : resData.data || [],
@@ -50,26 +59,27 @@ function AttendancePage() {
         setLoading(false);
       }
     };
-
     fetchAttendance();
   }, [dateValue, gradeFilter, sectionFilter, studentSearch, blockFilter]);
 
-  // Map backend records to match table props structure if needed
   const formattedRecords = useMemo(() => {
-    return attendanceRecords.map((record) => ({
-      id: record.id,
-      studentName: record.student?.student_name || "Unknown Student",
-      class: `Grade ${record.classRoom?.grade || "-"} - ${record.classRoom?.section || "-"}`,
-      date: record.date,
-      checkInTime: record.created_at
-        ? new Date(record.created_at).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        : "-",
-      status: record.is_blocked ? "blocked" : record.status || "present",
-      isUnlocked: record.is_unlocked,
-    }));
+    return attendanceRecords.map((record) => {
+      let mappedStatus = "present";
+      if (record.status === "A") mappedStatus = "absent";
+      if (record.status === "PM") mappedStatus = "permission";
+
+      return {
+        id: record.id,
+        studentName: record.studentName || "Unknown Student",
+        absenceCount: record.absenceCount || 0,
+        class: record.class || "—",
+        date: record.date,
+        checkInTime: record.checkInTime || "—",
+        status: record.isLocked ? "blocked" : mappedStatus,
+        isLocked: record.isLocked,
+        hasUnreadMessage: record.hasUnreadMessage,
+      };
+    });
   }, [attendanceRecords]);
 
   const summary = useMemo(() => {
@@ -79,12 +89,13 @@ function AttendancePage() {
     const absentCount = formattedRecords.filter(
       (r) => r.status === "absent",
     ).length;
-    const lateCount = formattedRecords.filter(
-      (r) => r.status === "late",
+    const permissionCount = formattedRecords.filter(
+      (r) => r.status === "permission",
     ).length;
+
     const total = formattedRecords.length;
     const rate = total
-      ? Math.round(((presentCount + lateCount) / total) * 100)
+      ? Math.round(((presentCount + permissionCount) / total) * 100)
       : 0;
 
     return [
@@ -95,7 +106,12 @@ function AttendancePage() {
         accent: "green",
       },
       { label: "Absent", value: absentCount, icon: XCircle, accent: "orange" },
-      { label: "Late", value: lateCount, icon: Clock3, accent: "purple" },
+      {
+        label: "Permission",
+        value: permissionCount,
+        icon: Clock3,
+        accent: "purple",
+      },
       {
         label: "Attendance Rate",
         value: `${rate}%`,
@@ -106,10 +122,15 @@ function AttendancePage() {
   }, [formattedRecords]);
 
   return (
-    <div className="space-y-6 p-6 bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 font-sans">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-        Attendance Monitoring
-      </h2>
+    <div className="space-y-6 bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 font-sans">
+      <div>
+        <h2 className="text-lg font-bold text-gray-800 dark:text-gray-300">
+          Attendance Monitoring
+        </h2>
+        <p className="text-xs sm:text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
+          Configure and manage school subjects and course codes.
+        </p>
+      </div>
 
       <StatsGrid stats={summary} />
 
@@ -119,7 +140,7 @@ function AttendancePage() {
           onDateChange={setDateValue}
           classFilter={gradeFilter}
           onClassChange={setGradeFilter}
-          classOptions={[]}
+          classOptions={classOptions} // 💡 3. ส่ง classOptions ដែល fetch បានចូលទៅទីនេះ
         />
         <div className="relative">
           <Search

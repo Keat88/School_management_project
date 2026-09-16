@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Student\ClassRoomForm;
 use App\Http\Resources\Student\ClassRoomResource;
+use App\Http\Resources\TeacherAddAttendanceResource;
 use App\Models\Attendance;
 use App\Models\ClassRoom;
 use Illuminate\Http\Request;
@@ -23,12 +24,16 @@ class ClassController extends Controller
         $date = $request->input('date', now()->toDateString());
         $class = ClassRoom::with([
             'students.scores' => fn($q) => $q->where('class_id', $classId),
-            'students.attendances' => fn($q) => $q->where('attendance_date', $date)
+            'students.attendances' => fn($q) => $q->where('date', $date)
         ])->findOrFail($classId);
-
         return response()->json([
             'success' => true,
-            'class' => $class
+            'data' => [
+                'id' => $class->id,
+                'grade' => $class->grade,
+                'section' => $class->section,
+                'students' => TeacherAddAttendanceResource::collection($class->students)
+            ],
         ]);
     }
     public function updateAttendance(Request $request, $classId)
@@ -40,28 +45,31 @@ class ClassController extends Controller
             'attendances.*.status' => 'nullable|in:P,A,PM',
             'attendances.*.reason' => 'nullable|string',
         ]);
+
         foreach ($request->attendances as $attData) {
             $existing = Attendance::where('class_id', $classId)
                 ->where('student_id', $attData['student_id'])
-                ->where('attendance_date', $request->attendance_date)
+                ->where('date', $request->attendance_date) // 💡 ដូរពី attendance_date មក date
                 ->first();
 
-            // Prevent modifications if locked by administrator
-            if ($existing && $existing->is_locked) {
+            // 💡 ពិនិត្យ is_blocked ជំនួស is_locked
+            if ($existing && $existing->is_blocked == 1) {
                 continue;
             }
+
             Attendance::updateOrCreate(
                 [
                     'class_id' => $classId,
                     'student_id' => $attData['student_id'],
-                    'attendance_date' => $request->attendance_date,
+                    'date' => $request->attendance_date, // 
                 ],
                 [
                     'status' => $attData['status'] ?? null,
-                    'reason' => $attData['reason'] ?? null,
+                    'message' => $attData['reason'] ?? null,
                 ]
             );
         }
+
         return response()->json([
             'success' => true,
             'message' => 'Attendance synchronized successfully!'

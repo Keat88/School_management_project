@@ -100,14 +100,14 @@ export default function StudentLibraryActivity() {
   };
 
   return (
-    <div className="lg:min-w-160 mx-auto rounded-2xl p-6 sm:p-8 font-sans my-8 transition-colors space-y-6 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+    <div className="lg:min-w-160 mx-auto font-sans transition-colors space-y-6  dark:bg-slate-950 text-slate-900 dark:text-slate-100">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2.5">
-            <div className="p-2 transition duration-200 rounded-xl border bg-blue-600 text-white border-blue-500 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700">
+          <h2 className="text-lg font-bold tracking-tight flex items-center gap-2.5">
+            {/* <div className="p-2 transition duration-200 rounded-xl border bg-blue-600 text-white border-blue-500 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700">
               <Flame size={22} />
-            </div>
+            </div> */}
             Student Library Activity & Top Visitors
           </h2>
           <p className="text-xs sm:text-sm mt-1 text-slate-500 dark:text-slate-400">
@@ -116,16 +116,7 @@ export default function StudentLibraryActivity() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer active:scale-95 border bg-slate-200 border-slate-300 text-slate-700 hover:bg-slate-300 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-          >
-            <ArrowLeft size={16} />
-            Back
-          </button>
-        </div>
+       
       </div>
 
       {/* Search & Filter Bar */}
@@ -143,7 +134,7 @@ export default function StudentLibraryActivity() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search student name..."
-              className="w-full pl-10 pr-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/25 transition-all bg-white border-slate-300 text-slate-800 placeholder-slate-400 focus:border-indigo-500 dark:bg-slate-900 dark:border-slate-700/80 dark:text-slate-200 dark:placeholder-slate-500"
+              className="w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 transition-all bg-white border-slate-300 text-slate-800 placeholder-slate-400 focus:border-blue-500 dark:bg-slate-900 dark:border-slate-700/80 dark:text-slate-200 dark:placeholder-slate-500"
             />
           </div>
           <button
@@ -162,7 +153,7 @@ export default function StudentLibraryActivity() {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="w-full md:w-auto px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/25 cursor-pointer transition-all bg-white border-slate-300 text-slate-800 focus:border-indigo-500 dark:bg-slate-900 dark:border-slate-700/80 dark:text-slate-200"
+            className="w-full md:w-auto px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/25 cursor-pointer transition-all bg-white border-slate-300 text-slate-800 focus:border-blue-500 dark:bg-slate-900 dark:border-slate-700/80 dark:text-slate-200"
           >
             <option value="library_visits">Most Library Visits</option>
             <option value="total_borrowed">Most Books Borrowed</option>
@@ -173,7 +164,7 @@ export default function StudentLibraryActivity() {
       </div>
 
       {/* Main Table Container */}
-      <div className="rounded-xl border shadow-inner overflow-hidden transition-colors bg-slate-50 border-slate-200 shadow-slate-200/40 dark:bg-slate-900/40 dark:border-slate-800/80 dark:shadow-slate-950/50">
+      <div className="rounded-lg border shadow-inner overflow-hidden transition-colors bg-slate-50 border-slate-200 dark:bg-slate-900/40 dark:border-slate-800/80 dark:shadow-slate-950/50">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[640px]">
             <thead className="border-b text-xs font-bold uppercase tracking-wider transition-colors bg-slate-200 border-slate-300 text-slate-700 dark:bg-slate-900/90 dark:border-slate-800 dark:text-slate-400">

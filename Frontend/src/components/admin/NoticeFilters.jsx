@@ -27,7 +27,7 @@ function NoticeFilters({
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search notices..."
-          className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-sm
+          className="w-full rounded-lg border border-slate-200 bg-slate-50/50 py-2 pl-9 pr-3 text-sm
             text-slate-800 placeholder-slate-400 outline-none
             focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100
             transition-all duration-200"
@@ -38,7 +38,7 @@ function NoticeFilters({
       <select
         value={audienceFilter}
         onChange={(e) => onAudienceChange(e.target.value)}
-        className="rounded-xl border border-slate-200 bg-slate-50/50 py-2 px-3 text-sm text-slate-700
+        className="rounded-lg border border-slate-200 bg-slate-50/50 py-2 px-3 text-sm text-slate-700
           outline-none focus:bg-white focus:border-blue-600 focus:ring-2 focus:ring-blue-100
           transition-all duration-200 w-full md:w-44 font-medium"
       >
@@ -53,7 +53,7 @@ function NoticeFilters({
       <button
         type="button"
         onClick={onCreateNotice}
-        className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 text-white text-sm
+        className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm
           font-medium px-4 py-2 hover:bg-blue-700 active:bg-blue-800 transition-colors shadow-xs shrink-0"
       >
         <Plus size={16} />

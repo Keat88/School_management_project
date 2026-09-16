@@ -56,6 +56,8 @@ Route::get('/public/category', [CourseCategoryController::class, 'index'])->name
 Route::get('/public/courses/{courses}', [CourseController::class, 'show'])->name('public.courses.show');
 Route::get('/public/course-categories', [CourseCategoryController::class, 'index'])->name('public.categories.index');
 Route::post('/public/contacts', [ContactController::class, 'store'])->name('public.contacts.store');
+Route::get('/settings', [SettingController::class, 'index']);
+// System Settings
 
 // ── Protected Routes (Sanctum Authenticated) ──
 Route::middleware('auth:sanctum')->group(function () {
@@ -92,6 +94,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // 🔒 1. ADMIN ONLY ROUTES
     // ==========================================
     Route::middleware('role:admin')->group(function () {
+        // for update setting system 
+        Route::post('/settings', [SettingController::class, 'update']);
         Route::get('/admin-dashboard', [DashboardController::class, 'Adminsdashboard'])->name('admin-dashboard');
         Route::get('/get-recently', [DashboardController::class, 'getRecently'])->name('admin-get-recenytly');
         Route::get('/form-schedult', [DashboardController::class, 'getDataForSchedult'])->name('form-schedult');
@@ -151,9 +155,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::delete('/destroy/{id}', 'destroy')->name('notice.destroy');
             Route::get('/dashboard', 'dashboard')->name('notice.dashboard');
         });
-        // System Settings
-        Route::get('/settings', [SettingController::class, 'index']);
-        Route::post('/settings', [SettingController::class, 'update']);
         // Timetable Management
         Route::prefix('timetable')->controller(Time_Table::class)->group(function () {
             Route::get('/index', 'index')->name('timetable.index');
@@ -274,13 +275,20 @@ Route::middleware('auth:sanctum')->group(function () {
     // 👥 3. SHARED ROUTES (ADMIN, TEACHER, & STAFF)
     // ==========================================
     Route::middleware('role:admin,teacher,staff')->group(function () {
+        // ✅ កែសម្រួលលំដាប់សារថ្មីបែបនេះ៖
+
+        // 1. ដាក់ Route ធម្មតា (Static Routes) ទុកពីលើគេ
+        Route::get('/classes/student-attendance', [TeacherController::class, 'getStudentsByClass']);
+        Route::get('/class-activeform', [ClassController::class, 'getActiveClasses'])->name('class-activeform');
+
+        // 2. ដាក់ Route មាន Parameter ទុកនៅខាងក្រោម
         Route::get('/classes/{classId}', [ClassController::class, 'showClassData']);
         Route::post('/classes/{classId}/attendance', [ClassController::class, 'updateAttendance']);
         Route::post('/classes/{classId}/scores', [ClassController::class, 'updateOrCreateScores']);
-        Route::get('/class-activeform',[ClassController::class,'getActiveClasses'])->name('class-activeform');
 
-        Route::get('/dashboard', [TeacherController::class, 'dashboardSummary']);
-        Route::get('/classes/{classId}/students', [TeacherController::class, 'getStudentsByClass']);
+        // ផ្សេងៗទៀត
+        Route::get('/teacher/dashboard', [TeacherController::class, 'dashboardSummary']);
+        Route::get('/teacher/setting', [TeacherController::class, 'teacherSetting']);
         Route::get('/{teacherId}/notice', [TeacherController::class, 'getTeacherNotices'])->name('teacher.notice');
 
         // Attendance Tracking

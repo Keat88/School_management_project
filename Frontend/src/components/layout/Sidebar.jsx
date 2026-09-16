@@ -16,6 +16,7 @@ function Sidebar() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [loading, setLoading] = useState(false);
   const [nameSchool, setNameSchool] = useState("School Portal");
+  const userAvata = localStorage.getItem("userAvatar");
   // Dark/Light mode state initialized from localStorage
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
@@ -69,7 +70,6 @@ function Sidebar() {
     };
     fetchNameSchool();
   }, []);
-
   return (
     <>
       <LoadingModal
@@ -261,7 +261,15 @@ function Sidebar() {
         <div className="border-t border-gray-200 dark:border-gray-800 px-4 py-4">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-semibold uppercase">
-              {currentUser?.name?.charAt(0) || "U"}
+              {userAvata ? (
+                <img
+                  src={userAvata}
+                  alt={userAvata}
+                  className="rounded-full w-full"
+                />
+              ) : (
+                currentUser?.name?.charAt(0) || "U"
+              )}
             </div>
             <div className="min-w-0">
               <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">

@@ -55,7 +55,7 @@ function NoticePage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <h1 className="text-xl md:text-2xl font-semibold text-gray-800">
+          <h1 className="text-lg font-semibold text-gray-800">
             Notice Management
           </h1>
 

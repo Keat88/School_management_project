@@ -128,7 +128,7 @@ export default function AutoScheduleForm() {
   };
 
   return (
-    <div className="lg:min-w-160 mx-auto rounded-2xl p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-xl text-gray-800 dark:text-slate-100 font-sans my-6">
+    <div className="lg:min-w-160 mx-auto rounded-lg p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-100 font-sans my-6">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           <button
@@ -138,8 +138,8 @@ export default function AutoScheduleForm() {
           >
             <ArrowLeft size={14} /> Back
           </button>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
-            <Wand2 className="text-indigo-600 dark:text-indigo-400" size={22} />
+          <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+            <Wand2 className="text-blue-500 dark:text-blue-400" size={22} />
             Auto-Generate Weekly Timetable
           </h3>
         </div>
@@ -147,7 +147,7 @@ export default function AutoScheduleForm() {
 
       {feedback && (
         <div
-          className={`p-4 mb-5 rounded-xl text-sm font-medium ${
+          className={`p-4 mb-5 rounded-lg text-sm font-medium ${
             feedback.type === "success"
               ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30"
               : "bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30"
@@ -180,15 +180,15 @@ export default function AutoScheduleForm() {
         </div>
 
         {/* Subjects & Teachers Pairs */}
-        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-lg border border-gray-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 flex items-center gap-1.5">
-              <BookOpen size={14} className="text-indigo-600 dark:text-indigo-400" /> Subjects & Assigned Teachers (8-9+ Subjects)
+              <BookOpen size={14} className="text-blue-500 dark:text-blue-400" /> Subjects & Assigned Teachers (8-9+ Subjects)
             </label>
             <button
               type="button"
               onClick={addAssignment}
-              className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold cursor-pointer"
             >
               <Plus size={14} /> Add Subject Pair
             </button>
@@ -215,7 +215,7 @@ export default function AutoScheduleForm() {
                   value={pair.teacher_id}
                   onChange={(e) => handleAssignmentChange(index, 'teacher_id', e.target.value)}
                   required
-                  className="flex-1 px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="flex-1 px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
                 >
                   <option value="">Select Teacher</option>
                   {dropdowns.teachers.map((t) => (
@@ -240,9 +240,9 @@ export default function AutoScheduleForm() {
         </div>
 
         {/* Days of the Week Selection */}
-        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800">
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-lg border border-gray-100 dark:border-slate-800">
           <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-2.5 flex items-center gap-1.5">
-            <Calendar size={14} className="text-indigo-600 dark:text-indigo-400" /> Active Days for Schedule Distribution
+            <Calendar size={14} className="text-blue-500 dark:text-blue-400" /> Active Days for Schedule Distribution
           </label>
           <div className="flex flex-wrap gap-2">
             {allDays.map((day) => {
@@ -252,9 +252,9 @@ export default function AutoScheduleForm() {
                   key={day}
                   type="button"
                   onClick={() => toggleDay(day)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
                     isSelected
-                      ? "bg-indigo-600 text-white border-indigo-500 shadow-md"
+                      ? "bg-blue-500 text-white border-blue-500 shadow-md"
                       : "bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700"
                   }`}
                 >
@@ -269,12 +269,12 @@ export default function AutoScheduleForm() {
         <div className="bg-gray-50/60 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800 space-y-3">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 flex items-center gap-1.5">
-              <Clock size={14} className="text-indigo-600 dark:text-indigo-400" /> Daily Time Slots / Periods
+              <Clock size={14} className="text-blue-500 dark:text-blue-400" /> Daily Time Slots / Periods
             </label>
             <button
               type="button"
               onClick={addTimeSlot}
-              className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold cursor-pointer"
             >
               <Plus size={14} /> Add Time Slot
             </button>
@@ -289,7 +289,7 @@ export default function AutoScheduleForm() {
                     value={slot.start}
                     onChange={(e) => handleTimeSlotChange(index, 'start', e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
                   />
                   <span className="text-gray-400 dark:text-slate-400 text-xs font-medium">to</span>
                   <input
@@ -297,7 +297,7 @@ export default function AutoScheduleForm() {
                     value={slot.end}
                     onChange={(e) => handleTimeSlotChange(index, 'end', e.target.value)}
                     required
-                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:border-blue-500"
                   />
                 </div>
 
@@ -305,7 +305,7 @@ export default function AutoScheduleForm() {
                   <button
                     type="button"
                     onClick={() => removeTimeSlot(index)}
-                    className="p-2 text-gray-400 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 cursor-pointer"
+                    className="p-2 text-gray-400 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 cursor-pointer"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -319,7 +319,7 @@ export default function AutoScheduleForm() {
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <button
             type="button"
-            className="px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-xl text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700 transition-all cursor-pointer"
+            className="px-4 py-2.5 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700 transition-all cursor-pointer"
             onClick={() => navigate(-1)}
           >
             Cancel
@@ -328,7 +328,7 @@ export default function AutoScheduleForm() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 shadow-lg transition-all cursor-pointer disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 shadow-lg transition-all cursor-pointer disabled:opacity-50"
           >
             <Wand2 size={16} /> {loading ? "Generating Schedule..." : "Auto-Generate Full Schedule"}
           </button>
