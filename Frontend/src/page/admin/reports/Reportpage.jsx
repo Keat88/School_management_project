@@ -16,7 +16,6 @@ function ReportPage() {
   const lastMonthDate = new Date();
   lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
   const lastMonth = formatDate(lastMonthDate);
-
   // Inside your React Component:
   const [startDate, setStartDate] = useState(lastMonth);
   const [endDate, setEndDate] = useState(today);
@@ -27,11 +26,6 @@ function ReportPage() {
   const [feeCollectionByMonth, setFeeCollectionByMonth] = useState([]);
   const [performanceBySubject, setPerformanceBySubject] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // Fetch data whenever startDate or endDate changes
-  useEffect(() => {
-    fetchReportData();
-  }, [startDate, endDate]);
 
   const fetchReportData = async () => {
     setLoading(true);
@@ -58,12 +52,15 @@ function ReportPage() {
       setLoading(false);
     }
   };
-
+  // Fetch data whenever startDate or endDate changes
+  useEffect(() => {
+    fetchReportData();
+  }, [startDate, endDate]);
   const handleExportPdf = async () => {
     try {
       const response = await api.get("/reports/export-pdf", {
         params: { start_date: startDate, end_date: endDate },
-        responseType: "blob", // ចាំបាច់ណាស់សម្រាប់ဖाइल Binary
+        responseType: "blob",
       });
 
       const blob = new Blob([response.data], { type: "application/pdf" });

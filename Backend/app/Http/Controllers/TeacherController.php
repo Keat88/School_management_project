@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NoticeResource;
+use App\Http\Resources\ScoresResource;
 use App\Http\Resources\TeacherClassRoomResource;
 use App\Http\Resources\TeacherResource;
 use App\Models\ClassRoom;
@@ -20,6 +21,58 @@ use Illuminate\Support\Str;
 
 class TeacherController extends Controller
 {
+    public function teacherClassScore(Request $request, $id)
+    {
+        try {
+            $user = $request->user();
+            $teacher = $user->teacher;
+
+            if (!$teacher) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Teacher profile not found for this user.'
+                ], 404);
+            }
+
+            // 1. Find classroom and eager load students, scores, attendances, and timetables for this teacher
+            $classroom = ClassRoom::with([
+                'students.scores' => fn($q) => $q->where('class_id', $id),
+                'students.attendances' => fn($q) => $q->where('date', now()->toDateString()),
+                'timeTables' => fn($q) => $q->where('teacher_id', $teacher->id)
+            ])
+                ->where('id', $id)
+                ->first();
+
+            // 2. Check if classroom exists
+            if (!$classroom) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Classroom ID does not exist in database.'
+                ], 404);
+            }
+
+            // 3. Security check: Ensure this teacher is assigned to this class via timetables
+            if ($classroom->timeTables->isEmpty()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Permission mismatch! You are not assigned to teach this class.',
+                    'logged_in_teacher_id' => $teacher->id
+                ], 403);
+            }
+
+            // 4. Return response using ClassRoomResource (since $classroom is a ClassRoom object)
+            return response()->json([
+                'status' => 'success',
+                'data' => new ScoresResource($classroom)
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Something went wrong while retrieving class data',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function teacherSetting(Request $request)
     {
         try {
@@ -34,7 +87,6 @@ class TeacherController extends Controller
 
             return $this->success('Teacher settings retrieved successfully', [
                 'user' => $user,
-                'teacher' => $teacherProfile,
             ]);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving teacher settings', $e->getMessage(), 500);
@@ -111,11 +163,17 @@ class TeacherController extends Controller
             ], 500);
         }
     }
-    public function saveScores($classId, Request $request)
+    public function updateOrCreateScores(Request $request, $classId)
     {
         try {
             $teacher = $request->user()->teacher;
-            $class = $teacher->classRooms()->where('id', $classId)->firstOrFail();
+
+            // Verify the class exists and belongs to this teacher via timeTables
+            $class = ClassRoom::where('id', $classId)
+                ->whereHas('timeTables', function ($q) use ($teacher) {
+                    $q->where('teacher_id', $teacher->id);
+                })
+                ->firstOrFail();
 
             $request->validate([
                 'students' => 'required|array',
@@ -125,19 +183,21 @@ class TeacherController extends Controller
                 'students.*.examScore' => 'nullable|numeric',
             ]);
 
-            foreach ($request->students as $studentData) {
-                Scores::updateOrCreate(
-                    [
-                        'class_id'   => $classId,
-                        'student_id' => $studentData['id'],
-                    ],
-                    [
-                        'attendance_score' => $studentData['attendanceScore'] ?? 0,
-                        'activity_score'   => $studentData['activityScore'] ?? 0,
-                        'exam_score'       => $studentData['examScore'] ?? 0,
-                    ]
-                );
-            }
+            DB::transaction(function () use ($request, $classId) {
+                foreach ($request->students as $studentData) {
+                    Scores::updateOrCreate(
+                        [
+                            'class_id'   => $classId,
+                            'student_id' => $studentData['id'],
+                        ],
+                        [
+                            'attendance_score' => $studentData['attendanceScore'] ?? 0,
+                            'activity_score'   => $studentData['activityScore'] ?? 0,
+                            'exam_score'       => $studentData['examScore'] ?? 0,
+                        ]
+                    );
+                }
+            });
 
             return response()->json([
                 'status' => true,
@@ -151,10 +211,16 @@ class TeacherController extends Controller
             ], 500);
         }
     }
-    public function getTeacherNotices($teacherId)
+
+    public function getTeacherNotices($teacherId, Request $request)
     {
         try {
-            $notices = Notice::with('user')
+            $user = $request->user();
+            $teacher = $user->teacher;
+
+            // Fetch notices with necessary relationships (e.g., user/teacher info)
+            $notices = Notice::with(['user.teacher']) // Adjust relationship based on your models
+                ->where('user_id', $user->id)
                 ->where(function ($query) use ($teacherId) {
                     $query->where('target_audience', 'all')
                         ->orWhere('target_audience', 'all_teachers')
@@ -170,11 +236,25 @@ class TeacherController extends Controller
                 return $this->error('No notices found for this teacher', null, 404);
             }
 
-            return $this->success('Teacher notices retrieved successfully', NoticeResource::collection($notices));
+            $formattedNotices = $notices->map(function ($notice) {
+                return [
+                    'id' => $notice->id,
+                    'teacherName' => $notice->user->name ?? 'Unknown Teacher',
+                    'subject' => $notice->subject ?? 'General',
+                    'reportTitle' => $notice->title ?? $notice->report_title,
+                    'type' => $notice->type ?? $notice->target_audience,
+                    'submittedDate' => optional($notice->publish_date)->format('Y-m-d') ?? $notice->created_at->format('Y-m-d'),
+                    'status' => $notice->status ?? 'Pending',
+                    'content' => $notice->content,
+                ];
+            });
+
+            return $this->success('Teacher notices retrieved successfully', $formattedNotices);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving teacher notices', $e->getMessage(), 500);
         }
     }
+
     /**
      * Display a listing of the resource.
      */

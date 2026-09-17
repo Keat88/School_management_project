@@ -1,13 +1,13 @@
 import { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, ChevronDown, Sun, Moon } from "lucide-react";
-import sidebarMenu from "../../data/sideBar";
-import { sidebarTeacherMenu } from "../../data/sideBar";
-import { AuthContext } from "../../context/AuthContext";
+import { sidebarMenu, sidebarTeacherMenu } from "../../data/sideBar";
+import { AuthContext, useAuth } from "../../context/AuthContext";
 import { AuthApi } from "../../data/AuthApi";
 import LoadingModal from "../../hooks/LoadingModal";
 import { IoSchool } from "react-icons/io5";
 import { api } from "../../data/api";
+import { PiStudentFill } from "react-icons/pi";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [nameSchool, setNameSchool] = useState("School Portal");
+  const { SchoolName } = useAuth();
   const userAvata = localStorage.getItem("userAvatar");
   // Dark/Light mode state initialized from localStorage
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -57,19 +57,7 @@ function Sidebar() {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    const fetchNameSchool = async () => {
-      try {
-        const response = await api.get("/settings");
-        if (response.data.status === "success" && response.data.settings) {
-          setNameSchool(response.data.settings.schoolName || "School Portal");
-        }
-      } catch (error) {
-        console.log("Fails to reload", error);
-      }
-    };
-    fetchNameSchool();
-  }, []);
+
   return (
     <>
       <LoadingModal
@@ -80,11 +68,13 @@ function Sidebar() {
       {/* Mobile Header Bar */}
       <div className="md:hidden flex items-center justify-between bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-30 transition-colors">
         <span className="text-xl font-bold flex flex-col text-gray-800 dark:text-white">
-          {nameSchool && (
+          {SchoolName && (
             <div className="flex gap-x-1 items-center">
-              <IoSchool size={20} />
+              <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
+                <PiStudentFill />
+              </div>
               <span className="text-blue-600 dark:text-blue-400">
-                {nameSchool}
+                {SchoolName?.schoolName || "School Management"}
               </span>
             </div>
           )}
@@ -136,11 +126,13 @@ function Sidebar() {
         {/* Header */}
         <div className="flex items-center justify-between px-5 h-[73px] border-b border-gray-200 dark:border-gray-800">
           <span className="text-xl flex flex-col font-bold text-gray-800 dark:text-white">
-            {nameSchool && (
+            {SchoolName && (
               <div className="flex gap-x-1 items-center">
-                <IoSchool size={20} />
-                <span className="text-blue-600 dark:text-blue-400">
-                  {nameSchool}
+                <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
+                  <PiStudentFill />
+                </div>
+                <span className="text-blue-600 max-md:text-sm dark:text-blue-400">
+                  {SchoolName?.schoolName || "School Management"}
                 </span>
               </div>
             )}

@@ -13,7 +13,6 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
-        // Creates 10 dummy students using the factory
-        Students::factory()->count(10)->create();
+        Students::factory()->count(20)->create();
     }
 }

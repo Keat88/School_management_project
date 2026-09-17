@@ -153,20 +153,13 @@ export default function StudentStayForm() {
   }
 
   return (
-    <div className="lg:min-w-160 w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div className="lg:min-w-160 w-full mx-auto  space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            type="button"
-            className="p-2.5 border border-gray-200 bg-white rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white shadow-xs transition-all shrink-0"
-            title="Back"
-          >
-            <ArrowLeft size={18} />
-          </button>
+          
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
               {isEditing ? "Edit Stay Record" : "Assign Bed to Student"}
             </h2>
             <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -199,7 +192,7 @@ export default function StudentStayForm() {
       {/* Form Container */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xs space-y-6"
+        className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-lg border border-gray-200 dark:border-gray-700  space-y-6"
       >
         {/* Student Section */}
         <div className="space-y-4">

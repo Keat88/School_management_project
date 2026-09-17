@@ -6,7 +6,8 @@ import Pagination from "../../../hooks/Pagination";
 
 export default function ManageCategories() {
   const [isDark, setIsDark] = useState(() => {
-    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    const savedTheme =
+      localStorage.getItem("theme") || localStorage.getItem("darkMode");
     if (savedTheme !== null) {
       return savedTheme === "dark" || savedTheme === "true";
     }
@@ -26,7 +27,8 @@ export default function ManageCategories() {
   // Sync with localStorage changes across components/tabs if theme toggles elsewhere
   useEffect(() => {
     const handleStorageChange = () => {
-      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      const savedTheme =
+        localStorage.getItem("theme") || localStorage.getItem("darkMode");
       if (savedTheme !== null) {
         setIsDark(savedTheme === "dark" || savedTheme === "true");
       }
@@ -101,11 +103,13 @@ export default function ManageCategories() {
   };
 
   return (
-    <div className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6  text-gray-900 dark:text-slate-100 transition-colors duration-200`}>
+    <div
+      className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors duration-200`}
+    >
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-100 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-200 dark:border-slate-800">
         <div>
-          <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-slate-50">
             Manage Book Categories
           </h2>
           <p className="text-xs sm:text-sm mt-1 text-gray-500 dark:text-slate-400">
@@ -114,7 +118,7 @@ export default function ManageCategories() {
         </div>
         <NavLink
           to="/admin/library/category/add"
-          className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-blue-700 transition-colors shadow-sm active:scale-95 duration-150"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-blue-500 active:bg-blue-700 transition-colors shadow-sm duration-150 cursor-pointer"
         >
           <Plus size={16} />
           <span>Add Category</span>
@@ -126,8 +130,8 @@ export default function ManageCategories() {
         <div
           className={`p-4 rounded-lg text-sm font-medium border transition-all ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-400 dark:border-green-900/60"
-              : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-900/60"
+              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-800/60"
+              : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/60"
           }`}
         >
           {feedback.text}
@@ -137,29 +141,32 @@ export default function ManageCategories() {
       {/* Search & Filter Form */}
       <form
         onSubmit={handleSearchSubmit}
-        className="flex flex-col sm:flex-row gap-2.5 p-4 rounded-lg border transition-colors bg-gray-50 border-gray-200/80 dark:bg-slate-900 dark:border-slate-800"
+        className="flex flex-col sm:flex-row gap-2.5 p-4 rounded-xl border transition-colors bg-gray-50/80 border-gray-200/80 dark:bg-slate-900/80 dark:border-slate-800 shadow-xs"
       >
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 text-gray-400 dark:text-slate-500" size={18} />
+          <Search
+            className="absolute left-3 top-2.5 text-gray-400 dark:text-slate-500"
+            size={18}
+          />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search categories..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-white border-gray-200 text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors bg-white border-gray-300 text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
           />
         </div>
         <div className="flex gap-2">
           <button
             type="submit"
-            className="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-xs cursor-pointer"
+            className="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-500 active:bg-blue-700 transition-colors shadow-xs cursor-pointer"
           >
             Search
           </button>
           <button
             type="button"
             onClick={handleReset}
-            className="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+            className="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:active:bg-slate-600"
           >
             Reset
           </button>
@@ -167,10 +174,10 @@ export default function ManageCategories() {
       </form>
 
       {/* Table Container */}
-      <div className="rounded-lg border overflow-hidden transition-colors bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-800">
+      <div className="rounded-xl border overflow-hidden transition-colors bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-800 shadow-xs">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b text-xs font-semibold uppercase tracking-wider bg-gray-50 border-gray-100 text-gray-500 dark:bg-slate-800/60 dark:border-slate-800 dark:text-slate-400">
+            <tr className="border-b text-xs font-semibold uppercase tracking-wider bg-gray-50/90 border-gray-200 text-gray-600 dark:bg-slate-800/80 dark:border-slate-800 dark:text-slate-300">
               <th className="py-3.5 px-4">Category Name</th>
               <th className="py-3.5 px-4">Created At</th>
               <th className="py-3.5 px-4 text-right">Actions</th>
@@ -179,23 +186,32 @@ export default function ManageCategories() {
           <tbody className="divide-y text-sm divide-gray-100 text-gray-700 dark:divide-slate-800 dark:text-slate-300">
             {loading ? (
               <tr>
-                <td colSpan="3" className="py-12 text-center text-gray-400 dark:text-slate-400">
+                <td
+                  colSpan="3"
+                  className="py-12 text-center text-gray-400 dark:text-slate-400"
+                >
                   <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-indigo-400"></div>
+                    <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
                     <span>Loading categories...</span>
                   </div>
                 </td>
               </tr>
             ) : categories.length === 0 ? (
               <tr>
-                <td colSpan="3" className="py-12 text-center text-gray-400 dark:text-slate-400">
+                <td
+                  colSpan="3"
+                  className="py-12 text-center text-gray-400 dark:text-slate-400"
+                >
                   <span>No categories found.</span>
                 </td>
               </tr>
             ) : (
               categories.map((cat) => (
-                <tr key={cat.id} className="transition-colors hover:bg-gray-50/60 dark:hover:bg-slate-800/40">
-                  <td className="py-3.5 px-4 font-semibold text-gray-800 dark:text-slate-100">
+                <tr
+                  key={cat.id}
+                  className="transition-colors hover:bg-gray-50/60 dark:hover:bg-slate-800/50"
+                >
+                  <td className="py-3.5 px-4 font-semibold text-gray-900 dark:text-slate-100">
                     {cat.book_category}
                   </td>
                   <td className="py-3.5 px-4 text-xs text-gray-500 dark:text-slate-400 font-mono">
@@ -208,7 +224,7 @@ export default function ManageCategories() {
                       onClick={() =>
                         navigate(`/admin/library/category/view/${cat.id}`)
                       }
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border cursor-pointer text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-950/40 dark:border-blue-900/60 dark:hover:bg-blue-900/50"
+                      className="text-md border rounded-lg px-2.5 py-1 transition-colors font-medium active:scale-95 cursor-pointer bg-green-600 text-white border-green-600 hover:bg-green-700 dark:bg-green-600 dark:border-green-600 dark:hover:bg-green-500 shadow-xs"
                       title="View"
                     >
                       View
@@ -217,14 +233,14 @@ export default function ManageCategories() {
                       onClick={() =>
                         navigate(`/admin/library/category/add/${cat.id}`)
                       }
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border cursor-pointer text-gray-700 bg-gray-100 border-gray-200 hover:bg-gray-200 dark:text-indigo-400 dark:bg-indigo-950/40 dark:border-indigo-900/60 dark:hover:bg-indigo-900/50"
+                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-700 shadow-2xs"
                       title="Edit"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(cat.id)}
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors inline-block border cursor-pointer text-red-600 bg-red-50 border-red-200 hover:bg-red-100 dark:text-red-400 dark:bg-red-950/40 dark:border-red-900/60 dark:hover:bg-red-900/50"
+                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
                       title="Delete"
                     >
                       Delete

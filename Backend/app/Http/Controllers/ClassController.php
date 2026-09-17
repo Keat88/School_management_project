@@ -132,7 +132,7 @@ class ClassController extends Controller
         $validator = Validator::make($request->all(), [
             'academic_year_id' => 'required|exists:academic_years,id',
             'name'             => 'required|string|max:255',
-            'grade'            => 'required|numeric',
+            'grade'            => 'required|string',
             'section'          => 'required|string|max:50',
         ]);
 
@@ -182,7 +182,7 @@ class ClassController extends Controller
             $validator = Validator::make($request->all(), [
                 'academic_year_id' => 'sometimes|required|exists:academic_years,id',
                 'name'             => 'sometimes|required|string|max:255',
-                'grade'            => 'sometimes|required|numeric',
+                'grade'            => 'sometimes|required|string',
                 'section'          => 'sometimes|required|string|max:50',
             ]);
 

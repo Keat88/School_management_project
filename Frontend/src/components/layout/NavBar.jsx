@@ -81,7 +81,7 @@ export default function Navbar({ title, notificationCount = 0 }) {
             <div>
               <h1 className="text-base md:text-lg font-extrabold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-1.5">
                 <span>Welcome</span>
-                <span style={{ color: accentColor }} className="uppercase">
+                <span style={{ color: accentColor }}>
                   {currentUser?.name || title || "User"}
                 </span>
               </h1>

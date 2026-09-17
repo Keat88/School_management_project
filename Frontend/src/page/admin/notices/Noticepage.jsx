@@ -5,6 +5,7 @@ import notices, { NoticeApi } from "../../../data/notices";
 import NoticeStats from "../../../components/admin/NoticeStats";
 import NoticeFilters from "../../../components/admin/NoticeFilters";
 import NoticeList from "../../../components/admin/NoticeList";
+import { api } from "../../../data/api";
 
 function NoticePage() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function NoticePage() {
   const [audienceFilter, setAudienceFilter] = useState("all");
   const [notice, SetNotice] = useState([]);
   const [loading, SetLoading] = useState(false);
+  const [dashboard, setDashboard] = useState([]);
   const fetchAllNotice = async (parem) => {
     try {
       SetLoading(true);
@@ -32,7 +34,6 @@ function NoticePage() {
   const handleCreateNotice = () => {
     navigate("/admin/notice/add");
   };
-
   const handleEdit = async (notice) => {
     try {
       navigate(`/admin/notice/add/${notice.id}`);
@@ -40,12 +41,21 @@ function NoticePage() {
       console.log("Error", error);
     }
   };
-
   const handleDelete = async (notice) => {
     await NoticeApi.delete(notice.id);
     fetchAllNotice();
   };
-
+  useEffect(() => {
+    const fetchDash = async () => {
+      try {
+        const res = await api.get("/notice/getNoticeDashboard");
+        setDashboard(res?.data?.data);
+      } catch (error) {
+        console.log("Error", error);
+      }
+    };
+    fetchDash();
+  }, []);
   return (
     <>
       {loading ? (
@@ -55,10 +65,10 @@ function NoticePage() {
         </div>
       ) : (
         <div className="space-y-6">
-          <h1 className="text-lg font-semibold text-gray-800">
+          <h1 className="text-lg dark:text-white font-semibold text-gray-800">
             Notice Management
           </h1>
-
+          <NoticeStats notices={notices} />
           <NoticeFilters
             searchValue={searchValue}
             onSearchChange={setSearchValue}
@@ -66,8 +76,6 @@ function NoticePage() {
             onAudienceChange={setAudienceFilter}
             onCreateNotice={handleCreateNotice}
           />
-
-          <NoticeStats notices={notices} />
 
           <NoticeList
             notices={notice}

@@ -125,13 +125,7 @@ export default function ScheduleForm() {
     <div className="lg:min-w-160 mx-auto rounded-lg p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800  text-gray-800 dark:text-slate-100 font-sans my-8 transition-all">
       <div className="flex items-center justify-between mb-8 pb-5 border-b border-gray-100 dark:border-slate-800">
         <div>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-300 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer border border-gray-200 dark:border-slate-700/60 mb-3 shadow-xs active:scale-95"
-          >
-            <ArrowLeft size={14} /> Back
-          </button>
+          
           <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
               <Calendar size={22} />

@@ -131,13 +131,7 @@ export default function AutoScheduleForm() {
     <div className="lg:min-w-160 mx-auto rounded-lg p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-100 font-sans my-6">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-slate-300 text-xs font-semibold hover:bg-gray-200 dark:hover:bg-slate-700 transition-all cursor-pointer border border-gray-200 dark:border-slate-700 mb-2"
-          >
-            <ArrowLeft size={14} /> Back
-          </button>
+          
           <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
             <Wand2 className="text-blue-500 dark:text-blue-400" size={22} />
             Auto-Generate Weekly Timetable

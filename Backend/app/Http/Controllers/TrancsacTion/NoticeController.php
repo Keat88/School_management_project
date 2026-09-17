@@ -8,6 +8,7 @@ use App\Models\Notice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Mockery\Matcher\Not;
 
 class NoticeController extends Controller
 {
@@ -36,7 +37,7 @@ class NoticeController extends Controller
             $announcements = $query->orderBy('created_at', 'desc')->get();
 
             if ($announcements->isEmpty()) {
-                return $this->error('No announcements found!', null, 404);
+                return $this->success('No announcements found!', null, 404);
             }
 
             return $this->success('Announcements retrieved successfully!', NoticeResource::collection($announcements));
@@ -44,7 +45,19 @@ class NoticeController extends Controller
             return $this->error('Something went wrong while retrieving announcements', $e->getMessage(), 500);
         }
     }
+    public function getNoticeDashboard()
+    {
+        $total_notice = Notice::count();
+        $total_published_today = Notice::whereDate('publish_date', today())->count();
 
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'total_notice' => $total_notice,
+                'total_published_today' => $total_published_today,
+            ]
+        ]);
+    }
     /**
      * Store a newly created resource in storage.
      */

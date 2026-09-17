@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LuUser,
   LuLock,
   LuBell,
   LuSave,
-  LuShield,
   LuMail,
   LuPhone,
   LuMapPin,
@@ -13,18 +12,31 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function TeacherSettings() {
   const [activeTab, setActiveTab] = useState("profile");
+  const { currentUser, userData } = useAuth();
+
   const [formData, setFormData] = useState({
-    fullName: "Keng Keat",
-    email: "keatkeng88@gmail.com",
-    phone: "+855 12 345 678",
-    address: "Phnom Penh, Cambodia",
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "Phnom Penh, Cambodia", // Default or fallback if not in API
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
     emailNotifications: true,
     pushNotifications: false,
   });
-  const { currentUser } = useAuth();
+
+  // Populate form data when userData becomes available from the API response
+  useEffect(() => {
+    if (userData?.user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: userData.user.name || "",
+        email: userData.user.email || "",
+        phone: userData.user.teacher?.phone || "",
+      }));
+    }
+  }, [userData]);
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -37,9 +49,9 @@ export default function TeacherSettings() {
     e.preventDefault();
     alert("Settings updated successfully!");
   };
-  console.log(currentUser)
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950  font-sans text-slate-800 dark:text-slate-100">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100">
       <div className="lg:min-w-160 mx-auto">
         {/* Header */}
         <div className="mb-6">

@@ -159,14 +159,7 @@ export default function BookForm() {
         <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-slate-100">
           {isEditMode ? "Edit Book" : "Add New Book"}
         </h2>
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center gap-1.5"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </button>
+        
       </div>
 
       {feedback && (
@@ -195,7 +188,7 @@ export default function BookForm() {
               onChange={handleChange}
               required
               placeholder="Enter book title"
-              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
           <div>
@@ -209,7 +202,7 @@ export default function BookForm() {
               onChange={handleChange}
               required
               placeholder="Enter author name"
-              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
         </div>
@@ -225,7 +218,7 @@ export default function BookForm() {
               value={formData.isbn}
               onChange={handleChange}
               placeholder="Enter ISBN number"
-              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
           <div>
@@ -237,7 +230,7 @@ export default function BookForm() {
               value={formData.book_category_id}
               onChange={handleChange}
               required
-              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
+              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
             >
               <option value="">Select Category</option>
               {categories.map((cat) => (
@@ -262,7 +255,7 @@ export default function BookForm() {
               required
               min="1"
               placeholder="0"
-              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
           <div>
@@ -277,7 +270,7 @@ export default function BookForm() {
               required
               min="0"
               placeholder="0"
-              className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
             />
           </div>
         </div>

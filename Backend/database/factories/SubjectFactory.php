@@ -19,19 +19,22 @@ class SubjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'subject_name' => fake()->randomElement([
+            'subject_name' => fake()->unique()->randomElement([
                 'Mathematics',
                 'Physics',
                 'Chemistry',
-                'Computer Science',
                 'Biology',
+                'Khmer Literature',
+                'History',
+                'Geography',
+                'Moral and Civics',
+                'Earth and Environmental Science',
                 'English',
-                'Khmer',
-                'AI Learning',
-                'History'
+                'Computer Science',
+                'Physical Education'
             ]),
-            'code' => fake()->unique()->bothify("KH-####"),
-            'image' => null
+            'code' => fake()->unique()->bothify("SUB-####"),
+            'image' => null,
         ];
     }
 }

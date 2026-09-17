@@ -121,7 +121,7 @@ export default function TeacherClassManagement({ onSelectAction }) {
               </button>
 
               <button
-                onClick={handleToScore}
+                onClick={() => navigate(`/teacher/score/${cls.id}`)}
                 className="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
               >
                 <LuClipboardList size={14} />

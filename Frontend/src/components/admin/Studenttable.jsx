@@ -4,7 +4,13 @@ function initials(name = "") {
   return name ? name.charAt(0).toUpperCase() : "S";
 }
 
-export default function StudentTable({ students = [], onView, onEdit, onDelete, loading }) {
+export default function StudentTable({
+  students = [],
+  onView,
+  onEdit,
+  onDelete,
+  loading,
+}) {
   return (
     <div className="border border-gray-200 dark:border-slate-800 rounded-lg p-5  space-y-4 bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 transition-colors">
       <div className="overflow-x-auto">
@@ -25,7 +31,10 @@ export default function StudentTable({ students = [], onView, onEdit, onDelete, 
           <tbody className="divide-y divide-gray-100 dark:divide-slate-800">
             {loading ? (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center text-gray-400 dark:text-slate-400">
+                <td
+                  colSpan={9}
+                  className="px-4 py-12 text-center text-gray-400 dark:text-slate-400"
+                >
                   <div className="flex flex-col items-center justify-center gap-2">
                     <div className="w-6 h-6 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
                     <span className="text-sm font-medium text-gray-500 dark:text-slate-400">
@@ -112,21 +121,21 @@ export default function StudentTable({ students = [], onView, onEdit, onDelete, 
                     <button
                       type="button"
                       onClick={() => onView && onView(student.id)}
-                      className="text-md border rounded-lg px-2.5 py-1 transition-colors font-medium active:scale-95 cursor-pointer border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-slate-300"
+                      className="text-md border rounded-lg px-2.5 py-1 transition-colors font-medium active:scale-95 cursor-pointer bg-green-600 text-white border-green-600 hover:bg-green-700 dark:bg-green-600 dark:border-green-600 dark:hover:bg-green-500 shadow-xs"
                     >
                       View
                     </button>
                     <button
                       type="button"
                       onClick={() => onEdit && onEdit(student.id)}
-                      className="text-md border rounded-lg px-2.5 py-1 transition-colors font-medium active:scale-95 cursor-pointer text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/40 border-indigo-200/60 dark:border-indigo-900/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
+                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-700 shadow-2xs"
                     >
                       Edit
                     </button>
                     <button
                       type="button"
                       onClick={() => onDelete && onDelete(student.id)}
-                      className="text-md border rounded-lg px-2.5 py-1 transition-colors font-medium active:scale-95 cursor-pointer text-red-600 dark:text-red-400 bg-red-50/50 dark:bg-red-950/40 border-red-200/60 dark:border-red-900/60 hover:bg-red-100 dark:hover:bg-red-900/50"
+                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
                     >
                       Delete
                     </button>
@@ -135,8 +144,12 @@ export default function StudentTable({ students = [], onView, onEdit, onDelete, 
               ))
             ) : (
               <tr>
-                <td colSpan={9} className="px-4 py-12 text-center text-sm text-gray-400 dark:text-slate-400">
-                  No student data found. Please try again or adjust your search filters.
+                <td
+                  colSpan={9}
+                  className="px-4 py-12 text-center text-sm text-gray-400 dark:text-slate-400"
+                >
+                  No student data found. Please try again or adjust your search
+                  filters.
                 </td>
               </tr>
             )}

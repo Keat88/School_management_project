@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../data/api";
+import { NavLink } from "react-router-dom";
+import { Plus } from "lucide-react";
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
   const [pagination, setPagination] = useState({
@@ -130,20 +132,23 @@ export default function UserManagement() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-slate-900 rounded-lg p-3 shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4">
+        <div className="bg-white dark:bg-slate-900 rounded-lg p-2 shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-4">
           <input
             type="text"
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-1 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
           />
           <button
-            onClick={openCreateModal}
-            className="bg-blue-600 dark:bg-blue-500 hover:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold text-xs px-5 py-2.5 rounded-lg transition shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer"
-          >
-            <span>+ Add User</span>
-          </button>
+          type="button"
+          onClick={openCreateModal}
+          className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm
+          font-medium px-4 py-2 hover:bg-blue-700 active:bg-blue-800 transition-colors shrink-0"
+        >
+          <Plus size={16} />
+          Add User
+        </button>
           {/* Role Filter Select (Uncomment if needed) */}
           {/* <select
                         value={roleFilter}
@@ -229,13 +234,13 @@ export default function UserManagement() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                       <button
                         onClick={() => openEditModal(user)}
-                        className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 dark:hover:text-white border border-gray-200 dark:border-slate-700"
+                        className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-700 shadow-2xs"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(user.id)}
-                        className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-100 dark:bg-red-500/10 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/20 border border-red-200/60 dark:border-red-500/20"
+                        className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
                       >
                         Delete
                       </button>
@@ -271,7 +276,7 @@ export default function UserManagement() {
         {/* Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-xl space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg max-w-md w-full p-6 shadow-xl space-y-4">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                 {isEditMode ? "Edit User" : "Create User"}
               </h2>
@@ -293,7 +298,7 @@ export default function UserManagement() {
                     onChange={(e) =>
                       setCurrentUser({ ...currentUser, name: e.target.value })
                     }
-                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
                   />
                 </div>
                 <div>
@@ -307,7 +312,7 @@ export default function UserManagement() {
                     onChange={(e) =>
                       setCurrentUser({ ...currentUser, email: e.target.value })
                     }
-                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
                   />
                 </div>
                 <div>
@@ -327,7 +332,7 @@ export default function UserManagement() {
                         password: e.target.value,
                       })
                     }
-                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
                   />
                 </div>
 
@@ -353,13 +358,13 @@ export default function UserManagement() {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-medium transition cursor-pointer"
+                    className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-medium transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2.5 bg-blue-600 dark:bg-indigo-600 hover:bg-blue-700 dark:hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition cursor-pointer shadow-xs"
+                    className="px-4 py-2.5 bg-blue-600 dark:bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition cursor-pointer shadow-xs"
                   >
                     {isEditMode ? "Update" : "Create"}
                   </button>

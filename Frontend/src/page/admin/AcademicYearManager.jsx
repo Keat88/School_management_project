@@ -242,13 +242,13 @@ export default function AcademicYearManager() {
                     <td className="px-5 py-4 text-right space-x-2">
                       <button
                         onClick={() => handleOpenModal(year)}
-                        className="px-3 py-1.5 text-xs font-bold rounded-xl transition-colors cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 dark:hover:text-white"
+                        className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-700 shadow-2xs"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(year.id)}
-                        className="px-3 py-1.5 text-xs font-bold rounded-xl border transition-colors cursor-pointer bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-500/20 hover:bg-rose-100 dark:hover:bg-rose-500/20"
+                        className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
                       >
                         Delete
                       </button>

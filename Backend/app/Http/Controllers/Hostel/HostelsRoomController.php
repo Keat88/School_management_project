@@ -141,14 +141,14 @@ class HostelsRoomController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'hostel_id'      => 'required|exists:hostels,id',
-            'room_number'    => 'required|string|max:255',
+            'room_number'    => 'sometimes|required|string|max:255',
             'block_name'     => 'nullable|string|max:255',
             'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'type'           => 'required|in:standard,deluxe,vip,ac,non-ac',
-            'gender'         => 'required|in:male,female,others',
-            'number_of_beds' => 'required|integer|min:1',
-            'cost_per_bed'   => 'required|numeric|min:0',
-            'status'         => 'required|in:available,full,maintenance',
+            'type'           => 'sometimes|required|in:standard,deluxe,vip,ac,non-ac',
+            'gender'         => 'sometimes|required|in:male,female,unisex,others', // បន្ថែម unisex
+            'number_of_beds' => 'sometimes|required|integer|min:1',
+            'cost_per_bed'   => 'sometimes|required|numeric|min:0',
+            'status'         => 'sometimes|required|in:available,occupied,full,maintenance', // បន្ថែម occupied
         ]);
 
         if ($validator->fails()) {

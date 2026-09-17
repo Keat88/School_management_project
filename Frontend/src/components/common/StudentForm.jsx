@@ -259,7 +259,7 @@ export default function StudentForm({ onSuccess }) {
         >
           {/* Student Information Section */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
+            <h3 className="text-sm font-semibold  tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
               Student Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -274,7 +274,7 @@ export default function StudentForm({ onSuccess }) {
                   onChange={handleChange}
                   required
                   placeholder="Enter full name"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -287,7 +287,7 @@ export default function StudentForm({ onSuccess }) {
                     type="text"
                     value={currentStudent.roll_number}
                     disabled
-                    className="w-full px-3.5 py-2.5 border rounded-xl text-sm cursor-not-allowed bg-gray-100 border-gray-200 text-gray-500 dark:bg-slate-800/40 dark:border-slate-800 dark:text-slate-400"
+                    className="w-full px-3.5 py-2.5 border rounded-lg text-sm cursor-not-allowed bg-gray-100 border-gray-200 text-gray-500 dark:bg-slate-800/40 dark:border-slate-800 dark:text-slate-400"
                   />
                 </div>
               )}
@@ -302,7 +302,7 @@ export default function StudentForm({ onSuccess }) {
                   value={formData.date_of_birth}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:[color-scheme:dark]"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:[color-scheme:dark]"
                 />
               </div>
 
@@ -314,7 +314,7 @@ export default function StudentForm({ onSuccess }) {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
                 >
                   <option value="male" className="dark:bg-slate-800">
                     Male
@@ -337,7 +337,7 @@ export default function StudentForm({ onSuccess }) {
                   value={formData.class_id}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
                 >
                   <option value="" className="dark:bg-slate-800">
                     --Select class--
@@ -367,7 +367,7 @@ export default function StudentForm({ onSuccess }) {
                   value={formData.student_phone}
                   onChange={handleChange}
                   placeholder="e.g. +123456789"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -382,7 +382,7 @@ export default function StudentForm({ onSuccess }) {
                   onChange={handleChange}
                   required
                   placeholder="student@example.com"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 />
               </div>
 
@@ -397,7 +397,7 @@ export default function StudentForm({ onSuccess }) {
                   onChange={handleChange}
                   required
                   placeholder="Enter full address"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
                 ></textarea>
               </div>
 
@@ -410,7 +410,7 @@ export default function StudentForm({ onSuccess }) {
                     <img
                       src={imagePreviewStudent}
                       alt="Student Preview"
-                      className="w-16 h-16 rounded-xl object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
+                      className="w-16 h-16 rounded-lg object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
                     />
                   ) : (
                     <div className="w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 shadow-sm bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
@@ -421,7 +421,7 @@ export default function StudentForm({ onSuccess }) {
                     type="file"
                     accept="image/png, image/jpeg"
                     onChange={handleImageChange}
-                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-500/20 dark:file:text-indigo-300 dark:hover:file:bg-indigo-500/30 file:transition-colors"
+                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
                   />
                 </div>
               </div>
@@ -430,7 +430,7 @@ export default function StudentForm({ onSuccess }) {
 
           {/* Parent Information Section */}
           <div className="space-y-4 pt-4">
-            <h3 className="text-sm font-semibold uppercase tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
+            <h3 className="text-sm font-semibold  tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
               Parent Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -515,10 +515,10 @@ export default function StudentForm({ onSuccess }) {
                     <img
                       src={imagePreviewParent}
                       alt="Parent Preview"
-                      className="w-16 h-16 rounded-xl object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
+                      className="w-16 h-16 rounded-lg object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
                     />
                   ) : (
-                    <div className="w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 shadow-sm bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
+                    <div className="w-16 h-16 rounded-lg border flex items-center justify-center shrink-0 shadow-sm bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
                       <ImageIcon size={24} />
                     </div>
                   )}
@@ -526,7 +526,7 @@ export default function StudentForm({ onSuccess }) {
                     type="file"
                     accept="image/png, image/jpeg"
                     onChange={handleImageParentChange}
-                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-indigo-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
+                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
                   />
                 </div>
               </div>

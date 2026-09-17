@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Save,
   RefreshCw,
@@ -10,78 +10,72 @@ import {
   Trash2,
   ArrowLeft,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
-const initialClassData = {
-  name: "PHP + Laravel",
-  createdDate: "2026-06-06 21:11:54",
-  totalStudents: 18,
-  termTime: "Sat & Sun (11:00 am - 01:30 pm)",
-  students: [
-    {
-      id: 1,
-      studentId: "3691",
-      name: "Taing Daniel",
-      attendanceScore: 5,
-      activityScore: 0,
-      examScore: 0,
-    },
-    {
-      id: 2,
-      studentId: "3575",
-      name: "Svay Champey",
-      attendanceScore: 0,
-      activityScore: 0,
-      examScore: 0,
-    },
-    {
-      id: 3,
-      studentId: "3572",
-      name: "khin Utdom",
-      attendanceScore: 0,
-      activityScore: 0,
-      examScore: 0,
-    },
-    {
-      id: 4,
-      studentId: "3573",
-      name: "SEN THING",
-      attendanceScore: 0,
-      activityScore: 0,
-      examScore: 0,
-    },
-    {
-      id: 5,
-      studentId: "3574",
-      name: "Oeu Lina",
-      attendanceScore: 0,
-      activityScore: 0,
-      examScore: 0,
-    },
-  ],
-};
+import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../data/api";
 
 export default function ClassScoreTable() {
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [classData, setClassData] = useState(initialClassData);
+  const [classData, setClassData] = useState({ students: [] });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const handleScoreChange = (id, field, value) => {
+  useEffect(() => {
+    const fetchClassScore = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get(`/classes/${id}/show`);
+
+        // Matches your Laravel response structure: response()->json(['data' => ...])
+        setClassData(res.data.data);
+      } catch (error) {
+        console.error("Error fetching class scores:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchClassScore();
+    }
+  }, [id]);
+
+  const handleScoreChange = (studentId, field, value) => {
     setClassData((prev) => ({
       ...prev,
       students: prev.students.map((student) =>
-        student.id === id ? { ...student, [field]: value } : student,
+        student.id === studentId ? { ...student, [field]: value } : student,
       ),
     }));
   };
+
   const handleBack = () => {
     navigate(-1);
   };
-  const handleSaveScores = () => {
-    alert("Scores saved successfully to backend!");
+
+  const handleSaveScores = async () => {
+    try {
+      setSaving(true);
+      await api.put(`/classes/${id}/scores`, { students: classData.students });
+      alert("Scores saved successfully to backend!");
+    } catch (error) {
+      console.error("Error saving scores:", error);
+      alert("Failed to save scores. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-500">
+        Loading class scores...
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100  font-sans transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Top Navigation & Back Button */}
         <div>
@@ -145,28 +139,18 @@ export default function ClassScoreTable() {
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               type="button"
+              onClick={() => window.location.reload()}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
             >
               <RefreshCw size={14} /> Refresh Table
             </button>
             <button
               type="button"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
-            >
-              <Users size={14} /> Group
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 transition-all cursor-pointer shadow-2xs"
-            >
-              <FileText size={14} /> Request Certificate
-            </button>
-            <button
-              type="button"
+              disabled={saving}
               onClick={handleSaveScores}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-950 text-xs font-semibold hover:bg-slate-800 dark:hover:bg-white shadow-sm transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-950 text-xs font-semibold hover:bg-slate-800 dark:hover:bg-white shadow-sm transition-all cursor-pointer disabled:opacity-50"
             >
-              <Save size={14} /> Save Score
+              <Save size={14} /> {saving ? "Saving..." : "Save Score"}
             </button>
           </div>
         </div>
@@ -190,7 +174,7 @@ export default function ClassScoreTable() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-sm">
-                {classData.students.map((student, index) => (
+                {classData.students?.map((student, index) => (
                   <tr
                     key={student.id}
                     className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
@@ -217,7 +201,7 @@ export default function ClassScoreTable() {
                             e.target.value,
                           )
                         }
-                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 transition-all"
                       />
                     </td>
                     <td className="py-4 px-4 text-center">
@@ -231,7 +215,7 @@ export default function ClassScoreTable() {
                             e.target.value,
                           )
                         }
-                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 transition-all"
                       />
                     </td>
                     <td className="py-4 px-4 text-center">
@@ -245,7 +229,7 @@ export default function ClassScoreTable() {
                             e.target.value,
                           )
                         }
-                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                        className="w-20 text-center bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-slate-200 text-sm focus:outline-none focus:border-indigo-500 transition-all"
                       />
                     </td>
                     <td className="py-4 px-4 text-center">
@@ -253,28 +237,28 @@ export default function ClassScoreTable() {
                         <button
                           type="button"
                           aria-label="View Details"
-                          className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white cursor-pointer"
                         >
                           <Eye size={15} />
                         </button>
                         <button
                           type="button"
                           aria-label="Sync status"
-                          className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 cursor-pointer"
                         >
                           <ArrowLeftRight size={15} />
                         </button>
                         <button
                           type="button"
                           aria-label="Edit student record"
-                          className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-amber-500 cursor-pointer"
                         >
                           <Edit size={15} />
                         </button>
                         <button
                           type="button"
                           aria-label="Delete student record"
-                          className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-500 hover:text-rose-500 cursor-pointer"
                         >
                           <Trash2 size={15} />
                         </button>

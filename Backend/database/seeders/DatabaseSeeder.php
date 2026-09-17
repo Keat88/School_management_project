@@ -200,10 +200,10 @@ class DatabaseSeeder extends Seeder
     //         SubjectSeeder::class,
     //     ]);
     // ClassRoom::factory()->count(10)->create();
-    public function run(): void
-    {
-        $this->call([
-            CourseSeeder::class,
-        ]);
-    }
+    // public function run(): void
+    // {
+    //     $this->call([
+    //         CourseSeeder::class,
+    //     ]);
+    // }
 }

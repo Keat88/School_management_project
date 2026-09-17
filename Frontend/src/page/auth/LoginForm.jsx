@@ -1,15 +1,119 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthApi } from "../../data/AuthApi";
-import { FaArrowLeft, FaGithub, FaGoogle } from "react-icons/fa6";
+import {
+  FaGithub,
+  FaGoogle,
+  FaUsers,
+  FaClipboardCheck,
+  FaChartLine,
+  FaArrowLeft,
+} from "react-icons/fa6";
 import LoadingModal from "../../hooks/LoadingModal";
 import { useAuth } from "../../context/AuthContext";
+import { PiStudentFill } from "react-icons/pi";
+
+function BrandPanel() {
+  const { SchoolName } = useAuth();
+  return (
+    <div className="relative hidden lg:flex lg:w-[46%] xl:w-[48%] flex-col justify-between overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 px-8 lg:px-12 py-10 text-white shrink-0">
+      <div
+        aria-hidden
+        className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-400/30 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-blue-500/30 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_55%)]"
+      />
+
+      <div className="relative flex items-center gap-3">
+        <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
+          <PiStudentFill />
+        </div>
+        <div>
+          <p className="text-lg font-bold leading-none tracking-tight">
+            {SchoolName?.schoolName || "School Management"}
+          </p>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-200/80">
+            {SchoolName?.academicYear || "Academic Portal"}
+          </p>
+        </div>
+      </div>
+
+      <div className="relative my-auto py-8">
+        <h1 className="text-3xl xl:text-4xl font-bold leading-tight">
+          Run every part of your school{" "}
+          <span className="text-cyan-300">from one dashboard.</span>
+        </h1>
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-blue-100/85">
+          Students, teachers, classes, attendance, payments and reports —
+          everything you need for smarter education management.
+        </p>
+
+        <div className="mt-8 xl:mt-10 space-y-4">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+              <FaUsers className="text-cyan-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Student & Teacher Records</p>
+              <p className="text-xs text-blue-100/70">
+                Organized profiles in one central place
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+              <FaClipboardCheck className="text-cyan-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Attendance & Scores</p>
+              <p className="text-xs text-blue-100/70">
+                Track classes, marks and progress daily
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+              <FaChartLine className="text-cyan-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Payments & Reports</p>
+              <p className="text-xs text-blue-100/70">
+                Insights and finances at a glance
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative rounded-2xl bg-white/10 p-5 ring-1 ring-white/20 backdrop-blur">
+        <p className="text-sm italic leading-relaxed text-blue-50/90">
+          “Empowering education through smarter management.”
+        </p>
+        <p className="mt-2 text-xs font-semibold tracking-wide text-cyan-300">
+          {SchoolName?.schoolName || "School Management"}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function LoginForm() {
-  const { login } = useAuth();
+  const [mode, setMode] = useState("login");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+  });
+  const [registerData, setRegisterData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    password_confirmation: "",
   });
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
@@ -18,31 +122,41 @@ export default function LoginForm() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleRegisterChange = (e) => {
+    const { name, value } = e.target;
+    setRegisterData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const switchMode = (next) => {
+    if (next !== mode) {
+      setMode(next);
+      setFeedback(null);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setFeedback(null);
+
     try {
-      const res = await AuthApi.Login(formData);
-      // If AuthApi returns the raw axios response, use res.data.token
-      // If AuthApi already returns response.data, use res.token
-      const responseData = res?.data || res;
-      const token = responseData.token || responseData.access_token;
-      const user = responseData.user;
+      const response = await AuthApi.Login(formData);
+      const token = response.token || response.access_token;
+      const user = response.user;
       if (token) {
-        login(user, token);
+        localStorage.setItem("token", token);
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+        }
         setFeedback({ type: "success", text: "Login successful!" });
         setTimeout(() => {
           if (user?.role === "admin") {
             window.location.href = "/admin/dashboard";
-          } else if (user?.role === "teacher") {
-            window.location.href = "/teacher/dashboard";
           } else {
             window.location.href = "/";
           }
         }, 500);
-      } else {
-        window.location.href = "/";
       }
     } catch (error) {
       console.log("Login error:", error);
@@ -58,19 +172,100 @@ export default function LoginForm() {
     }
   };
 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setFeedback(null);
+
+    if (registerData.password !== registerData.password_confirmation) {
+      setFeedback({ type: "error", text: "Passwords do not match." });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await AuthApi.Register({
+        name: registerData.name,
+        email: registerData.email,
+        password: registerData.password,
+        password_confirmation: registerData.password_confirmation,
+      });
+      setFeedback({
+        type: "success",
+        text: "Account created successfully! You can now sign in.",
+      });
+      setRegisterData({
+        name: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
+      });
+      setTimeout(() => setMode("login"), 1000);
+    } catch (error) {
+      console.log("Register error:", error);
+      setFeedback({
+        type: "error",
+        text:
+          error.response?.data?.message || "Registration failed. Try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  const { SchoolName } = useAuth();
   return (
     <>
       <LoadingModal
         isOpen={loading}
-        title="Completing login..."
-        subtitle="Finalizing your request"
+        title={mode === "login" ? "Completing login..." : "Creating account..."}
+        subtitle={
+          mode === "login"
+            ? "Finalizing your request"
+            : "Setting up your profile"
+        }
       />
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-6 shadow-xl shadow-slate-200/50 border border-slate-100 rounded-3xl sm:px-10">
+      <div className="flex min-h-screen w-full bg-slate-50 overflow-x-hidden">
+        <BrandPanel />
+
+        <div className="flex flex-1 flex-col items-center justify-center px-4 sm:px-6 md:px-10 py-8 sm:py-12">
+          <div className="w-full max-w-md sm:max-w-lg md:max-w-md">
+            <div className="mb-6 sm:mb-8 flex items-center justify-center gap-2 lg:hidden">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white text-lg font-bold shadow-md">
+                SM
+              </div>
+              <span className="text-lg font-bold tracking-tight text-slate-900">
+                {SchoolName?.schoolName || "School Management"}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-200/80 p-1 text-sm font-semibold">
+              <button
+                type="button"
+                onClick={() => switchMode("login")}
+                className={`rounded-xl py-2.5 transition ${
+                  mode === "login"
+                    ? "bg-white text-blue-700 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => switchMode("register")}
+                className={`rounded-xl py-2.5 transition ${
+                  mode === "register"
+                    ? "bg-white text-blue-700 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                Create Account
+              </button>
+            </div>
+
             {feedback && (
               <div
-                className={`p-4 mb-6 rounded-2xl text-sm font-medium ${
+                className={`mt-5 p-4 rounded-xl text-sm font-medium ${
                   feedback.type === "success"
                     ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     : "bg-rose-50 text-rose-700 border border-rose-200"
@@ -79,132 +274,209 @@ export default function LoginForm() {
                 {feedback.text}
               </div>
             )}
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-              <div className="flex justify-between items-center mb-6">
-                <Link
-                  to="/"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors group"
-                >
-                  <FaArrowLeft className="transition-transform group-hover:-translate-x-1" />
-                  Back to home
-                </Link>
-              </div>
 
-              <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20 mb-4 font-bold text-2xl">
-                  SM
+            {mode === "login" ? (
+              <form
+                onSubmit={handleSubmit}
+                className="mt-6 sm:mt-8 space-y-4 sm:space-y-5"
+              >
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                    Welcome back
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Sign in to access your administrative dashboard
+                  </p>
                 </div>
-                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
-                  Welcome back
-                </h2>
-                <p className="mt-2 text-sm text-slate-600">
-                  Sign in to your School Management Portal account
-                </p>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <button
-                type="button"
-                onClick={() =>
-                  (window.location.href =
-                    "http://localhost:8000/api/auth/google/redirect")
-                }
-                className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
-              >
-                <FaGoogle size={18} className="text-slate-600" />
-                Google
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  (window.location.href =
-                    "http://localhost:8000/api/auth/github/redirect")
-                }
-                className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
-              >
-                <FaGithub size={18} className="text-slate-900" />
-                Github
-              </button>
-            </div>
-
-            <div className="relative flex py-2 items-center mb-6">
-              <div className="flex-grow border-t border-slate-200"></div>
-              <span className="flex-shrink mx-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Or continue with email
-              </span>
-              <div className="flex-grow border-t border-slate-200"></div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2"
-                >
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="admin@school.edu"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-all"
-                />
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label
-                    htmlFor="password"
-                    className="block text-xs font-bold text-slate-700 uppercase tracking-wider"
-                  >
-                    Password
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                    Email Address
                   </label>
-                  <Link
-                    to="/forgot-password"
-                    className="text-xs font-semibold text-blue-600 hover:text-blue-500 transition-colors"
-                  >
-                    Forgot password?
-                  </Link>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    placeholder="admin@school.edu"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  />
                 </div>
-                <input
-                  id="password"
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-all"
-                />
-              </div>
 
-              <div className="pt-2">
+                <div>
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <label className="block text-sm font-semibold text-slate-700">
+                      Password
+                    </label>
+                    <Link
+                      to="/forgot-password"
+                      className="text-xs font-medium text-blue-600 hover:text-blue-500 transition"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    placeholder="••••••••"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  />
+                </div>
+
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-blue-600/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
+                  className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
                 >
                   {loading ? "Signing in..." : "Sign in"}
                 </button>
-              </div>
 
-              <div className="text-center pt-2">
-                <p className="text-sm text-slate-600">
-                  Don't have an account?{" "}
-                  <Link
-                    to="/register"
-                    className="font-semibold text-blue-600 hover:text-blue-500 transition-colors"
+                <div className="relative my-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-slate-50 px-3 text-slate-400">
+                      or continue with
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      (window.location.href =
+                        "http://localhost:8000/api/auth/google/redirect")
+                    }
+                    className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition"
                   >
-                    Sign up
-                  </Link>
+                    <FaGoogle size={18} />
+                    Google
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      (window.location.href =
+                        "http://localhost:8000/api/auth/github/redirect")
+                    }
+                    className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition"
+                  >
+                    <FaGithub size={18} />
+                    Github
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form
+                onSubmit={handleRegister}
+                className="mt-6 sm:mt-8 space-y-4 sm:space-y-5"
+              >
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                    Create your account
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Join the school portal and start today
+                  </p>
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={registerData.name}
+                    onChange={handleRegisterChange}
+                    required
+                    placeholder="Jane Doe"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={registerData.email}
+                    onChange={handleRegisterChange}
+                    required
+                    placeholder="you@school.edu"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={registerData.password}
+                      onChange={handleRegisterChange}
+                      required
+                      placeholder="••••••••"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                      Confirm
+                    </label>
+                    <input
+                      type="password"
+                      name="password_confirmation"
+                      value={registerData.password_confirmation}
+                      onChange={handleRegisterChange}
+                      required
+                      placeholder="••••••••"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full mt-2 py-2.5 px-4 bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
+                >
+                  {loading ? "Creating..." : "Create Account"}
+                </button>
+
+                <p className="text-center text-xs text-slate-500 pt-1">
+                  Already have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => switchMode("login")}
+                    className="font-semibold text-blue-600 hover:text-blue-500"
+                  >
+                    Sign in
+                  </button>
                 </p>
-              </div>
-            </form>
+              </form>
+            )}
+
+            {/* Fixed & Styled Back Home Link */}
+            <div className="mt-6 text-center">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-blue-600 transition"
+              >
+                <FaArrowLeft size={12} />
+                Back to Home
+              </Link>
+            </div>
           </div>
         </div>
       </div>

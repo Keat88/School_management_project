@@ -64,7 +64,7 @@ class HostelAssignmentsController extends Controller
             'bed_number'     => 'nullable|string|max:255',
             'start_date'     => 'required|date',
             'end_date'       => 'nullable|date|after_or_equal:start_date',
-            'status'         => 'required|in:active,checked_out',
+            'status' => 'required|in:active,checked_out,completed,cancelled,checked-in',
         ]);
 
         if ($validator->fails()) {
@@ -118,7 +118,7 @@ class HostelAssignmentsController extends Controller
             'bed_number'     => 'nullable|string|max:255',
             'start_date'     => 'required|date',
             'end_date'       => 'nullable|date|after_or_equal:start_date',
-            'status'         => 'required|in:active,checked_out',
+            'status' => 'required|in:active,checked_out,completed,cancelled,checked-in',
         ]);
 
         if ($validator->fails()) {

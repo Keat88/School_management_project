@@ -1,60 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   LuSearch,
   LuCheck,
   LuX,
-  LuEye,
   LuClock,
 } from "react-icons/lu";
+import { api } from "../../data/api";
+
 
 export default function ManageTeacherReports() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedReport, setSelectedReport] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [reports, setReports] = useState([
-    {
-      id: 1,
-      teacherName: "Mr. Dara Smith",
-      subject: "Web Development (React & Laravel)",
-      reportTitle: "Monthly Attendance & Progress Report - August",
-      type: "Monthly Summary",
-      submittedDate: "2026-09-02",
-      status: "Pending",
-      content:
-        "Covered Laravel RESTful APIs, Sanctum authentication, and React component workflows. Average class attendance was 95% with 2 students requiring extra tutoring support.",
-    },
-    {
-      id: 2,
-      teacherName: "Ms. Sophea Chan",
-      subject: "Object-Oriented Programming (Java)",
-      reportTitle: "Mid-Term Exam Evaluation & Score Breakdown",
-      type: "Exam Report",
-      submittedDate: "2026-09-01",
-      status: "Approved",
-      content:
-        "Conducted mid-term practical evaluation on Java collections (ArrayList, HashMap). Overall performance exceeded expectations with an average score of 82/100.",
-    },
-    {
-      id: 3,
-      teacherName: "Mr. Vicheka Rith",
-      subject: "Database Design (MySQL)",
-      reportTitle: "Lab Equipment & Incident Report",
-      type: "Incident Report",
-      submittedDate: "2026-08-28",
-      status: "Rejected",
-      content:
-        "Reported 2 malfunctioning computers in Lab 1 during database connection testing session. Requested immediate IT maintenance intervention.",
-    },
-  ]);
+  // Fetch reports from Laravel backend on mount
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/teacher-notices/1'); 
+        setReports(response.data.data);
+      } catch (error) {
+        console.error("Error fetching teacher reports:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleStatusChange = (id, newStatus) => {
-    setReports(
-      reports.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
-    );
-    setSelectedReport(null);
-    setFeedback("");
+    fetchReports();
+  }, []);
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      // Optional: Send update to backend API
+      // await api.put(`/reports/${id}/status`, { status: newStatus, feedback });
+
+      setReports(
+        reports.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+      );
+      setSelectedReport(null);
+      setFeedback("");
+    } catch (error) {
+      console.error("Failed to update status:", error);
+    }
   };
 
   const filteredReports = reports.filter((r) => {
@@ -71,7 +62,7 @@ export default function ManageTeacherReports() {
   });
 
   return (
-    <div className="lg:min-w-160 mx-auto  font-sans text-slate-900 dark:text-slate-100">
+    <div className="lg:min-w-160 mx-auto font-sans text-slate-900 dark:text-slate-100">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-5 border-b border-slate-200 dark:border-slate-800">
         <div>
@@ -95,7 +86,6 @@ export default function ManageTeacherReports() {
             <option value="approved">Approved</option>
             <option value="rejected">Rejected</option>
           </select>
-
           {/* Search Input */}
           <div className="relative w-full sm:w-60">
             <LuSearch
@@ -128,7 +118,13 @@ export default function ManageTeacherReports() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
-              {filteredReports.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="py-10 text-center text-slate-400">
+                    Loading reports...
+                  </td>
+                </tr>
+              ) : filteredReports.length > 0 ? (
                 filteredReports.map((report) => (
                   <tr
                     key={report.id}

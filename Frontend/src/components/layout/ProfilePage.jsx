@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Save,
@@ -57,30 +57,51 @@ function InfoItem({ icon: Icon, label, value }) {
 }
 
 export default function ProfilePage() {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, userData, logout } = useAuth();
   const navigate = useNavigate();
+
   const [profile, setProfile] = useState({
-    name: currentUser?.name || "Keng Keat",
-    email: currentUser?.email || "keatkeng88@gmail.com",
-    role: currentUser?.role || "admin",
-    phone: currentUser?.phone || "+855 12 345 678",
-    gender: currentUser?.gender || "Male",
-    dateOfBirth: currentUser?.dateOfBirth || "1990-05-14",
-    address: currentUser?.address || "Phnom Penh, Cambodia",
+    name: "",
+    email: "",
+    role: "admin",
+    phone: "",
+    gender: "male",
+    dateOfBirth: "",
+    address: "Phnom Penh, Cambodia",
   });
+
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState(
-    currentUser?.avatar ||
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=250&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=250&auto=format&fit=crop",
   );
   const fileInputRef = useRef(null);
 
+  // Sync profile data dynamically when API response (userData or currentUser) updates
+  useEffect(() => {
+    const activeUser = userData?.user || currentUser;
+    if (activeUser) {
+      setProfile({
+        name: activeUser.name || "",
+        email: activeUser.email || "",
+        role: activeUser.role || "admin",
+        phone: activeUser.teacher?.phone || activeUser.phone || "",
+        gender: activeUser.teacher?.gender || activeUser.gender || "male",
+        dateOfBirth: activeUser.dateOfBirth || "",
+        address: activeUser.address || "Phnom Penh, Cambodia",
+      });
+      if (activeUser.avatar) {
+        setAvatar(activeUser.avatar);
+      }
+    }
+  }, [userData, currentUser]);
+
   const memberSince = useMemo(() => {
-    if (currentUser?.created_at) {
-      return new Date(currentUser.created_at).getFullYear();
+    const activeUser = userData?.user || currentUser;
+    if (activeUser?.created_at) {
+      return new Date(activeUser.created_at).getFullYear();
     }
     return "2026";
-  }, [currentUser?.created_at]);
+  }, [userData, currentUser]);
 
   const avatarInitial = useMemo(
     () => (profile.name || "K").trim().charAt(0).toUpperCase(),
@@ -132,7 +153,7 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                <h1 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
                   Profile Settings
                 </h1>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50">
@@ -141,21 +162,15 @@ export default function ProfilePage() {
                 </span>
               </div>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                Manage your personal credentials, workspace security, and preferences.
+                Manage your personal credentials, workspace security, and
+                preferences.
               </p>
             </div>
-            <button
-              type="button"
-              onClick={handleLogOut}
-              className="self-start sm:self-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-2.5 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-rose-600 dark:hover:text-rose-400 transition-all cursor-pointer shadow-2xs active:scale-95"
-            >
-              <LogOut size={16} />
-              <span>Sign Out</span>
-            </button>
+        
           </div>
 
           {/* Banner and User Header Card */}
-          <div className="rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-hidden transition-colors">
+          <div className="rounded-lg bg-white dark:bg-slate-900  border border-slate-200/80 dark:border-slate-800 overflow-hidden transition-colors">
             <div className="h-32 sm:h-40 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/15 via-transparent to-transparent pointer-events-none" />
               <div className="absolute right-6 top-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-white text-xs font-medium">
@@ -204,10 +219,11 @@ export default function ProfilePage() {
                       {profile.name}
                     </h2>
                     <span className="self-center sm:self-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold capitalize bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900/60">
-                      <ShieldCheck size={13} className="text-blue-500" /> {profile.role}
+                      <ShieldCheck size={13} className="text-blue-500" />{" "}
+                      {profile.role}
                     </span>
                   </div>
-                  
+
                   <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                     <InfoItem icon={Mail} label="Email" value={profile.email} />
                     <InfoItem
@@ -225,15 +241,16 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
+
           {/* Content Layout Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main Form */}
             <form
               onSubmit={handleSave}
-              className="rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-8 lg:col-span-2 space-y-6 transition-colors"
+              className="rounded-lg bg-white dark:bg-slate-900  border border-slate-200/80 dark:border-slate-800 p-5 sm:p-8 lg:col-span-2 space-y-6 transition-colors"
             >
               <div>
-                <h3 className="text-base  font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
                   Personal Information
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
@@ -321,7 +338,7 @@ export default function ProfilePage() {
             </form>
 
             {/* Sidebar Account Summary */}
-            <div className="rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 h-fit space-y-5 transition-colors">
+            <div className="rounded-lg bg-white dark:bg-slate-900  border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 h-fit space-y-5 transition-colors">
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Account Overview
@@ -334,7 +351,8 @@ export default function ProfilePage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950/60 px-4 py-3 border border-slate-200/60 dark:border-slate-800">
                   <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
-                    <Lock size={16} className="text-blue-500 shrink-0" /> Role Level
+                    <Lock size={16} className="text-blue-500 shrink-0" /> Role
+                    Level
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 capitalize">
                     {profile.role}
@@ -343,7 +361,8 @@ export default function ProfilePage() {
 
                 <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950/60 px-4 py-3 border border-slate-200/60 dark:border-slate-800">
                   <span className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium">
-                    <Calendar size={16} className="text-blue-500 shrink-0" /> Member Since
+                    <Calendar size={16} className="text-blue-500 shrink-0" />{" "}
+                    Member Since
                   </span>
                   <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
                     {memberSince}

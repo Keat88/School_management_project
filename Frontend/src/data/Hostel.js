@@ -87,7 +87,7 @@ export const hostelRoomApi = {
   },
   upDate: async (id, UpdateRoom) => {
     try {
-      const response = await api.put(
+      const response = await api.post(
         `/hostels/hostel-room/update/${id}`,
         UpdateRoom,
         {

@@ -133,7 +133,7 @@ function TeacherList() {
               Manage and view teacher records
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-500/30">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-500/30">
             Total: {totalItems}
           </span>
         </div>

@@ -150,6 +150,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('notice')->controller(NoticeController::class)->group(function () {
             Route::post('/store', 'store')->name('notice.store');
             Route::get('/index', 'index')->name('notice.index');
+            Route::get('/getNoticeDashboard', 'getNoticeDashboard')->name('notice.getNoticeDashboard');
             Route::get('/show/{id}', 'show')->name('notice.show');
             Route::match(['post', 'put'], '/notice/update/{id}', 'update')->name('notice.update');
             Route::delete('/destroy/{id}', 'destroy')->name('notice.destroy');
@@ -284,7 +285,8 @@ Route::middleware('auth:sanctum')->group(function () {
         // 2. ដាក់ Route មាន Parameter ទុកនៅខាងក្រោម
         Route::get('/classes/{classId}', [ClassController::class, 'showClassData']);
         Route::post('/classes/{classId}/attendance', [ClassController::class, 'updateAttendance']);
-        Route::post('/classes/{classId}/scores', [ClassController::class, 'updateOrCreateScores']);
+        Route::put('/classes/{classId}/scores', [TeacherController::class, 'updateOrCreateScores']);
+        Route::get('/classes/{id}/show', [TeacherController::class, 'teacherClassScore']);
 
         // ផ្សេងៗទៀត
         Route::get('/teacher/dashboard', [TeacherController::class, 'dashboardSummary']);

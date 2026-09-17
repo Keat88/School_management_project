@@ -1,8 +1,107 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { AuthApi } from "../../data/AuthApi";
-import { FaArrowLeft } from "react-icons/fa6";
+import {
+  FaGithub,
+  FaGoogle,
+  FaUsers,
+  FaClipboardCheck,
+  FaChartLine,
+  FaArrowLeft,
+} from "react-icons/fa6";
 import LoadingModal from "../../hooks/LoadingModal";
+import { useAuth } from "../../context/AuthContext";
+import { PiStudentFill } from "react-icons/pi";
+
+function BrandPanel() {
+  const { SchoolName } = useAuth();
+  return (
+    <div className="relative hidden lg:flex w-[46%] flex-col justify-between overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 px-12 py-10 text-white">
+      <div
+        aria-hidden
+        className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-400/30 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-blue-500/30 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_55%)]"
+      />
+
+      <div className="relative flex items-center gap-3">
+        <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
+          <PiStudentFill />
+        </div>
+        <div>
+          <p className="text-lg font-bold leading-none tracking-tight">
+            {SchoolName?.schoolName || "School Management"}
+          </p>
+          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-200/80">
+            {SchoolName?.academicYear || "Academic Portal"}
+          </p>
+        </div>
+      </div>
+
+      <div className="relative">
+        <h1 className="text-4xl font-bold leading-tight">
+          Run every part of your school{" "}
+          <span className="text-cyan-300">from one dashboard.</span>
+        </h1>
+        <p className="mt-4 max-w-md text-sm leading-relaxed text-blue-100/85">
+          Students, teachers, classes, attendance, payments and reports —
+          everything you need for smarter education management.
+        </p>
+
+        <div className="mt-10 space-y-4">
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+              <FaUsers className="text-cyan-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Student & Teacher Records</p>
+              <p className="text-xs text-blue-100/70">
+                Organized profiles in one central place
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+              <FaClipboardCheck className="text-cyan-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Attendance & Scores</p>
+              <p className="text-xs text-blue-100/70">
+                Track classes, marks and progress daily
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3.5">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
+              <FaChartLine className="text-cyan-300" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">Payments & Reports</p>
+              <p className="text-xs text-blue-100/70">
+                Insights and finances at a glance
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative rounded-2xl bg-white/10 p-5 ring-1 ring-white/20 backdrop-blur">
+        <p className="text-sm italic leading-relaxed text-blue-50/90">
+          “Empowering education through smarter management.”
+        </p>
+        <p className="mt-2 text-xs font-semibold tracking-wide text-cyan-300">
+          {SchoolName?.schoolName || "School Management"}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function ResetPassword() {
   const location = useLocation();
@@ -71,36 +170,33 @@ export default function ResetPassword() {
         title="Resetting password..."
         subtitle="Updating your credentials securely"
       />
-      <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="flex justify-between items-center mb-6">
-            <Link
-              to="/forgot-password"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors group"
-            >
-              <FaArrowLeft className="transition-transform group-hover:-translate-x-1" />
-              Back
-            </Link>
-          </div>
+      <div className="flex min-h-screen bg-slate-50">
+        <BrandPanel />
 
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/20 mb-4 font-bold text-2xl">
-              SM
+        <div className="flex flex-1 items-center justify-center px-4 py-12 sm:px-8">
+          <div className="w-full max-w-md">
+            <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white text-lg font-bold shadow-md">
+                SM
+              </div>
+              <span className="text-lg font-bold tracking-tight text-slate-900">
+                School Management
+              </span>
             </div>
-            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
-              Set New Password
-            </h2>
-            <p className="mt-2 text-sm text-slate-600">
-              Please choose a secure password with at least 8 characters
-            </p>
-          </div>
-        </div>
 
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-6 shadow-xl shadow-slate-200/50 border border-slate-100 rounded-3xl sm:px-10">
+            <div className="mb-6">
+              <Link
+                to="/forgot-password"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors group"
+              >
+                <FaArrowLeft className="transition-transform group-hover:-translate-x-1" />
+                Back to forgot password
+              </Link>
+            </div>
+
             {feedback && (
               <div
-                className={`p-4 mb-6 rounded-2xl text-sm font-medium ${
+                className={`mt-5 p-4 rounded-xl text-sm font-medium ${
                   feedback.type === "success"
                     ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     : "bg-rose-50 text-rose-700 border border-rose-200"
@@ -110,54 +206,53 @@ export default function ResetPassword() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                  Set New Password
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Please choose a secure password with at least 8 characters
+                </p>
+              </div>
+
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2"
-                >
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700">
                   New Password
                 </label>
                 <input
-                  id="password"
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-all"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="password_confirmation"
-                  className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2"
-                >
+                <label className="mb-1.5 block text-sm font-semibold text-slate-700">
                   Confirm Password
                 </label>
                 <input
-                  id="password_confirmation"
                   type="password"
                   name="password_confirmation"
                   value={formData.password_confirmation}
                   onChange={handleChange}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-all"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
               </div>
 
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-blue-600/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all disabled:opacity-50"
-                >
-                  {loading ? "Resetting Password..." : "Reset Password"}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
+              >
+                {loading ? "Resetting Password..." : "Reset Password"}
+              </button>
             </form>
           </div>
         </div>

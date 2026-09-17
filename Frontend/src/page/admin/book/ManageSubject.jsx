@@ -158,7 +158,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
         </div>
       )}
 
-      {/* Search Bar */}
+      {/* Search Bar & Actions */}
       <form
         onSubmit={handleSearchSubmit}
         className={`p-4 rounded-lg border flex flex-col md:flex-row gap-3 transition-colors ${
@@ -189,10 +189,10 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
           <button
             type="button"
             onClick={handleResetSearch}
-            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 ${
+            className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
               isDark
-                ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200"
             }`}
           >
             <RotateCcw size={14} />
@@ -200,13 +200,13 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
           </button>
           <button
             type="submit"
-            className="flex-1 sm:flex-initial px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
+            className="flex-1 sm:flex-initial px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center cursor-pointer shadow-xs"
           >
             Search
           </button>
           <Link
             to="/admin/subjects/add"
-            className="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5"
+            className="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs"
           >
             <Plus size={16} />
             Add Subject
@@ -214,9 +214,9 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
         </div>
       </form>
 
-      {/* Subject List Table */}
+      {/* Subject List Table Container */}
       <div
-        className={`border rounded-lg p-3 sm:p-5 space-y-4 transition-colors ${
+        className={`border rounded-lg p-3 sm:p-5 space-y-4 transition-colors shadow-xs ${
           isDark
             ? "bg-slate-900 border-slate-800 text-slate-100"
             : "bg-white border-gray-200 text-gray-800"
@@ -327,11 +327,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/admin/subjects/add/${sub.id}`}
-                          className={`px-2.5 py-1 text-xs border rounded-lg transition-colors font-medium active:scale-95 ${
-                            isDark
-                              ? "text-indigo-400 bg-indigo-950/40 border-indigo-900/60 hover:bg-indigo-900/50"
-                              : "text-indigo-600 bg-indigo-50/50 border-indigo-200/60 hover:bg-indigo-100"
-                          }`}
+                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-700 shadow-xs"
                           title="Edit"
                         >
                           Edit
@@ -339,11 +335,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                         <button
                           type="button"
                           onClick={() => handleDelete(sub.id)}
-                          className={`px-2.5 py-1 text-xs border rounded-lg transition-colors font-medium active:scale-95 ${
-                            isDark
-                              ? "text-red-400 bg-red-950/40 border-red-900/60 hover:bg-red-900/50"
-                              : "text-red-600 bg-red-50/50 border-red-200/60 hover:bg-red-100"
-                          }`}
+                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
                           title="Delete"
                         >
                           Delete

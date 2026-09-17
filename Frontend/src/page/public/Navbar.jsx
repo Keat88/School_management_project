@@ -234,7 +234,7 @@ export default function Navbar() {
               className="p-2 rounded-full bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition border border-gray-200 dark:border-slate-800 focus:outline-none"
             >
               {isDarkMode ? (
-                <FaSun className="w-4 h-4 text-amber-400" />
+                <FaSun className="w-4 h-4 text-gray-400" />
               ) : (
                 <FaMoon className="w-4 h-4 text-slate-600" />
               )}

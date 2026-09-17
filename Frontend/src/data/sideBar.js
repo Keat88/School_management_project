@@ -42,21 +42,21 @@ export const sidebarTeacherMenu = [
   },
   {
     id: 3,
-    title: "Setting",
-    path: "/teacher/setting",
-    icon: LuSettings,
-    roles: ["admin", "teacher"],
-  },
-  {
-    id: 4,
     title: "Reports",
     path: "/teacher/report",
     icon: LuFileSpreadsheet,
     roles: ["admin", "teacher"],
   },
+  {
+    id: 4,
+    title: "Setting",
+    path: "/teacher/setting",
+    icon: LuSettings,
+    roles: ["admin", "teacher"],
+  },
 ];
 
-const sidebarMenu = [
+export const sidebarMenu = [
   {
     id: 1,
     title: "Dashboard",
@@ -70,6 +70,7 @@ const sidebarMenu = [
     icon: LuSchool,
     child: [
       {
+        id: 1,
         title: "Teachers",
         path: "/admin/teachers",
         icon: LuGraduationCap,
@@ -213,29 +214,27 @@ const sidebarMenu = [
         icon: FaBookOpenFa6,
       },
     ],
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
-    id: 12,
+    id: 11,
     title: "Event",
     path: "/admin/notices",
     icon: FaRegStickyNote,
     roles: ["admin"],
   },
   {
-    id: 13,
+    id: 12,
     title: "Reports",
     path: "/admin/reports",
     icon: LuFileSpreadsheet,
     roles: ["admin"],
   },
   {
-    id: 14,
+    id: 13,
     title: "Settings",
     path: "/admin/settings",
     icon: LuSettings,
     roles: ["admin"],
   },
 ];
-
-export default sidebarMenu;

@@ -74,7 +74,7 @@ function TeacherTable({ teachers = [], onEditId, onDeleteId }) {
                     <button
                       onClick={() => onEditId(teacher.id)}
                       type="button"
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 dark:hover:text-white border border-gray-200 dark:border-slate-700"
+                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-700 shadow-2xs"
                     >
                       Edit
                     </button>
@@ -82,7 +82,7 @@ function TeacherTable({ teachers = [], onEditId, onDeleteId }) {
                     <button
                       type="button"
                       onClick={() => onDeleteId(teacher.id)}
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-100 dark:bg-red-500/10 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/20 border border-red-200/60 dark:border-red-500/20"
+                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
                     >
                       Delete
                     </button>

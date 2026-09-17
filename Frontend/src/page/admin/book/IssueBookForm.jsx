@@ -97,14 +97,6 @@ export default function IssueBookForm() {
         <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-slate-100">
           Issue Book
         </h2>
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center gap-1.5"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </button>
       </div>
 
       {feedback &&
@@ -132,7 +124,7 @@ export default function IssueBookForm() {
             value={formData.book_id}
             onChange={handleChange}
             required
-            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
+            className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
               errors.book_id
                 ? "border-rose-500 focus:ring-rose-500/40 dark:border-rose-500"
                 : "border-gray-300 focus:ring-indigo-500/45 focus:border-indigo-500 dark:border-slate-700/80"
@@ -161,7 +153,7 @@ export default function IssueBookForm() {
             value={formData.student_id}
             onChange={handleChange}
             required
-            className={`w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
+            className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
               errors.student_id
                 ? "border-rose-500 focus:ring-rose-500/40 dark:border-rose-500"
                 : "border-gray-300 focus:ring-indigo-500/45 focus:border-indigo-500 dark:border-slate-700/80"
@@ -194,7 +186,7 @@ export default function IssueBookForm() {
               value={formData.issue_date}
               onChange={handleChange}
               required
-              className={`w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
+              className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
                 errors.issue_date
                   ? "border-rose-500 focus:ring-rose-500/40 dark:border-rose-500"
                   : "border-gray-300 focus:ring-indigo-500/45 focus:border-indigo-500 dark:border-slate-700/80"
@@ -218,7 +210,7 @@ export default function IssueBookForm() {
               onChange={handleChange}
               required
               min={formData.issue_date}
-              className={`w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
+              className={`w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 bg-gray-50/50 text-gray-900 dark:bg-slate-800/80 dark:text-slate-100 ${
                 errors.due_date
                   ? "border-rose-500 focus:ring-rose-500/40 dark:border-rose-500"
                   : "border-gray-300 focus:ring-indigo-500/45 focus:border-indigo-500 dark:border-slate-700/80"
@@ -236,14 +228,14 @@ export default function IssueBookForm() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
+            className="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
+            className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-blue-500 hover:bg-blue-700 shadow-blue-100 dark:hover:bg-blue-500 dark:shadow-blue-950/50"
           >
             {loading ? "Issuing..." : "Issue Book"}
           </button>

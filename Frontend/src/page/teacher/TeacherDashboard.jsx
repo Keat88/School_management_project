@@ -10,8 +10,10 @@ import {
   UserCheck,
 } from "lucide-react";
 import { api } from "../../data/api";
+import { useNavigate } from "react-router-dom";
 
-export default function TeacherDashboard({ onOpenAttendance }) {
+export default function TeacherDashboard() {
+  const navigate = useNavigate();
   // 1. កំណត់ State ដំបូង (Initial State)
   const [stats, setStats] = useState({
     totalClasses: 0,
@@ -53,7 +55,7 @@ export default function TeacherDashboard({ onOpenAttendance }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100 p-6 space-y-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100  space-y-6">
       {/* Welcome Banner */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -66,7 +68,7 @@ export default function TeacherDashboard({ onOpenAttendance }) {
           </p>
         </div>
         <button
-          onClick={onOpenAttendance}
+          onClick={() => navigate(`/teacher/attendance`)}
           className="bg-white text-blue-700 hover:bg-blue-50 px-4 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition-all flex items-center gap-2 cursor-pointer"
         >
           <UserCheck size={16} />
@@ -179,7 +181,7 @@ export default function TeacherDashboard({ onOpenAttendance }) {
                     </p>
                   </div>
                   <button
-                    onClick={onOpenAttendance}
+                    onClick={() => navigate(`/teacher/attendance/${item.id}`)}
                     className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <span>Attendance</span>
