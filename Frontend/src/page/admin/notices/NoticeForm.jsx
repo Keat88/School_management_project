@@ -180,11 +180,11 @@ export default function NoticeForm({ notice: propNotice = null }) {
   return (
     <div className="w-full lg:min-w-160 mx-auto  transition-colors">
       {loading && !currentNotice ? (
-        <div className="flex flex-col items-center justify-center gap-2 py-16">
-          <div className="w-6 h-6 border-2 border-indigo-500 dark:border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-sm text-gray-500 dark:text-slate-400">
-            Loading {id ? "update..." : "create..."}
-          </span>
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+            <span className="text-sm font-medium">Loading data...</span>
+          </div>
         </div>
       ) : (
         <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg p-4 sm:p-6 lg:p-8 space-y-6 shadow-xs transition-colors">

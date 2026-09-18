@@ -49,7 +49,10 @@ export default function TeacherDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
-        Loading dashboard summary...
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
+        </div>
       </div>
     );
   }

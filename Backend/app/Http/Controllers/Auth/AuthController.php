@@ -52,6 +52,7 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($credentials)) {
+            
             ActivityLog::create([
                 'action' => 'Failed login attempt with email: ' . $request->email,
                 'ip_address' => $request->ip(),

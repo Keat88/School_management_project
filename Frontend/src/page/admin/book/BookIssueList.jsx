@@ -105,7 +105,7 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
 
     if (status === "returned") {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1  text-xs font-semibold   text-emerald-700   dark:text-emerald-300 ">
           <CheckCircle
             size={12}
             className="text-emerald-500 dark:text-emerald-400"
@@ -117,7 +117,7 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
 
     if (isOverdue) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1  text-xs font-semibold border  text-amber-700">
           <AlertCircle
             size={12}
             className="text-amber-500 dark:text-amber-400"
@@ -141,7 +141,6 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800 lg:min-w-160">
           <div>
             <h2 className="text-lg font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-white">
-              
               Student Book Issue Management
             </h2>
             <p className="text-xs sm:text-sm mt-1.5 text-slate-500 dark:text-slate-400">
@@ -195,10 +194,10 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
                       colSpan={7}
                       className="px-4 py-16 text-center text-slate-500 dark:text-slate-400"
                     >
-                      <div className="flex flex-col items-center justify-center gap-3">
-                        <div className="w-7 h-7 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                          Loading issued books...
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+                        <span className="text-sm font-medium">
+                          Loading data...
                         </span>
                       </div>
                     </td>
@@ -252,11 +251,11 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
                               type="button"
                               onClick={() => handleReturn(item.id)}
                               title="Mark as Returned"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 border rounded-lg transition-all text-xs font-semibold cursor-pointer active:scale-95 border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:border-emerald-800/60 dark:text-emerald-300 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 border rounded-lg transition-all text-xs font-semibold cursor-pointer active:scale-95 border-slate-200 text-slate-700 bg-slate-50 hover:bg-slate-100 dark:border-slate-800/60 dark:text-slate-300 dark:bg-slate-950/40 dark:hover:bg-slate-900/50"
                             >
                               <CheckCircle
                                 size={14}
-                                className="text-emerald-500 dark:text-emerald-400"
+                                className="text-slate-500 dark:text-slate-400"
                               />
                               Return
                             </button>
@@ -265,12 +264,9 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
                             type="button"
                             onClick={() => handleDelete(item.id)}
                             title="Delete Record"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 border rounded-lg transition-all text-xs font-semibold cursor-pointer active:scale-95 border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 dark:border-rose-800/60 dark:text-rose-300 dark:bg-rose-950/40 dark:hover:bg-rose-900/50"
+                            className="inline-flex text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-500 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
                           >
-                            <Trash2
-                              size={14}
-                              className="text-rose-500 dark:text-rose-400"
-                            />
+                            <Trash2 size={14} className="" />
                             Delete
                           </button>
                         </div>

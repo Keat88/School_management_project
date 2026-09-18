@@ -17,7 +17,7 @@ export default function WelcomeBanner({ name }) {
         {/* Welcome Text & Date */}
         <div className="space-y-1 min-w-0">
           <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tight text-white truncate">
-            Welcome back, {displayName} 👋
+            Welcome back, {displayName} 
           </h2>
           <p className="text-xs sm:text-sm font-medium text-blue-100 dark:text-slate-400">
             {today}

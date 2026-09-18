@@ -6,6 +6,7 @@ import StudentTable from "../../../components/admin/Studenttable";
 import { studentData } from "../../../data/StudentsApi";
 import { classRoomApi } from "../../../data/classrooms";
 import Pagination from "../../../hooks/Pagination";
+import { AlertTriangle, CheckCircle2, AlertCircle, X } from "lucide-react";
 
 function StudentList({ isDark = false }) {
   const navigate = useNavigate();
@@ -24,6 +25,11 @@ function StudentList({ isDark = false }) {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
+
+  // Delete Modal & Feedback States
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
+  const [feedback, setFeedback] = useState(null);
 
   // 1. Debounce Search Value (300ms)
   useEffect(() => {
@@ -135,22 +141,49 @@ function StudentList({ isDark = false }) {
     navigate(`/admin/students/add/${id}`);
   };
 
-  const handleDelete = async (id) => {
+  // Delete Action Triggers Modal
+  const handleDeleteClick = (id) => {
+    setStudentToDelete(id);
+    setIsDeleteModalOpen(true);
+    setFeedback(null);
+  };
+
+  // Confirm Delete
+  const handleConfirmDelete = async () => {
+    if (!studentToDelete) return;
     try {
-      await studentData.delete(id);
+      await studentData.delete(studentToDelete);
+      setFeedback({
+        type: "success",
+        text: "Student deleted successfully!",
+      });
+      setIsDeleteModalOpen(false);
+      setStudentToDelete(null);
       fetchStudent();
     } catch (error) {
       console.error("Error deleting student:", error);
+      setFeedback({
+        type: "error",
+        text: error.response?.data?.message || "Failed to delete student.",
+      });
+      setIsDeleteModalOpen(false);
+      setStudentToDelete(null);
     }
   };
 
+  // Cancel Delete
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setStudentToDelete(null);
+  };
+
   return (
-    <div className="space-y-6 w-full lg:min-w-160 mx-auto ">
+    <div className="space-y-6 w-full lg:min-w-160 mx-auto">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2
-            className={`text-lg  font-bold tracking-tight ${isDark ? "text-slate-100" : "text-gray-800"}`}
+            className={`text-lg font-bold dark:text-white tracking-tight ${isDark ? "text-white" : "text-gray-800"}`}
           >
             Students
           </h2>
@@ -160,12 +193,36 @@ function StudentList({ isDark = false }) {
         </div>
         <div className="self-start sm:self-auto">
           <span
-            className={`inline-flex items-center text-xs font-semibold px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20`}
+            className={`inline-flex items-center text-xs font-semibold px-3 py-1  dark:bg-blue-500/10 text-gray-500 dark:text-gray-400 `}
           >
             {totalItems} students found
           </span>
         </div>
       </div>
+
+      {/* Feedback Banner */}
+      {feedback && (
+        <div
+          className={`flex items-center gap-3 p-4 rounded-xl text-sm font-semibold border transition-all animate-in fade-in duration-200 ${
+            feedback.type === "success"
+              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/20"
+              : "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/20"
+          }`}
+        >
+          {feedback.type === "success" ? (
+            <CheckCircle2
+              size={18}
+              className="shrink-0 text-emerald-600 dark:text-emerald-400"
+            />
+          ) : (
+            <AlertCircle
+              size={18}
+              className="shrink-0 text-rose-600 dark:text-rose-400"
+            />
+          )}
+          <span>{feedback.text}</span>
+        </div>
+      )}
 
       {/* Filters Component */}
       <StudentFilters
@@ -196,7 +253,7 @@ function StudentList({ isDark = false }) {
       ) : (
         <StudentTable
           students={students}
-          onDelete={handleDelete}
+          onDelete={handleDeleteClick}
           onEdit={handleEdit}
           onView={handleView}
           loading={loading}
@@ -213,6 +270,50 @@ function StudentList({ isDark = false }) {
         onPageChange={handlePageChange}
         isDark={isDark}
       />
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-150">
+          <div
+            className={`rounded-lg max-w-sm w-full p-6 shadow-2xl space-y-4 text-center my-auto border transition-all ${
+              isDark
+                ? "bg-slate-900 border-slate-800 text-slate-100"
+                : "bg-white border-slate-200 text-slate-900"
+            }`}
+          >
+            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-2">
+              <AlertTriangle size={24} />
+            </div>
+            <h3 className="text-lg font-bold">Delete Student</h3>
+            <p
+              className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}
+            >
+              Are you sure you want to delete this student record? This action
+              cannot be undone.
+            </p>
+            <div className="flex justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleCancelDelete}
+                className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer border ${
+                  isDark
+                    ? "bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200"
+                }`}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-sm shadow-red-500/20 active:scale-95"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -75,7 +75,7 @@ export default function Navbar({ title, notificationCount = 0 }) {
         title="Completing Logout..."
         subtitle="Finalizing your request"
       />
-      <header className="max-md:hidden  w-full bg-white/50 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 sticky top-0 z-20 transition-colors">
+      <header className="max-md:hidden  w-full bg-white dark:bg-slate-900 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 sticky top-0 z-50 transition-colors">
         <div className="flex items-center justify-between px-6 md:px-8 h-18">
           <div className="flex items-center gap-3">
             <div>

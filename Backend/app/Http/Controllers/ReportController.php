@@ -14,17 +14,26 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-        $startDate = $request->get('start_date', '2026-01-01'); // Expanded start date
+        $startDate = $request->get('start_date', '2026-01-01');
         $endDate = $request->get('end_date', now()->toDateString());
-        // 1. Stats Calculation
+
         $totalStudents = Students::count();
-        $attendanceRecords = Attendance::whereBetween('date', [$startDate, $endDate])->get();
+
+        // Fetch attendance records safely using date bounds
+        $attendanceRecords = Attendance::whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->get();
+
         $totalAttendanceCount = $attendanceRecords->count();
+
+        // Unified status check (using 'present' consistently)
         $presentCount = $attendanceRecords->where('status', 'present')->count();
         $avgAttendanceRate = $totalAttendanceCount > 0 ? round(($presentCount / $totalAttendanceCount) * 100) : 0;
-        // Change 'score' to 'marks_obtained'
-        $averageScore = Resulte::whereBetween('created_at', [$startDate, $endDate])->avg('marks_obtained');
-        // $avgPerformance = Resulte::whereBetween('created_at', [$startDate, $endDate])->avg('score') ?? 78;
+
+        // Fixed datetime cutoff for average score
+        $averageScore = Resulte::whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
+            ->avg('marks_obtained');
 
         $feesCollected = Payment::where('status', 'paid')
             ->whereBetween('due_date', [$startDate, $endDate])
@@ -35,32 +44,35 @@ class ReportController extends Controller
                 'label' => 'Total Students',
                 'value' => number_format($totalStudents),
                 'trend' => '+3.2%',
+                'icon'  => 'users', // Icon identifier
             ],
             [
                 'label' => 'Avg. Attendance',
                 'value' => $avgAttendanceRate . '%',
                 'trend' => '+1.1%',
+                'icon'  => 'attendance',
             ],
             [
                 'label' => 'Avg. Performance',
-                // 'value' => round($avgPerformance) . '%',
-                'value' => round($averageScore) . '%',
+                'value' => round($averageScore ?? 0) . '%',
                 'trend' => '+2.4%',
+                'icon'  => 'performance',
             ],
             [
                 'label' => 'Fees Collected',
                 'value' => '$' . number_format($feesCollected),
                 'trend' => '+8.4%',
+                'icon'  => 'fees',
             ],
         ];
-
-        // 2. Attendance Trend
+        // Unified attendance trend query matching 'present' status
         $attendanceTrend = Attendance::select(
             'date',
             DB::raw('sum(case when status = "present" then 1 else 0 end) as present_count'),
             DB::raw('count(*) as total_count')
         )
-            ->whereBetween('date', [$startDate, $endDate])
+            ->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
             ->groupBy('date')
             ->orderBy('date')
             ->get()
@@ -73,19 +85,20 @@ class ReportController extends Controller
             });
 
         // 3. Performance by Subject
-        // 3. Performance by Subject
         $performanceBySubject = Resulte::join('exams', 'resultes.exam_id', '=', 'exams.id')
             ->leftJoin('subjects', 'exams.subject_id', '=', 'subjects.id')
-            ->whereBetween('resultes.created_at', [$startDate, $endDate])
+            ->whereDate('resultes.created_at', '>=', $startDate)
+            ->whereDate('resultes.created_at', '<=', $endDate)
             ->select('subjects.id', 'subjects.subject_name as subject_name', DB::raw('avg(resultes.marks_obtained) as avg_score'))
             ->groupBy('subjects.id', 'subjects.subject_name')
             ->get()
             ->map(function ($item) {
                 return [
                     'subject' => $item->subject_name ?? 'General',
-                    'average' => round($item->avg_score),
+                    'average' => round($item->avg_score ?? 0),
                 ];
             });
+
         // 4. Fee Collection by Month
         $feeCollectionByMonth = Payment::select(
             DB::raw("DATE_FORMAT(due_date, '%b') as month_name"),
@@ -107,7 +120,8 @@ class ReportController extends Controller
 
         // 5. Activity Logs
         $activityLogs = ActivityLog::with('user')
-            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
             ->latest()
             ->take(10)
             ->get()
@@ -120,7 +134,7 @@ class ReportController extends Controller
                 ];
             });
 
-        return $this->success('reports recived succesffully!', [
+        return $this->success('Reports received successfully!', [
             'stats' => $stats,
             'attendanceTrend' => $attendanceTrend,
             'performanceBySubject' => $performanceBySubject,
@@ -128,7 +142,21 @@ class ReportController extends Controller
             'activityLogs' => $activityLogs,
         ], 200);
     }
-    public function exportPdf(Request $request) {}
+
+    public function exportPdf(Request $request)
+    {
+        $startDate = $request->get('start_date', '2026-01-01');
+        $endDate = $request->get('end_date', now()->toDateString());
+        $filename = "system-report-{$startDate}-to-{$endDate}.pdf";
+
+        $pdfContent = "%PDF-1.4 Report from {$startDate} to {$endDate}";
+
+        return response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
     public function exportExcel(Request $request)
     {
         $startDate = $request->get('start_date', '2026-01-01');
@@ -145,11 +173,8 @@ class ReportController extends Controller
 
         $callback = function () use ($startDate, $endDate) {
             $file = fopen('php://output', 'w');
-
-            // កំណត់ Header របស់តារាង CSV
             fputcsv($file, ['Payment ID', 'Due Date', 'Status', 'Amount']);
 
-            // ទាញយកទិន្នន័យពិតពី Database មកសរសេរចូល CSV បន្តបន្ទាប់គ្នា
             Payment::whereBetween('due_date', [$startDate, $endDate])
                 ->chunk(100, function ($payments) use ($file) {
                     foreach ($payments as $payment) {

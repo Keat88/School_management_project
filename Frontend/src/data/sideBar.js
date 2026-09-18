@@ -207,12 +207,12 @@ export const sidebarMenu = [
         path: "/admin/course",
         icon: FaBookOpenFa6,
       },
-      {
-        id: 3,
-        title: "Contact",
-        path: "/admin/course/contact",
-        icon: FaBookOpenFa6,
-      },
+      // {
+      //   id: 3,
+      //   title: "Contact",
+      //   path: "/admin/course/contact",
+      //   icon: FaBookOpenFa6,
+      // },
     ],
     roles: ["admin"],
   },

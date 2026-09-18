@@ -53,8 +53,7 @@ class AttendanceController extends Controller
         }
 
         // 7. ទាញយកទិន្នន័យចុងក្រោយ
-        $attendances = $query->latest()->get();
-
+        $attendances = $query->paginate(30);
         return AttendanceResource::collection($attendances)->additional([
             'message' => 'Attendance records retrieved successfully!'
         ]);

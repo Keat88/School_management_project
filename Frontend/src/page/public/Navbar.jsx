@@ -64,7 +64,7 @@ export default function Navbar() {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Courses", path: "/courses" },
-    { name: "Dormitory", path: "/dormitory" },
+    // { name: "Dormitory", path: "/dormitory" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
   ];
@@ -105,7 +105,7 @@ export default function Navbar() {
             </div>
             <div className="truncate">
               <span className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-none block truncate">
-                {schoolName.schoolName}
+                {schoolName.schoolName || "Etec Technology"}
               </span>
               <p className="text-[10px] text-gray-400 dark:text-slate-400 mt-0.5 hidden xs:block">
                 Learn. Grow. Succeed.

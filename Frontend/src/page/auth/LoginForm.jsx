@@ -16,14 +16,14 @@ import { PiStudentFill } from "react-icons/pi";
 function BrandPanel() {
   const { SchoolName } = useAuth();
   return (
-    <div className="relative hidden lg:flex lg:w-[46%] xl:w-[48%] flex-col justify-between overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 px-8 lg:px-12 py-10 text-white shrink-0">
+    <div className="relative hidden lg:flex lg:w-[46%] xl:w-[48%] flex-col justify-between overflow-hidden bg-gradient-to-br from-blue-700 via-indigo-800 to-slate-900 dark:from-slate-950 dark:via-indigo-950 dark:to-slate-900 px-8 lg:px-12 py-10 text-white shrink-0 transition-colors">
       <div
         aria-hidden
-        className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-400/30 blur-3xl"
+        className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-400/30 dark:bg-cyan-500/20 blur-3xl"
       />
       <div
         aria-hidden
-        className="absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-blue-500/30 blur-3xl"
+        className="absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-blue-500/30 dark:bg-blue-600/20 blur-3xl"
       />
       <div
         aria-hidden
@@ -31,7 +31,7 @@ function BrandPanel() {
       />
 
       <div className="relative flex items-center gap-3">
-        <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
+        <div className="bg-blue-600 dark:bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
           <PiStudentFill />
         </div>
         <div>
@@ -47,17 +47,18 @@ function BrandPanel() {
       <div className="relative my-auto py-8">
         <h1 className="text-3xl xl:text-4xl font-bold leading-tight">
           Run every part of your school{" "}
-          <span className="text-cyan-300">from one dashboard.</span>
+          <span className="text-cyan-300 dark:text-cyan-400">from one life.</span>
         </h1>
         <p className="mt-4 max-w-md text-sm leading-relaxed text-blue-100/85">
-          Students, teachers, classes, attendance, payments and reports —
-          everything you need for smarter education management.
+          {/* Students, teachers, classes, attendance, payments and reports —
+          everything you need for smarter education management. */}
+          Improve skill with us
         </p>
 
         <div className="mt-8 xl:mt-10 space-y-4">
           <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
-              <FaUsers className="text-cyan-300" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 dark:bg-white/5 ring-1 ring-white/20 dark:ring-white/10">
+              <FaUsers className="text-cyan-300 dark:text-cyan-400" />
             </div>
             <div>
               <p className="text-sm font-semibold">Student & Teacher Records</p>
@@ -67,8 +68,8 @@ function BrandPanel() {
             </div>
           </div>
           <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
-              <FaClipboardCheck className="text-cyan-300" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 dark:bg-white/5 ring-1 ring-white/20 dark:ring-white/10">
+              <FaClipboardCheck className="text-cyan-300 dark:text-cyan-400" />
             </div>
             <div>
               <p className="text-sm font-semibold">Attendance & Scores</p>
@@ -78,8 +79,8 @@ function BrandPanel() {
             </div>
           </div>
           <div className="flex items-center gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20">
-              <FaChartLine className="text-cyan-300" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 dark:bg-white/5 ring-1 ring-white/20 dark:ring-white/10">
+              <FaChartLine className="text-cyan-300 dark:text-cyan-400" />
             </div>
             <div>
               <p className="text-sm font-semibold">Payments & Reports</p>
@@ -91,11 +92,11 @@ function BrandPanel() {
         </div>
       </div>
 
-      <div className="relative rounded-2xl bg-white/10 p-5 ring-1 ring-white/20 backdrop-blur">
+      <div className="relative rounded-2xl bg-white/10 dark:bg-white/5 p-5 ring-1 ring-white/20 dark:ring-white/10 backdrop-blur">
         <p className="text-sm italic leading-relaxed text-blue-50/90">
           “Empowering education through smarter management.”
         </p>
-        <p className="mt-2 text-xs font-semibold tracking-wide text-cyan-300">
+        <p className="mt-2 text-xs font-semibold tracking-wide text-cyan-300 dark:text-cyan-400">
           {SchoolName?.schoolName || "School Management"}
         </p>
       </div>
@@ -117,6 +118,17 @@ export default function LoginForm() {
   });
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  // Rate limit cooldown countdown timer
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setInterval(() => {
+        setCooldown((prev) => (prev > 1 ? prev - 1 : 0));
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [cooldown]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -137,6 +149,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (cooldown > 0) return;
     setLoading(true);
     setFeedback(null);
 
@@ -160,13 +173,21 @@ export default function LoginForm() {
       }
     } catch (error) {
       console.log("Login error:", error);
-      setFeedback({
-        type: "error",
-        text:
-          error.response?.data?.message ||
-          error.message ||
-          "Invalid email or password.",
-      });
+      if (error.response?.status === 429) {
+        setCooldown(30); // 20 seconds cooldown lockout
+        setFeedback({
+          type: "error",
+          text: "Too many login attempts. Please wait 20 seconds before trying again.",
+        });
+      } else {
+        setFeedback({
+          type: "error",
+          text:
+            error.response?.data?.message ||
+            error.message ||
+            "Invalid email or password.",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -174,6 +195,7 @@ export default function LoginForm() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (cooldown > 0) return;
     setLoading(true);
     setFeedback(null);
 
@@ -203,15 +225,24 @@ export default function LoginForm() {
       setTimeout(() => setMode("login"), 1000);
     } catch (error) {
       console.log("Register error:", error);
-      setFeedback({
-        type: "error",
-        text:
-          error.response?.data?.message || "Registration failed. Try again.",
-      });
+      if (error.response?.status === 429) {
+        setCooldown(20);
+        setFeedback({
+          type: "error",
+          text: "Too many requests. Please wait 20 seconds before trying again.",
+        });
+      } else {
+        setFeedback({
+          type: "error",
+          text:
+            error.response?.data?.message || "Registration failed. Try again.",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
+
   const { SchoolName } = useAuth();
   return (
     <>
@@ -224,7 +255,7 @@ export default function LoginForm() {
             : "Setting up your profile"
         }
       />
-      <div className="flex min-h-screen w-full bg-slate-50 overflow-x-hidden">
+      <div className="flex min-h-screen w-full bg-slate-50 dark:bg-slate-950 overflow-x-hidden transition-colors">
         <BrandPanel />
 
         <div className="flex flex-1 flex-col items-center justify-center px-4 sm:px-6 md:px-10 py-8 sm:py-12">
@@ -233,19 +264,19 @@ export default function LoginForm() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white text-lg font-bold shadow-md">
                 SM
               </div>
-              <span className="text-lg font-bold tracking-tight text-slate-900">
+              <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
                 {SchoolName?.schoolName || "School Management"}
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-200/80 p-1 text-sm font-semibold">
+            <div className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-200/80 dark:bg-slate-900 p-1 text-sm font-semibold border border-slate-300/50 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => switchMode("login")}
                 className={`rounded-xl py-2.5 transition ${
                   mode === "login"
-                    ? "bg-white text-blue-700 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white dark:bg-slate-800 text-blue-700 dark:text-cyan-400 shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
               >
                 Sign In
@@ -255,8 +286,8 @@ export default function LoginForm() {
                 onClick={() => switchMode("register")}
                 className={`rounded-xl py-2.5 transition ${
                   mode === "register"
-                    ? "bg-white text-blue-700 shadow-sm"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white dark:bg-slate-800 text-blue-700 dark:text-cyan-400 shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 }`}
               >
                 Create Account
@@ -267,8 +298,8 @@ export default function LoginForm() {
               <div
                 className={`mt-5 p-4 rounded-xl text-sm font-medium ${
                   feedback.type === "success"
-                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                    : "bg-rose-50 text-rose-700 border border-rose-200"
+                    ? "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80"
+                    : "bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80"
                 }`}
               >
                 {feedback.text}
@@ -281,16 +312,16 @@ export default function LoginForm() {
                 className="mt-6 sm:mt-8 space-y-4 sm:space-y-5"
               >
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                  <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                     Welcome back
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     Sign in to access your administrative dashboard
                   </p>
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Email Address
                   </label>
                   <input
@@ -300,18 +331,18 @@ export default function LoginForm() {
                     onChange={handleChange}
                     required
                     placeholder="admin@school.edu"
-                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-transparent transition"
                   />
                 </div>
 
                 <div>
                   <div className="mb-1.5 flex items-center justify-between">
-                    <label className="block text-sm font-semibold text-slate-700">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Password
                     </label>
                     <Link
                       to="/forgot-password"
-                      className="text-xs font-medium text-blue-600 hover:text-blue-500 transition"
+                      className="text-xs font-medium text-blue-600 dark:text-cyan-400 hover:text-blue-500 dark:hover:text-cyan-300 transition"
                     >
                       Forgot password?
                     </Link>
@@ -323,24 +354,28 @@ export default function LoginForm() {
                     onChange={handleChange}
                     required
                     placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-transparent transition"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full py-2.5 px-4 bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
+                  disabled={loading || cooldown > 0}
+                  className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-950 transition-colors disabled:opacity-50 cursor-pointer"
                 >
-                  {loading ? "Signing in..." : "Sign in"}
+                  {cooldown > 0
+                    ? `Please wait (${cooldown}s)`
+                    : loading
+                      ? "Signing in..."
+                      : "Sign in"}
                 </button>
 
                 <div className="relative my-2">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200" />
+                    <div className="w-full border-t border-slate-200 dark:border-slate-800" />
                   </div>
                   <div className="relative flex justify-center text-xs">
-                    <span className="bg-slate-50 px-3 text-slate-400">
+                    <span className="bg-slate-50 dark:bg-slate-950 px-3 text-slate-400 dark:text-slate-500">
                       or continue with
                     </span>
                   </div>
@@ -353,7 +388,7 @@ export default function LoginForm() {
                       (window.location.href =
                         "http://localhost:8000/api/auth/google/redirect")
                     }
-                    className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition"
+                    className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-300 dark:border-slate-800 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                   >
                     <FaGoogle size={18} />
                     Google
@@ -364,7 +399,7 @@ export default function LoginForm() {
                       (window.location.href =
                         "http://localhost:8000/api/auth/github/redirect")
                     }
-                    className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 transition"
+                    className="flex justify-center items-center gap-x-2 py-2.5 px-4 border border-slate-300 dark:border-slate-800 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition cursor-pointer"
                   >
                     <FaGithub size={18} />
                     Github
@@ -377,16 +412,16 @@ export default function LoginForm() {
                 className="mt-6 sm:mt-8 space-y-4 sm:space-y-5"
               >
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+                  <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
                     Create your account
                   </h2>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     Join the school portal and start today
                   </p>
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Full Name
                   </label>
                   <input
@@ -396,12 +431,12 @@ export default function LoginForm() {
                     onChange={handleRegisterChange}
                     required
                     placeholder="Jane Doe"
-                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-transparent transition"
                   />
                 </div>
 
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                  <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Email Address
                   </label>
                   <input
@@ -411,13 +446,13 @@ export default function LoginForm() {
                     onChange={handleRegisterChange}
                     required
                     placeholder="you@school.edu"
-                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-transparent transition"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Password
                     </label>
                     <input
@@ -427,11 +462,11 @@ export default function LoginForm() {
                       onChange={handleRegisterChange}
                       required
                       placeholder="••••••••"
-                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-transparent transition"
                     />
                   </div>
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">
+                    <label className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Confirm
                     </label>
                     <input
@@ -441,25 +476,29 @@ export default function LoginForm() {
                       onChange={handleRegisterChange}
                       required
                       placeholder="••••••••"
-                      className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                      className="w-full px-3.5 py-2.5 border border-slate-300 dark:border-slate-800 rounded-lg text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500 focus:border-transparent transition"
                     />
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={loading}
-                  className="w-full mt-2 py-2.5 px-4 bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
+                  disabled={loading || cooldown > 0}
+                  className="w-full mt-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-slate-950 transition-colors disabled:opacity-50 cursor-pointer"
                 >
-                  {loading ? "Creating..." : "Create Account"}
+                  {cooldown > 0
+                    ? `Please wait (${cooldown}s)`
+                    : loading
+                      ? "Creating..."
+                      : "Create Account"}
                 </button>
 
-                <p className="text-center text-xs text-slate-500 pt-1">
+                <p className="text-center text-xs text-slate-500 dark:text-slate-400 pt-1">
                   Already have an account?{" "}
                   <button
                     type="button"
                     onClick={() => switchMode("login")}
-                    className="font-semibold text-blue-600 hover:text-blue-500"
+                    className="font-semibold text-blue-600 dark:text-cyan-400 hover:text-blue-500 dark:hover:text-cyan-300 cursor-pointer"
                   >
                     Sign in
                   </button>
@@ -467,11 +506,10 @@ export default function LoginForm() {
               </form>
             )}
 
-            {/* Fixed & Styled Back Home Link */}
             <div className="mt-6 text-center">
               <Link
                 to="/"
-                className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-blue-600 transition"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 transition"
               >
                 <FaArrowLeft size={12} />
                 Back to Home

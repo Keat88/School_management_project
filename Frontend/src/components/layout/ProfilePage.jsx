@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import LoadingModal from "../../hooks/LoadingModal";
+import { api } from "../../data/api";
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 px-3.5 py-2.5 text-sm md:text-base text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-2xs";
@@ -71,6 +72,7 @@ export default function ProfilePage() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState("saving"); 
   const [avatar, setAvatar] = useState(
     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=250&auto=format&fit=crop",
   );
@@ -122,13 +124,36 @@ export default function ProfilePage() {
     e.target.value = "";
   };
 
-  const handleSave = (e) => {
+  // Connected Save Handler with Laravel Backend API
+  const handleSave = async (e) => {
     e.preventDefault();
-    navigate(-1);
+    try {
+      setLoadingAction("saving");
+      setLoading(true);
+
+      // Send updated profile fields to Laravel API endpoint
+      await api.put("/teacher/profile", {
+        fullName: profile.name,
+        email: profile.email,
+        phone: profile.phone,
+        gender: profile.gender,
+        dateOfBirth: profile.dateOfBirth,
+        address: profile.address,
+      });
+
+      alert("Profile updated successfully!");
+      navigate(-1);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert(error.response?.data?.message || "Failed to update profile.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogOut = () => {
     try {
+      setLoadingAction("logout");
       setLoading(true);
       logout();
       navigate("/");
@@ -143,8 +168,16 @@ export default function ProfilePage() {
     <>
       <LoadingModal
         isOpen={loading}
-        title="Completing Logout..."
-        subtitle="Finalizing your request"
+        title={
+          loadingAction === "logout"
+            ? "Completing Logout..."
+            : "Saving Changes..."
+        }
+        subtitle={
+          loadingAction === "logout"
+            ? "Finalizing your request"
+            : "Updating your profile information"
+        }
       />
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex justify-center transition-colors">
@@ -166,17 +199,16 @@ export default function ProfilePage() {
                 preferences.
               </p>
             </div>
-        
           </div>
 
           {/* Banner and User Header Card */}
           <div className="rounded-lg bg-white dark:bg-slate-900  border border-slate-200/80 dark:border-slate-800 overflow-hidden transition-colors">
             <div className="h-32 sm:h-40 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/15 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute right-6 top-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-white text-xs font-medium">
+              {/* <div className="absolute right-6 top-6 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/30 backdrop-blur-md border border-white/10 text-white text-xs font-medium">
                 <Sparkles size={14} className="text-blue-400" />
                 <span>Verified Workspace User</span>
-              </div>
+              </div> */}
             </div>
             <div className="px-5 sm:px-8 pb-6 -mt-12 sm:-mt-14">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 text-center sm:text-left">
@@ -372,9 +404,10 @@ export default function ProfilePage() {
 
               <button
                 type="button"
+                onClick={() => navigate("/teacher/settings")}
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-800 px-4 py-3 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer active:scale-95 shadow-2xs"
               >
-                Change Password
+                Change Password / Security
               </button>
             </div>
           </div>

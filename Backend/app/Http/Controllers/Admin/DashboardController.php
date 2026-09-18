@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -16,7 +17,7 @@ use App\Models\Subjects;
 use App\Models\Teachers;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache; // កុំភ្លេចហدود Cache facade
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
@@ -37,7 +38,46 @@ class DashboardController extends Controller
 
     public function Adminsdashboard()
     {
-        // Cache ស្ថិតិ Dashboard រយៈពេល ៥ នាទី ដើម្បីកាត់បន្ថយការ Query ញឹកញាប់
+        $startOfDay = now()->startOfDay();
+        $endOfDay = now()->endOfDay();
+
+        // 1. Calculate Overall Attendance Rate for Today (Fixed to match 'P')
+        $totalRecordsToday = Attendance::whereBetween('date', [$startOfDay, $endOfDay])->count();
+        $presentRecordsToday = Attendance::whereBetween('date', [$startOfDay, $endOfDay])->where('status', 'P')->count();
+
+        $overallRate = $totalRecordsToday > 0
+            ? round(($presentRecordsToday / $totalRecordsToday) * 100)
+            : 0;
+
+        // 2. Calculate Attendance Rate By Class for Today
+        $classes = ClassRoom::with(['attendances' => function ($query) use ($startOfDay, $endOfDay) {
+            $query->whereBetween('date', [$startOfDay, $endOfDay]);
+        }])->get();
+
+        $byClass = $classes->map(function ($classRoom) {
+            $totalClassAttendance = $classRoom->attendances->count();
+            $presentClassAttendance = $classRoom->attendances->where('status', 'P')->count();
+
+            $rate = $totalClassAttendance > 0
+                ? round(($presentClassAttendance / $totalClassAttendance) * 100)
+                : 0;
+
+            return [
+                'className' => $classRoom->grade ?? 'Unnamed Class',
+                'rate' => $rate,
+            ];
+        });
+
+        // 3. Fetch real-time daily data for notices and activity logs
+        $notice = Notice::whereBetween('publish_date', [$startOfDay, $endOfDay])->get();
+
+        $activityLog = ActivityLog::with(['user:id,name,email'])
+            ->whereBetween('created_at', [$startOfDay, $endOfDay])
+            ->latest()
+            ->take(20)
+            ->get();
+
+        // 4. Cache heavy statistics/counts for 5 minutes (300 seconds)
         $stats = Cache::remember('admin_dashboard_stats', 300, function () {
             return [
                 'total_students' => Students::count(),
@@ -51,9 +91,15 @@ class DashboardController extends Controller
             ];
         });
 
+        // 5. Combine everything into a single, comprehensive JSON response
         return response()->json([
             'message' => 'Dashboard statistics retrieved successfully',
-            'data'    => $stats
+            'data'    => array_merge($stats, [
+                'overall_rate'  => $overallRate,
+                'by_class'      => $byClass,
+                'notices'       => $notice,
+                'activity_logs' => $activityLog
+            ])
         ], 200);
     }
 
@@ -94,14 +140,13 @@ class DashboardController extends Controller
         // ប្រើប្រាស់ Date Range (`whereBetween`) ជំនួញឱ្យ `whereDate` ដើម្បីឱ្យ Database អាចប្រើ Index បានលឿន
         $startOfDay = now()->startOfDay();
         $endOfDay = now()->endOfDay();
-
         $notice = Notice::whereBetween('publish_date', [$startOfDay, $endOfDay])->get();
 
         // កំណត់យកត្រឹម ២០ ចុងក្រោយ (take(20)) ដើម្បីការពារកុំឱ្យទាញយកទិន្នន័យច្រើនពេកបើ Activity Log ច្រើន
         $activityLog = ActivityLog::with(['user:id,name,email'])
             ->whereBetween('created_at', [$startOfDay, $endOfDay])
             ->latest()
-            ->take(20) 
+            ->take(20)
             ->get();
 
         return $this->success('recently have been received !', [

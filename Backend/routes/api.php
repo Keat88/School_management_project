@@ -287,11 +287,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/classes/{classId}/attendance', [ClassController::class, 'updateAttendance']);
         Route::put('/classes/{classId}/scores', [TeacherController::class, 'updateOrCreateScores']);
         Route::get('/classes/{id}/show', [TeacherController::class, 'teacherClassScore']);
-
         // ផ្សេងៗទៀត
         Route::get('/teacher/dashboard', [TeacherController::class, 'dashboardSummary']);
         Route::get('/teacher/setting', [TeacherController::class, 'teacherSetting']);
-        Route::get('/{teacherId}/notice', [TeacherController::class, 'getTeacherNotices'])->name('teacher.notice');
+        Route::get('/teacher-notices', [TeacherController::class, 'getTeacherNotices'])->name('teacher.notice');
+        Route::put('/teacher/profile', [SettingController::class, 'updateProfile']);
+        Route::put('/teacher/password', [SettingController::class, 'updatePassword']);
+        Route::post('/teacher/2fa/enable', [SettingController::class, 'enable2fa']);
+        Route::post('/teacher/2fa/disable', [SettingController::class, 'disable2fa']);
 
         // Attendance Tracking
         Route::prefix('attendance')->controller(AttendanceController::class)->group(function () {

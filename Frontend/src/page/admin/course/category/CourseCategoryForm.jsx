@@ -73,13 +73,14 @@ export default function CourseCategoryForm({ onSuccess }) {
   };
   if (loading) {
     return (
-      <div className="flex justify-center flex-col items-center min-h-screen bg-gray-50 dark:bg-gray-950">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
-        Loding...
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
+        </div>
       </div>
     );
   }
-
   return (
     <div className="space-y-6 lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors">
       <div className="flex items-center justify-between">

@@ -128,12 +128,12 @@ export default function CoursesTable() {
   const draftCount = courses.filter((c) => c.status === "draft").length;
 
   return (
-    <div className="space-y-6 lg:min-w-160 mx-auto p-6 sm:p-8 dark:bg-slate-900 rounded-lg border border-slate-200/80 dark:border-slate-800  text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="space-y-6 lg:min-w-160 mx-auto  text-slate-900 dark:text-slate-100 transition-colors">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800/80">
         <div>
-          <h2 className="text-xl font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-indigo-500/10 text-blue-600 dark:text-indigo-400 border border-blue-100 dark:border-indigo-500/20">
+          <h2 className="text-lg font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
+            <div className="p-2 rounded-lg bg-blue-50 dark:bg-indigo-500/10 text-blue-600 dark:text-indigo-400 border border-blue-100 dark:border-indigo-500/20">
               <BookOpen size={20} />
             </div>
             Courses Management
@@ -145,7 +145,7 @@ export default function CoursesTable() {
         </div>
         <Link
           to="/admin/course/add"
-          className="inline-flex items-center justify-center gap-2 bg-blue-600 dark:bg-indigo-600 text-sm hover:bg-blue-700 dark:hover:bg-indigo-500 text-white rounded-xl px-4 py-2.5 duration-200 font-medium shadow-lg shadow-indigo-500/20 cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 bg-blue-500 dark:bg-blue-500 text-sm hover:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg px-4 py-2.5 duration-200 font-medium  shadow-blue-500/20 cursor-pointer"
         >
           <Plus size={16} /> Add New Course
         </Link>

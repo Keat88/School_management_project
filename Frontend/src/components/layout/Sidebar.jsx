@@ -74,7 +74,7 @@ function Sidebar() {
                 <PiStudentFill />
               </div>
               <span className="text-blue-600 dark:text-blue-400">
-                {SchoolName?.schoolName || "School Management"}
+                {SchoolName?.schoolName || "Etec Technology"}
               </span>
             </div>
           )}
@@ -132,7 +132,7 @@ function Sidebar() {
                   <PiStudentFill />
                 </div>
                 <span className="text-blue-600 max-md:text-sm dark:text-blue-400">
-                  {SchoolName?.schoolName || "School Management"}
+                  {SchoolName?.schoolName || "Etec Technology"}
                 </span>
               </div>
             )}

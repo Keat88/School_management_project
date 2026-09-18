@@ -104,9 +104,7 @@ export default function UserProfile() {
           <div className="min-w-0 flex-1">
             <h2 className="text-xl font-bold truncate">{user?.name || "User Name"}</h2>
             <p className="text-blue-100 text-sm mt-0.5 truncate">{user?.email || "user@example.com"}</p>
-            <span className="inline-block mt-3 px-3 py-1 bg-white/20 backdrop-blur-sm text-xs font-semibold rounded-full uppercase tracking-wider">
-              Role: {user?.role || "Student"}
-            </span>
+            
           </div>
         </div>
 
@@ -151,7 +149,6 @@ export default function UserProfile() {
           </div>
         )}
 
-        {/* Tab Content: General Information */}
         {activeTab === "general" && (
           <form onSubmit={handleUpdateProfile} className="p-6 sm:p-8 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

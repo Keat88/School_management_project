@@ -13,12 +13,11 @@ import { useAuth } from "../../../context/AuthContext";
 import { AdminDashboardApi } from "../../../data/Dashboard";
 import WelcomeBanner from "../../../components/admin/WelcomeBanner";
 import StatsGrid from "../../../components/admin/StatsGrid";
-import FeeOverview from "../../../components/admin/FeeOverview";
 import AttendanceOverview from "../../../components/admin/AttendanceOverview";
 import RecentActivity from "../../../components/admin/RecentActivity";
 import RecentNotices from "../../../components/admin/RecentNotices";
-import { api } from "../../../data/api";
 import ChartDashbaord from "../../../components/admin/ChartDashbaord";
+
 const STAT_SCHEMA = [
   {
     key: "total_students",
@@ -39,11 +38,11 @@ const STAT_SCHEMA = [
     accent: "purple",
   },
   {
-    key: "total_attendance",
+    key: "overall_rate", // Updated to use today's percentage rate from backend
     label: "Attendance Rate",
     icon: CalendarCheck,
     accent: "green",
-    format: (v) => `${v}%`,
+    format: (v) => `${v ?? 0}%`,
   },
   {
     key: "total_books",
@@ -59,40 +58,39 @@ const STAT_SCHEMA = [
   },
   {
     key: "total_studentassignments",
-    label: "Assignments",
+    label: "Student Stay Dorminitory",
     icon: FileCheck2,
     accent: "teal",
   },
-  { key: "total_hotelroom", label: "Hotel Rooms", icon: Hotel, accent: "rose" },
+  {
+    key: "total_hotelroom",
+    label: "Hotel Rooms",
+    icon: Hotel,
+    accent: "rose",
+  },
 ];
+
 function AdminDashboard() {
   const { currentUser } = useAuth();
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [activetyLog, setActivityLog] = useState([]);
 
-  const fetchData = async () => {
+  const fetchDashboardData = async () => {
     try {
       setLoading(true);
       const response = await AdminDashboardApi.getCardData();
+      // Extracts the merged data payload from your Laravel response structure: { message, data: { ... } }
       const result = response?.data?.data ?? response?.data ?? response ?? {};
       setData(result);
     } catch (error) {
-      console.error("Failed to fetch dashboard card data:", error);
+      console.error("Failed to fetch dashboard data:", error);
     } finally {
       setLoading(false);
     }
   };
-  const getRecently = async () => {
-    const response = await api.get("/get-recently");
-    const data = response?.data || response?.data?.data || response?.data?.data?.data || response;
-    setActivityLog(data?.data?.activity_logs);
-  };
+
   useEffect(() => {
-    getRecently();
-  }, []);
-  useEffect(() => {
-    fetchData();
+    fetchDashboardData();
   }, []);
 
   // Map API object to array for StatsGrid
@@ -106,46 +104,32 @@ function AdminDashboard() {
       accent: item.accent,
     };
   });
+
   const dataChart = [
-      {
-          name: "Books",
-          students: data.total_books
-
-      },
-      {
-          name: "Teacher",
-          students: data.total_teachers
-
-      },
-      {
-          name: "Class",
-          students:data.total_class
-      },
-      {
-          name: "Student",
-          students: data.total_students
-      },
+    { name: "Books", students: data?.total_books ?? 0 },
+    { name: "Teacher", students: data?.total_teachers ?? 0 },
+    { name: "Class", students: data?.total_class ?? 0 },
+    { name: "Student", students: data?.total_students ?? 0 },
   ];
-  console.log(data)
+
   return (
     <div className="space-y-6">
       <WelcomeBanner name={currentUser?.name} />
 
-      {/* Render converted array */}
+      {/* Stats Grid */}
       <StatsGrid stats={formattedStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AttendanceOverview
-          overallRate={data?.total_attendance ?? 92}
-          byClass={[]}
+          overallRate={data?.overall_rate ?? 0}
+          byClass={data?.by_class ?? []}
         />
-        <ChartDashbaord data={dataChart}/>
-        {/* <FeeOverview collected={48200} pending={9800} total={58000} /> */}
+        <ChartDashbaord data={dataChart} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentNotices notices={[]} />
-        <RecentActivity activities={[]} />
+        <RecentNotices notices={data?.notices ?? []} />
+        <RecentActivity activities={data?.activity_logs ?? []} />
       </div>
     </div>
   );

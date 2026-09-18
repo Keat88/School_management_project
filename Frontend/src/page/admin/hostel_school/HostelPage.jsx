@@ -73,7 +73,16 @@ export default function HostelPage() {
   const totalMale = hostels.filter((h) => h.type === "male").length;
   const totalFemale = hostels.filter((h) => h.type === "female").length;
   const totalOthers = hostels.filter((h) => h.type === "others").length;
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6 font-sans text-gray-900 dark:text-slate-100 transition-colors duration-200 pb-10">
       {/* Header Section */}
@@ -110,63 +119,66 @@ export default function HostelPage() {
 
       {/* Building Overview Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
-          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-gray-100 text-gray-700 flex items-center justify-center shrink-0 dark:bg-slate-800 dark:text-slate-300">
+        {/* Total Buildings */}
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
+          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 dark:bg-slate-800 dark:text-slate-300">
             <Building2 size={20} />
           </div>
           <div>
-            <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider dark:text-slate-400">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider dark:text-slate-400">
               Total Buildings
             </p>
-            <p className="text-xl font-bold text-gray-900 dark:text-slate-100 mt-0.5">
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
               {hostels.length}
             </p>
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
-          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 dark:bg-blue-950/50 dark:text-blue-400">
+        {/* Male Dorms */}
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
+          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 dark:bg-slate-800 dark:text-slate-300">
             <Users size={20} />
           </div>
           <div>
-            <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider dark:text-slate-400">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider dark:text-slate-400">
               Male Dorms
             </p>
-            <p className="text-xl font-bold text-gray-900 dark:text-slate-100 mt-0.5">
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
               {totalMale}
             </p>
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
-          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center shrink-0 dark:bg-pink-950/50 dark:text-pink-400">
+        {/* Female Dorms */}
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
+          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 dark:bg-slate-800 dark:text-slate-300">
             <Users size={20} />
           </div>
           <div>
-            <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider dark:text-slate-400">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider dark:text-slate-400">
               Female Dorms
             </p>
-            <p className="text-xl font-bold text-gray-900 dark:text-slate-100 mt-0.5">
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
               {totalFemale}
             </p>
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
-          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 dark:bg-purple-950/50 dark:text-purple-400">
+        {/* Other Dorms */}
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 flex items-center gap-4 shadow-xs dark:bg-slate-900 dark:border-slate-800">
+          <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 dark:bg-slate-800 dark:text-slate-300">
             <Building2 size={20} />
           </div>
           <div>
-            <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider dark:text-slate-400">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider dark:text-slate-400">
               Other Dorms
             </p>
-            <p className="text-xl font-bold text-gray-900 dark:text-slate-100 mt-0.5">
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-0.5">
               {totalOthers}
             </p>
           </div>
         </div>
       </div>
-
       {/* Search, Filter & Building Table Section */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl border border-gray-200 bg-white dark:bg-slate-900 dark:border-slate-800 shadow-xs">
@@ -241,9 +253,7 @@ export default function HostelPage() {
                           className={`px-2.5 py-1 rounded-md text-xs font-medium inline-block ${
                             hostel.type === "male"
                               ? "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800/60"
-                              : hostel.type === "female"
-                              ? "bg-pink-50 text-pink-700 border border-pink-200 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-800/60"
-                              : "bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-800/60"
+                              : "bg-slate-100 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
                           }`}
                         >
                           {hostel.type}

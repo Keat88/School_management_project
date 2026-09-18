@@ -42,7 +42,7 @@ class ClassController extends Controller
             'attendance_date' => 'required|date',
             'attendances' => 'required|array',
             'attendances.*.student_id' => 'required|exists:students,id',
-            'attendances.*.status' => 'nullable|in:P,A,PM',
+            'attendances.*.status' => 'required|in:P,A,PM', // Changed from nullable to required
             'attendances.*.reason' => 'nullable|string',
         ]);
 
@@ -64,7 +64,7 @@ class ClassController extends Controller
                     'date' => $request->attendance_date, // 
                 ],
                 [
-                    'status' => $attData['status'] ?? null,
+                    'status' => $attData['status'] ?? "P",
                     'message' => $attData['reason'] ?? null,
                 ]
             );

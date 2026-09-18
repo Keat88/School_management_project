@@ -13,7 +13,6 @@ import {
   Upload,
   X,
   Link as LinkIcon,
-  Image as ImageIcon,
 } from "lucide-react";
 import { api } from "../../../../data/api";
 import { useNavigate, useParams } from "react-router-dom";
@@ -57,27 +56,39 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
 
   // Fetch categories and instructors
   useEffect(() => {
+    let isMounted = true;
     setLoading(true);
-    api
-      .get("/course-categories")
-      .then((res) => {
-        if (res.data.status === "success" || res.data.status === true) {
-          const catData = res.data.data;
+
+    Promise.all([
+      api.get("/course-categories").catch((err) => {
+        console.error("Failed to load categories:", err);
+        return null;
+      }),
+      api.get("/teacher/index").catch((err) => {
+        console.error("Failed to load instructors:", err);
+        return null;
+      }),
+    ])
+      .then(([catRes, instRes]) => {
+        if (!isMounted) return;
+
+        if (catRes && (catRes.data.status === "success" || catRes.data.status === true)) {
+          const catData = catRes.data.data;
           setCategories(Array.isArray(catData) ? catData : catData.data || []);
         }
-      })
-      .catch((err) => console.error("Failed to load categories:", err))
-      .finally(setLoading(false));
 
-    api
-      .get("/teacher/index")
-      .then((res) => {
-        if (res.data.status === true || res.data.status === "success") {
-          const data = res.data.data;
-          setInstructors(Array.isArray(data) ? data : data.data || []);
+        if (instRes && (instRes.data.status === true || instRes.data.status === "success")) {
+          const instData = instRes.data.data;
+          setInstructors(Array.isArray(instData) ? instData : instData.data || []);
         }
       })
-      .catch((err) => console.error("Failed to load instructors:", err));
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Fetch course by URL param ID if no course prop was passed
@@ -134,7 +145,7 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
           : activeCourse.what_you_will_learn || "",
       });
 
-      // If existing thumbnail is a URL string (and not a local storage path file starting with /storage/), switch to URL mode automatically
+      // If existing thumbnail is a URL string, switch to URL mode automatically
       if (
         activeCourse.thumbnail &&
         typeof activeCourse.thumbnail === "string" &&
@@ -229,7 +240,7 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
   };
 
   const inputClass =
-    "w-full px-3.5 py-2.5 rounded-xl border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-500/30 focus:border-blue-600 dark:focus:border-indigo-500";
+    "w-full px-3.5 py-2.5 rounded-xl border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/30 focus:border-blue-600 dark:focus:border-blue-500";
   const labelClass =
     "block text-xs font-semibold uppercase tracking-wider mb-1.5 text-slate-700 dark:text-slate-300";
 
@@ -247,9 +258,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
 
   if (loadingCourse) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="flex justify-center items-center min-h-screen bg-slate-50 dark:bg-slate-950">
         <Loader2
-          className="animate-spin text-indigo-600 dark:text-indigo-400"
+          className="animate-spin text-blue-600 dark:text-blue-400"
           size={32}
         />
       </div>
@@ -257,27 +268,21 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
   }
 
   return (
-    <div className="space-y-6 lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="lg:min-w-160 mx-auto space-y-6 p-6 sm:p-8 border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 transition-colors">
+      
       {/* Header */}
       <div className="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center gap-3.5">
-          <button
-            type="button"
-            onClick={onCancel || (() => navigate(-1))}
-            className="p-2.5 rounded-xl border transition-colors cursor-pointer border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
-            title="Go back"
-          >
-            <ArrowLeft size={18} />
-          </button>
+        
           <div>
             <h2 className="text-xl font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
               <BookOpen
-                className="text-blue-600 dark:text-indigo-400"
+                className="text-blue-600 dark:text-blue-400"
                 size={22}
               />
               {isEditMode ? "Edit Course" : "Create New Course"}
             </h2>
-            <p className="text-sm mt-1 text-slate-500 dark:text-slate-400">
+            <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
               {isEditMode
                 ? "Update course details, pricing, and curriculum configurations."
                 : "Fill out the information below to publish a brand new course."}
@@ -287,13 +292,13 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium bg-red-50 dark:bg-rose-500/10 text-red-700 dark:text-rose-400 border-red-200 dark:border-rose-500/20">
+        <div className="flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium bg-red-50 dark:bg-rose-500/10 text-red-700 dark:text-rose-400 border-red-200 dark:border-rose-500/20 shadow-2xs">
           <AlertCircle size={16} className="shrink-0" />
           {error}
         </div>
       )}
       {success && (
-        <div className="flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20">
+        <div className="flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20 shadow-2xs">
           <CheckCircle size={16} className="shrink-0" />
           {isEditMode
             ? "Course updated successfully!"
@@ -302,9 +307,10 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
+        
         {/* Section 1: General Info */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
             <FileText size={16} /> General Information
           </h3>
 
@@ -357,8 +363,8 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
         </div>
 
         {/* Section 2: Pricing & Metrics */}
-        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+        <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800/80">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
             <DollarSign size={16} /> Pricing & Course Metrics
           </h3>
 
@@ -426,8 +432,8 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
         </div>
 
         {/* Section 3: Configuration & Media */}
-        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+        <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800/80">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
             <Tag size={16} /> Status & Settings
           </h3>
 
@@ -459,22 +465,22 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
             </div>
           </div>
 
-          {/* Thumbnail Input (Toggle between Upload File & Image URL) */}
+          {/* Thumbnail Input */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className={labelClass}>Thumbnail Image</label>
-              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
                 <button
                   type="button"
                   onClick={() => {
                     setThumbnailType("file");
-                    if (formData.thumbnail instanceof String) {
+                    if (typeof formData.thumbnail === "string") {
                       handleChange("thumbnail", "");
                     }
                   }}
-                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                  className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
                     thumbnailType === "file"
-                      ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-indigo-400 shadow-xs"
+                      ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-2xs"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
@@ -486,9 +492,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
                     setThumbnailType("url");
                     handleChange("thumbnail", "");
                   }}
-                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                  className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors cursor-pointer ${
                     thumbnailType === "url"
-                      ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-indigo-400 shadow-xs"
+                      ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-2xs"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
                   }`}
                 >
@@ -499,11 +505,11 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               {thumbnailType === "file" ? (
-                <label className="flex-1 w-full flex flex-col items-center justify-center px-6 py-4 border-2 border-dashed rounded-xl cursor-pointer border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-indigo-500 bg-slate-50 dark:bg-slate-950/40 transition-colors">
+                <label className="flex-1 w-full flex flex-col items-center justify-center px-6 py-4 border-2 border-dashed rounded-xl cursor-pointer border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-slate-50 dark:bg-slate-950/40 transition-colors">
                   <div className="flex flex-col items-center justify-center pt-2 pb-3 text-center">
                     <Upload className="w-8 h-8 mb-2 text-slate-400 dark:text-slate-500" />
                     <p className="text-xs font-medium text-slate-600 dark:text-slate-300">
-                      <span className="font-semibold text-blue-600 dark:text-indigo-400">
+                      <span className="font-semibold text-blue-600 dark:text-blue-400">
                         Click to upload
                       </span>{" "}
                       or drag and drop
@@ -543,7 +549,7 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
               )}
 
               {getPreviewUrl() && (
-                <div className="relative w-32 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 bg-slate-100 dark:bg-slate-950">
+                <div className="relative w-32 h-20 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 bg-slate-100 dark:bg-slate-950 shadow-2xs">
                   <img
                     src={getPreviewUrl()}
                     alt="Thumbnail Preview"
@@ -555,7 +561,7 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
                   <button
                     type="button"
                     onClick={() => handleChange("thumbnail", "")}
-                    className="absolute top-1 right-1 p-1 bg-slate-900/70 hover:bg-slate-900 text-white rounded-full transition"
+                    className="absolute top-1 right-1 p-1 bg-slate-900/70 hover:bg-slate-900 text-white rounded-full transition cursor-pointer"
                     title="Remove image"
                   >
                     <X size={12} />
@@ -565,7 +571,7 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 p-4 rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-950/30">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40">
             <label className="flex items-center gap-3 cursor-pointer select-none">
               <input
                 type="checkbox"
@@ -573,9 +579,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
                 onChange={(e) =>
                   handleChange("has_certificate", e.target.checked)
                 }
-                className="w-4 h-4 rounded text-blue-600 dark:text-indigo-500 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                className="w-4 h-4 rounded text-blue-600 dark:text-blue-500 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 cursor-pointer"
               />
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Offers Completion Certificate
               </span>
             </label>
@@ -584,9 +590,9 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
                 type="checkbox"
                 checked={formData.is_featured}
                 onChange={(e) => handleChange("is_featured", e.target.checked)}
-                className="w-4 h-4 rounded text-blue-600 dark:text-indigo-500 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                className="w-4 h-4 rounded text-blue-600 dark:text-blue-500 focus:ring-blue-500 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 cursor-pointer"
               />
-              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Feature on Homepage
               </span>
             </label>
@@ -594,8 +600,8 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
         </div>
 
         {/* Section 4: Content & Descriptions */}
-        <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-          <h3 className="text-sm font-semibold tracking-wide uppercase text-blue-600 dark:text-indigo-400 flex items-center gap-2">
+        <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800/80">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
             <Clock size={16} /> Course Syllabus & Details
           </h3>
 
@@ -639,19 +645,19 @@ export default function CourseForm({ course = null, onSuccess, onCancel }) {
         </div>
 
         {/* Footer Actions */}
-        <div className="pt-5 border-t flex items-center justify-end gap-3 border-slate-100 dark:border-slate-800/80">
+        <div className="pt-6 border-t flex items-center justify-end gap-3 border-slate-100 dark:border-slate-800/80">
           <button
             type="button"
             onClick={onCancel || (() => navigate(-1))}
             disabled={loading}
-            className="px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-xs cursor-pointer disabled:opacity-50 bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 border border-gray-200 dark:border-slate-700/80"
+            className="px-5 py-2.5 rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer disabled:opacity-50 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 dark:bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 dark:hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 cursor-pointer disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 dark:bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20 cursor-pointer disabled:opacity-50"
           >
             {loading ? (
               <Loader2 size={16} className="animate-spin" />

@@ -21,7 +21,7 @@ export default function ManageTeacherReports() {
     const fetchReports = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/teacher-notices/1'); 
+        const response = await api.get('/teacher-notices'); 
         setReports(response.data.data);
       } catch (error) {
         console.error("Error fetching teacher reports:", error);
@@ -32,7 +32,6 @@ export default function ManageTeacherReports() {
 
     fetchReports();
   }, []);
-
   const handleStatusChange = async (id, newStatus) => {
     try {
       // Optional: Send update to backend API
@@ -60,7 +59,18 @@ export default function ManageTeacherReports() {
 
     return matchesSearch && matchesStatus;
   });
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">
+            Loading your report...
+          </span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="lg:min-w-160 mx-auto font-sans text-slate-900 dark:text-slate-100">
       {/* Header Section */}
@@ -104,7 +114,7 @@ export default function ManageTeacherReports() {
       </div>
 
       {/* Reports Table Container */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-2xs">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800  overflow-hidden ">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>

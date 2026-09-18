@@ -56,34 +56,37 @@ function NoticePage() {
     };
     fetchDash();
   }, []);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
-      {loading ? (
-        <div className="flex flex-col items-center justify-center gap-2">
-          <div className="w-6 h-6 border-2 border-indigo-300 border-t-transparent rounded-full animate-spin"></div>
-          <span>Loading Notice...</span>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          <h1 className="text-lg dark:text-white font-semibold text-gray-800">
-            Notice Management
-          </h1>
-          <NoticeStats notices={notices} />
-          <NoticeFilters
-            searchValue={searchValue}
-            onSearchChange={setSearchValue}
-            audienceFilter={audienceFilter}
-            onAudienceChange={setAudienceFilter}
-            onCreateNotice={handleCreateNotice}
-          />
+      <div className="space-y-6">
+        <h1 className="text-lg dark:text-white font-semibold text-gray-800">
+          Notice Management
+        </h1>
+        <NoticeStats notices={notices} />
+        <NoticeFilters
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+          audienceFilter={audienceFilter}
+          onAudienceChange={setAudienceFilter}
+          onCreateNotice={handleCreateNotice}
+        />
 
-          <NoticeList
-            notices={notice}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </div>
-      )}
+        <NoticeList
+          notices={notice}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      </div>
     </>
   );
 }

@@ -50,13 +50,12 @@ class UnBlockAttendance extends Controller
     }
     public function unlockAttendance(Request $request, $id)
     {
-        // if ($request->user()->role !== 'admin') {
-        //     return response()->json([
-        //         'message' => 'Unauthorized! Only Admin can unlock attendance.'
-        //     ], 403);
-        // }
+        if ($request->user()->role !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized! Only Admin can unlock attendance.'
+            ], 403);
+        }
         $ids = is_array($id) ? $id : [$id];
-        // Check if records exist first
         $count = Attendance::whereIn('student_id', $ids)->count();
 
         if ($count === 0) {

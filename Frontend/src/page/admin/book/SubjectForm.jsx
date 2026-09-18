@@ -5,7 +5,8 @@ import { subjectApi } from "../../../data/classrooms";
 
 export default function SubjectForm({ isDark: propIsDark = false }) {
   const [isDark, setIsDark] = useState(() => {
-    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    const savedTheme =
+      localStorage.getItem("theme") || localStorage.getItem("darkMode");
     if (savedTheme !== null) {
       return savedTheme === "dark" || savedTheme === "true";
     }
@@ -28,7 +29,8 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
   // Sync with localStorage changes across components/tabs
   useEffect(() => {
     const handleStorageChange = () => {
-      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      const savedTheme =
+        localStorage.getItem("theme") || localStorage.getItem("darkMode");
       if (savedTheme !== null) {
         setIsDark(savedTheme === "dark" || savedTheme === "true");
       }
@@ -115,30 +117,28 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
 
   if (fetching) {
     return (
-      <div className={`max-w-2xl mx-auto py-16 text-center text-sm flex flex-col items-center justify-center gap-3 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
-        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        <span>Loading subject details...</span>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={` mx-auto space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-slate-900"}`}>
+    <div
+      className={` mx-auto space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-slate-900"}`}
+    >
       {/* Header */}
-      <div className={`flex items-center justify-between pb-4 border-b ${isDark ? "border-slate-800" : "border-slate-200"}`}>
+      <div
+        className={`flex items-center justify-between pb-4 border-b ${isDark ? "border-slate-800" : "border-slate-200"}`}
+      >
         <div className="flex items-center gap-3">
-          <Link
-            to="/admin/subjects"
-            className={`p-2.5 border rounded-xl transition-all active:scale-95 ${
-              isDark
-                ? "border-slate-800 bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white"
-                : "border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900"
-            }`}
-            title="Back to Subjects"
+      
+          <h2
+            className={`text-lg font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}
           >
-            <ArrowLeft size={18} />
-          </Link>
-          <h2 className={`text-lg font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}>
             {isEditing ? "Edit Subject" : "Add New Subject"}
           </h2>
         </div>
@@ -153,8 +153,8 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
                 ? "bg-green-950/40 text-green-400 border-green-900/60"
                 : "bg-green-50 text-green-700 border-green-200"
               : isDark
-              ? "bg-red-950/40 text-red-400 border-red-900/60"
-              : "bg-red-50 text-red-700 border-red-200"
+                ? "bg-red-950/40 text-red-400 border-red-900/60"
+                : "bg-red-50 text-red-700 border-red-200"
           }`}
         >
           {feedback.text}
@@ -165,11 +165,15 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
       <form
         onSubmit={handleSubmit}
         className={`p-6 sm:p-8 rounded-lg border shadow-inner space-y-6 transition-colors ${
-          isDark ? "bg-slate-900/90 border-slate-800 text-slate-100" : "bg-white border-slate-200 text-slate-900"
+          isDark
+            ? "bg-slate-900/90 border-slate-800 text-slate-100"
+            : "bg-white border-slate-200 text-slate-900"
         }`}
       >
         <div>
-          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+          <label
+            className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}
+          >
             Subject Name *
           </label>
           <input
@@ -188,9 +192,13 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
         </div>
 
         <div>
-          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+          <label
+            className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}
+          >
             Subject Code *{" "}
-            <span className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+            <span
+              className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}
+            >
               (must be unique)
             </span>
           </label>
@@ -209,9 +217,13 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
         </div>
 
         <div>
-          <label className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
+          <label
+            className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}
+          >
             Subject Image{" "}
-            <span className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+            <span
+              className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}
+            >
               (PNG, JPG, max 2MB)
             </span>
           </label>
@@ -225,9 +237,13 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
                 }`}
               />
             ) : (
-              <div className={`w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 ${
-                isDark ? "bg-slate-950 border-slate-700 text-slate-500" : "bg-slate-50 border-slate-200 text-slate-400"
-              }`}>
+              <div
+                className={`w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 ${
+                  isDark
+                    ? "bg-slate-950 border-slate-700 text-slate-500"
+                    : "bg-slate-50 border-slate-200 text-slate-400"
+                }`}
+              >
                 <ImageIcon size={24} />
               </div>
             )}
@@ -244,7 +260,9 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
           </div>
         </div>
 
-        <div className={`flex items-center justify-end gap-3 pt-5 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}>
+        <div
+          className={`flex items-center justify-end gap-3 pt-5 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}
+        >
           <Link
             to="/admin/subjects"
             className={`px-5 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border active:scale-95 ${
@@ -264,8 +282,8 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
             {loading
               ? "Saving..."
               : isEditing
-              ? "Update Subject"
-              : "Save Subject"}
+                ? "Update Subject"
+                : "Save Subject"}
           </button>
         </div>
       </form>

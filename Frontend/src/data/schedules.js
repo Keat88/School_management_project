@@ -7,6 +7,7 @@ const days = [
   "Thursday",
   "Friday",
   "Saturday",
+  "Sanday"
 ];
 
 const periods = [

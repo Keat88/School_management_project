@@ -128,11 +128,11 @@ export default function AutoScheduleForm() {
   };
 
   return (
-    <div className="lg:min-w-160 mx-auto rounded-lg p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-100 font-sans my-6">
+    <div className="lg:min-w-160 mx-auto  p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-100 font-sans my-6">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           
-          <h3 className="text-lg font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-gray-500 dark:text-slate-100 flex items-center gap-2">
             <Wand2 className="text-blue-500 dark:text-blue-400" size={22} />
             Auto-Generate Weekly Timetable
           </h3>

@@ -16,7 +16,7 @@ function ReportPage() {
   const lastMonthDate = new Date();
   lastMonthDate.setMonth(lastMonthDate.getMonth() - 1);
   const lastMonth = formatDate(lastMonthDate);
-  // Inside your React Component:
+
   const [startDate, setStartDate] = useState(lastMonth);
   const [endDate, setEndDate] = useState(today);
 
@@ -37,7 +37,6 @@ function ReportPage() {
         },
       });
 
-      // Safely extract data based on your API response structure
       const resData = response?.data || response;
       const data = resData?.data || resData;
 
@@ -52,10 +51,11 @@ function ReportPage() {
       setLoading(false);
     }
   };
-  // Fetch data whenever startDate or endDate changes
+
   useEffect(() => {
     fetchReportData();
   }, [startDate, endDate]);
+
   const handleExportPdf = async () => {
     try {
       const response = await api.get("/reports/export-pdf", {
@@ -84,7 +84,7 @@ function ReportPage() {
     try {
       const response = await api.get("/reports/export-excel", {
         params: { start_date: startDate, end_date: endDate },
-        responseType: "blob", // ចាំបាច់សម្រាប់ဖाइल CSV ឬ Excel
+        responseType: "blob",
       });
 
       const blob = new Blob([response.data], { type: "text/csv" });
@@ -103,6 +103,7 @@ function ReportPage() {
       console.error("Failed to export Excel:", error);
     }
   };
+
   return (
     <div className="space-y-6">
       <ReportHeader />
@@ -121,8 +122,11 @@ function ReportPage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-10 text-gray-500 font-medium">
-          Loading report data...
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+            <span className="text-sm font-medium">Loading data...</span>
+          </div>
         </div>
       ) : (
         <>

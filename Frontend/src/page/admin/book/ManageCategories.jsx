@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, RotateCcw, AlertTriangle } from "lucide-react";
 import { BookCategoryApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
 
@@ -24,6 +24,10 @@ export default function ManageCategories() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Delete Modal States
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+
   // Sync with localStorage changes across components/tabs if theme toggles elsewhere
   useEffect(() => {
     const handleStorageChange = () => {
@@ -46,10 +50,7 @@ export default function ManageCategories() {
         page: page,
       });
 
-      // Extract paginated array and pagination metadata
       const rawData = res?.data || res;
-
-      // Check if data is wrapped inside Laravel response format
       const items = rawData?.data || (Array.isArray(rawData) ? rawData : []);
       const lastPage = rawData?.meta?.last_page || rawData?.last_page || 1;
       const activePage =
@@ -87,38 +88,52 @@ export default function ManageCategories() {
     fetchCategories(1, search);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?"))
-      return;
+  const handleDeleteClick = (id) => {
+    setCategoryToDelete(id);
+    setIsDeleteModalOpen(true);
+    setFeedback(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!categoryToDelete) return;
     try {
-      await BookCategoryApi.delete(id);
+      await BookCategoryApi.delete(categoryToDelete);
       setFeedback({ type: "success", text: "Category deleted successfully!" });
+      setIsDeleteModalOpen(false);
+      setCategoryToDelete(null);
       fetchCategories(currentPage, search);
     } catch (error) {
       setFeedback({
         type: "error",
         text: error.response?.data?.message || "Failed to delete category.",
       });
+      setIsDeleteModalOpen(false);
+      setCategoryToDelete(null);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setCategoryToDelete(null);
   };
 
   return (
     <div
-      className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors duration-200`}
+      className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6  text-slate-900 dark:text-slate-100 transition-colors duration-200`}
     >
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-200 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-slate-50">
+          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             Manage Book Categories
           </h2>
-          <p className="text-xs sm:text-sm mt-1 text-gray-500 dark:text-slate-400">
-            Browse, search, and manage library categories
+          <p className="text-xs sm:text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
+            Browse, search, and manage library categories.
           </p>
         </div>
         <NavLink
           to="/admin/library/category/add"
-          className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-blue-500 active:bg-blue-700 transition-colors shadow-sm duration-150 cursor-pointer"
+          className="self-start sm:self-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs active:scale-98"
         >
           <Plus size={16} />
           <span>Add Category</span>
@@ -128,10 +143,10 @@ export default function ManageCategories() {
       {/* Feedback Alert */}
       {feedback && (
         <div
-          className={`p-4 rounded-lg text-sm font-medium border transition-all ${
+          className={`p-4 rounded-xl text-sm font-medium border shadow-2xs ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-800/60"
-              : "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-800/60"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-900/60"
+              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60"
           }`}
         >
           {feedback.text}
@@ -141,116 +156,122 @@ export default function ManageCategories() {
       {/* Search & Filter Form */}
       <form
         onSubmit={handleSearchSubmit}
-        className="flex flex-col sm:flex-row gap-2.5 p-4 rounded-xl border transition-colors bg-gray-50/80 border-gray-200/80 dark:bg-slate-900/80 dark:border-slate-800 shadow-xs"
+        className="p-4 rounded-xl border flex flex-col md:flex-row gap-3 transition-colors shadow-2xs bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-900 dark:text-slate-100"
       >
         <div className="relative flex-1">
-          <Search
-            className="absolute left-3 top-2.5 text-gray-400 dark:text-slate-500"
-            size={18}
-          />
+          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-400">
+            <Search size={16} />
+          </span>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search categories..."
-            className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors bg-white border-gray-300 text-gray-900 placeholder-gray-400 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
+            className="w-full pl-10 pr-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-colors bg-slate-50/50 border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-slate-900/60 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-400"
           />
         </div>
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="flex-1 sm:flex-initial px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-500 active:bg-blue-700 transition-colors shadow-xs cursor-pointer"
-          >
-            Search
-          </button>
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={handleReset}
-            className="flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:active:bg-slate-600"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer border bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-800 dark:border-slate-700"
           >
+            <RotateCcw size={14} />
             Reset
+          </button>
+          <button
+            type="submit"
+            className="flex-1 sm:flex-initial px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center cursor-pointer shadow-xs active:scale-98"
+          >
+            Search
           </button>
         </div>
       </form>
 
       {/* Table Container */}
-      <div className="rounded-xl border overflow-hidden transition-colors bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-800 shadow-xs">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="border-b text-xs font-semibold uppercase tracking-wider bg-gray-50/90 border-gray-200 text-gray-600 dark:bg-slate-800/80 dark:border-slate-800 dark:text-slate-300">
-              <th className="py-3.5 px-4">Category Name</th>
-              <th className="py-3.5 px-4">Created At</th>
-              <th className="py-3.5 px-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y text-sm divide-gray-100 text-gray-700 dark:divide-slate-800 dark:text-slate-300">
-            {loading ? (
-              <tr>
-                <td
-                  colSpan="3"
-                  className="py-12 text-center text-gray-400 dark:text-slate-400"
-                >
-                  <div className="flex flex-col items-center justify-center gap-2">
-                    <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
-                    <span>Loading categories...</span>
-                  </div>
-                </td>
+      <div className="border space-y-4 transition-colors shadow-2xs bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[640px]">
+            <thead>
+              <tr className="border-b text-xs font-semibold uppercase tracking-wider border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-400">
+                <th className="py-3.5 px-4">Category Name</th>
+                <th className="py-3.5 px-4">Created At</th>
+                <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
-            ) : categories.length === 0 ? (
-              <tr>
-                <td
-                  colSpan="3"
-                  className="py-12 text-center text-gray-400 dark:text-slate-400"
-                >
-                  <span>No categories found.</span>
-                </td>
-              </tr>
-            ) : (
-              categories.map((cat) => (
-                <tr
-                  key={cat.id}
-                  className="transition-colors hover:bg-gray-50/60 dark:hover:bg-slate-800/50"
-                >
-                  <td className="py-3.5 px-4 font-semibold text-gray-900 dark:text-slate-100">
-                    {cat.book_category}
-                  </td>
-                  <td className="py-3.5 px-4 text-xs text-gray-500 dark:text-slate-400 font-mono">
-                    {cat.created_at
-                      ? new Date(cat.created_at).toLocaleDateString()
-                      : "-"}
-                  </td>
-                  <td className="py-3.5 px-4 text-right space-x-1.5">
-                    <button
-                      onClick={() =>
-                        navigate(`/admin/library/category/view/${cat.id}`)
-                      }
-                      className="text-md border rounded-lg px-2.5 py-1 transition-colors font-medium active:scale-95 cursor-pointer bg-green-600 text-white border-green-600 hover:bg-green-700 dark:bg-green-600 dark:border-green-600 dark:hover:bg-green-500 shadow-xs"
-                      title="View"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() =>
-                        navigate(`/admin/library/category/add/${cat.id}`)
-                      }
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-700 shadow-2xs"
-                      title="Edit"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(cat.id)}
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-600 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
-                      title="Delete"
-                    >
-                      Delete
-                    </button>
+            </thead>
+            <tbody className="divide-y text-sm divide-slate-100 dark:divide-slate-700/80">
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan="3"
+                    className="py-12 text-center text-slate-400 dark:text-slate-400"
+                  >
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-500 dark:border-blue-400"></div>
+                      <span className="text-slate-500 dark:text-slate-400">
+                        Loading categories...
+                      </span>
+                    </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : categories.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="3"
+                    className="py-12 text-center text-slate-400 dark:text-slate-400"
+                  >
+                    No categories found.
+                  </td>
+                </tr>
+              ) : (
+                categories.map((cat) => (
+                  <tr
+                    key={cat.id}
+                    className="transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-700/40"
+                  >
+                    <td className="py-3.5 px-4 font-medium whitespace-nowrap text-slate-800 dark:text-slate-200">
+                      {cat.book_category}
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap text-xs text-slate-500 dark:text-slate-400 font-mono">
+                      {cat.created_at
+                        ? new Date(cat.created_at).toLocaleDateString()
+                        : "-"}
+                    </td>
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() =>
+                            navigate(`/admin/library/category/view/${cat.id}`)
+                          }
+                          className="text-xs border border-gray-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 font-medium transition-colors cursor-pointer bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+                          title="View"
+                        >
+                          View
+                        </button>
+                        <button
+                          onClick={() =>
+                            navigate(`/admin/library/category/add/${cat.id}`)
+                          }
+                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-700 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
+                          title="Edit"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteClick(cat.id)}
+                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
+                          title="Delete"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination Footer */}
@@ -262,6 +283,38 @@ export default function ManageCategories() {
           isDark={isDark}
         />
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-150">
+          <div className="rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center my-auto border transition-all bg-white border-slate-200 text-slate-900 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100">
+            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-2">
+              <AlertTriangle size={24} />
+            </div>
+            <h3 className="text-lg font-bold">Delete Category</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Are you sure you want to delete this category? This action cannot
+              be undone.
+            </p>
+            <div className="flex justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleCancelDelete}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer border bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                className="flex-1 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-sm shadow-rose-500/20 active:scale-95"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

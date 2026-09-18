@@ -12,6 +12,7 @@ import { api } from "../../data/api";
 export default function SystemSettings() {
   const [activeTab, setActiveTab] = useState("general");
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [settings, setSettings] = useState({
     schoolName: "",
@@ -25,6 +26,7 @@ export default function SystemSettings() {
   });
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/settings")
       .then((res) => {
@@ -46,6 +48,7 @@ export default function SystemSettings() {
           });
         }
       })
+      .finally(setLoading(false))
       .catch((err) => console.error("Failed to load settings:", err));
   }, []);
 
@@ -65,7 +68,16 @@ export default function SystemSettings() {
       console.error("Error saving settings:", error);
     }
   };
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading your report...</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="space-y-6  lg:min-w-160 mx-auto text-slate-900 dark:text-slate-100">
       {/* Header */}
@@ -94,7 +106,7 @@ export default function SystemSettings() {
           {[
             { id: "general", label: "General Setup", icon: Settings },
             { id: "notifications", label: "Notifications", icon: Bell },
-            { id: "security", label: "Security & Access", icon: Shield },
+            // { id: "security", label: "Security & Access", icon: Shield },
             { id: "academic", label: "Academic & Library", icon: BookOpen },
           ].map((tab) => {
             const Icon = tab.icon;

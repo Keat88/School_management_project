@@ -111,7 +111,16 @@ function TeacherList() {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       {isDeleteModalOpen && (
@@ -133,7 +142,7 @@ function TeacherList() {
               Manage and view teacher records
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-blue-700 dark:text-blue-300 border border-blue-200/60 dark:border-blue-500/30">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-400 dark:bg-blue-500/20 text-white dark:text-blue-300 border border-blue-200/60 dark:border-blue-500/30">
             Total: {totalItems}
           </span>
         </div>
@@ -147,17 +156,8 @@ function TeacherList() {
         />
 
         {/* Table Container with dynamic loading overlay/state */}
-        <div className="border rounded-lg shadow-sm space-y-4 min-h-[300px] relative transition-all bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800">
-          {loading && (
-            <div className="absolute inset-0 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center rounded-xl transition-all bg-white/80 dark:bg-slate-950/70">
-              <div className="w-7 h-7 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-xs font-medium mt-2 text-gray-600 dark:text-slate-300">
-                Loading page...
-              </span>
-            </div>
-          )}
-
-          {/* FIXED: Passed openDeleteModal instead of undeclared handleDelete */}
+        <div className="">
+          {/* Teacher Table */}
           <TeacherTable
             teachers={teachers}
             onDeleteId={openDeleteModal}
@@ -166,13 +166,15 @@ function TeacherList() {
         </div>
 
         {/* Pagination Controls */}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalItems={totalItems}
-          perPage={10}
-          onPageChange={handlePageChange}
-        />
+        <div className="mt-4 sm:mt-6 w-full">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            perPage={10}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </>
   );

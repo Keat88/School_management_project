@@ -5,6 +5,7 @@ import StatsGrid from "../../../components/admin/StatsGrid";
 import AttendanceFilters from "../../../components/admin/Attendancefilters";
 import AttendanceTable from "../../../components/admin/Attendancetable";
 import { api } from "../../../data/api";
+import Pagination from "../../../hooks/Pagination";
 
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -17,11 +18,15 @@ function AttendancePage() {
   const [studentSearch, setStudentSearch] = useState("");
   const [blockFilter, setBlockFilter] = useState("all");
 
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [attendanceRecords, setAttendanceRecords] = useState([]);
-  const [classOptions, setClassOptions] = useState([]); // 💡 1. បន្ថែម State សម្រាប់เก็บបញ្ជីថ្នាក់
+  const [classOptions, setClassOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 💡 2. Fetch បញ្ជីថ្នាក់សម្រាប់ Dropdown Filter
+  // Fetch class options for Dropdown Filter
   useEffect(() => {
     const fetchClassFilter = async () => {
       try {
@@ -35,12 +40,18 @@ function AttendancePage() {
     fetchClassFilter();
   }, []);
 
-  // Fetch data from Laravel API
+  // Reset to page 1 whenever any filter or search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [dateValue, gradeFilter, sectionFilter, studentSearch, blockFilter]);
+
+  // Fetch paginated attendance data from Laravel API
   useEffect(() => {
     const fetchAttendance = async () => {
       setLoading(true);
       try {
         const params = {
+          page: currentPage,
           date: dateValue,
           ...(gradeFilter !== "all" && { grade: gradeFilter }),
           ...(sectionFilter !== "all" && { section: sectionFilter }),
@@ -49,10 +60,11 @@ function AttendancePage() {
         };
 
         const response = await api.get("/attendance/index", { params });
-        const resData = response.data.data;
-        setAttendanceRecords(
-          Array.isArray(resData) ? resData : resData.data || [],
-        );
+        const responseJson = response?.data ?? {};
+
+        // Extract items and pagination metadata correctly
+        setAttendanceRecords(responseJson.data || []);
+        setTotalPages(responseJson?.meta?.last_page || 1);
       } catch (error) {
         console.error("Failed to fetch attendance data:", error);
       } finally {
@@ -60,7 +72,14 @@ function AttendancePage() {
       }
     };
     fetchAttendance();
-  }, [dateValue, gradeFilter, sectionFilter, studentSearch, blockFilter]);
+  }, [
+    currentPage,
+    dateValue,
+    gradeFilter,
+    sectionFilter,
+    studentSearch,
+    blockFilter,
+  ]);
 
   const formattedRecords = useMemo(() => {
     return attendanceRecords.map((record) => {
@@ -120,7 +139,16 @@ function AttendancePage() {
       },
     ];
   }, [formattedRecords]);
-
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="space-y-6 bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 font-sans">
       <div>
@@ -140,7 +168,7 @@ function AttendancePage() {
           onDateChange={setDateValue}
           classFilter={gradeFilter}
           onClassChange={setGradeFilter}
-          classOptions={classOptions} // 💡 3. ส่ง classOptions ដែល fetch បានចូលទៅទីនេះ
+          classOptions={classOptions}
         />
         <div className="relative">
           <Search
@@ -157,13 +185,15 @@ function AttendancePage() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="text-center py-12 text-xs text-slate-500">
-          Loading attendance data...
-        </div>
-      ) : (
+     
         <AttendanceTable records={formattedRecords} />
-      )}
+    
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

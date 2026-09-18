@@ -80,12 +80,12 @@ export default function IssueBookForm() {
     }
   };
 
-  if (fetching) {
+ if (fetching) {
     return (
-      <div className="py-12 text-center text-gray-500 dark:text-slate-400">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
         <div className="flex flex-col items-center justify-center gap-2">
-          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
-          <span>Loading issue book form...</span>
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading data...</span>
         </div>
       </div>
     );

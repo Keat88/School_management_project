@@ -6,6 +6,7 @@ use App\Http\Resources\NoticeResource;
 use App\Http\Resources\ScoresResource;
 use App\Http\Resources\TeacherClassRoomResource;
 use App\Http\Resources\TeacherResource;
+use App\Models\Attendance;
 use App\Models\ClassRoom;
 use App\Models\Notice;
 use App\Models\Scores;
@@ -101,12 +102,27 @@ class TeacherController extends Controller
             if (!$teacherProfile) {
                 return $this->error('Teacher profile not found for this user', null, 404);
             }
+
             $classIds = $teacherProfile->timeTables()->pluck('class_id')->unique();
+
             $classes = ClassRoom::whereIn('id', $classIds)
                 ->withCount('students')
                 ->get();
+
+            // 1. Calculate Real Attendance Rate
+            $totalAttendance = Attendance::whereIn('class_id', $classIds)->count();
+
+            $presentCount = Attendance::whereIn('class_id', $classIds)
+                ->where('status', 'P') // Change 'present' to match your DB value (e.g., 'Present', 1, etc.)
+                ->count();
+
+            $attendanceRate = $totalAttendance > 0
+                ? round(($presentCount / $totalAttendance) * 100, 1) . '%'
+                : '0%';
+
+            // 2. Format Schedules
             $schedules = $teacherProfile->timeTables()
-                ->with(['classRoom', 'subject']) // 💡 1. Load relation subject មកជាមួយ
+                ->with(['classRoom', 'subject'])
                 ->get()
                 ->map(function ($schedule) {
                     $subjectName = $schedule->subject ? $schedule->subject->subject_name : '';
@@ -122,12 +138,12 @@ class TeacherController extends Controller
                         'status' => 'Upcoming',
                     ];
                 });
-            // ៣. ส่งទិន្នន័យត្រឡប់ទៅ Frontend
+
             return $this->success('Teacher dashboard summary retrieved successfully', [
                 'stats' => [
                     'totalClasses' => $classes->count(),
                     'totalStudents' => $classes->sum('students_count'),
-                    'attendanceRate' => '96.4%',
+                    'attendanceRate' => $attendanceRate, // 💡 Real calculated rate here
                     'pendingGrades' => 0,
                 ],
                 'todaySchedule' => $schedules,
@@ -212,15 +228,17 @@ class TeacherController extends Controller
         }
     }
 
-    public function getTeacherNotices($teacherId, Request $request)
+    public function getTeacherNotices(Request $request)
     {
         try {
             $user = $request->user();
             $teacher = $user->teacher;
+            if (!$teacher) {
+                return $this->error('Teacher profile not found for this user', null, 404);
+            }
 
-            // Fetch notices with necessary relationships (e.g., user/teacher info)
-            $notices = Notice::with(['user.teacher']) // Adjust relationship based on your models
-                ->where('user_id', $user->id)
+            $teacherId = $teacher->user_id;
+            $notices = Notice::with(['user.teacher'])
                 ->where(function ($query) use ($teacherId) {
                     $query->where('target_audience', 'all')
                         ->orWhere('target_audience', 'all_teachers')
@@ -263,6 +281,7 @@ class TeacherController extends Controller
         try {
             $query = User::where('role', 'teacher')->with('teacher');
 
+            // 1. Search Filter (Name, Teacher Code, Gender search)
             if ($request->has('search') && !empty($request->search)) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
@@ -275,12 +294,23 @@ class TeacherController extends Controller
                         });
                 });
             }
+
+            // 💡 2. ADD THIS: Gender Dropdown Filter
+            if ($request->filled('gender') && $request->input('gender') !== 'all' && $request->input('gender') !== '') {
+                $gender = $request->input('gender');
+                $query->whereHas('teacher', function ($q) use ($gender) {
+                    $q->where('gender', $gender);
+                });
+            }
+
             $perPage = $request->get('per_page', 10);
             $teachers = $query->orderBy('created_at', 'desc')->paginate($perPage);
             $teacher = TeacherResource::collection($teachers)->response()->getData(true);
+
             if ($teachers->isEmpty()) {
                 return $this->success('No teachers found', [], 200);
             }
+
             return $this->success('Teacher have been accessed succesfully!', $teacher, 200);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving teachers', $e->getMessage(), 500);
