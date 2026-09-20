@@ -142,13 +142,98 @@ export default function ContactPage() {
                 Follow our social media
               </h4>
               <div className="flex space-x-3">
-                {["f", "ig", "t", "in", "yt"].map((social, idx) => (
+                {[
+                  {
+                    name: "facebook",
+                    icon: (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          d="M24 12.07C24 5.66 18.63.28 12 .28S0 5.66 0 12.07c0 5.8 4.39 10.6 10.13 11.45v-8.1H7.08v-3.35h3.05V9.41c0-3 1.79-4.67 4.53-4.67 1.31 0 2.68.24 2.68.24v2.95h-1.51c-1.49 0-1.95.92-1.95 1.87v2.24h3.32l-.53 3.35h-2.79v8.1C19.61 22.67 24 17.87 24 12.07z"
+                          fill="#1877F2"
+                        />
+                      </svg>
+                    ),
+                  },
+                  {
+                    name: "instagram",
+                    icon: (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <defs>
+                          <linearGradient
+                            id="igGradient"
+                            x1="0%"
+                            y1="100%"
+                            x2="100%"
+                            y2="0%"
+                          >
+                            <stop offset="0%" stopColor="#FFDC80" />
+                            <stop offset="20%" stopColor="#FCAF45" />
+                            <stop offset="40%" stopColor="#F77737" />
+                            <stop offset="60%" stopColor="#F56040" />
+                            <stop offset="80%" stopColor="#C13584" />
+                            <stop offset="100%" stopColor="#833AB4" />
+                          </linearGradient>
+                        </defs>
+                        <rect
+                          x="1"
+                          y="1"
+                          width="22"
+                          height="22"
+                          rx="6"
+                          fill="url(#igGradient)"
+                        />
+                        <circle
+                          cx="12"
+                          cy="12"
+                          r="5"
+                          fill="none"
+                          stroke="#fff"
+                          strokeWidth="1.8"
+                        />
+                        <circle cx="18" cy="6" r="1.3" fill="#fff" />
+                      </svg>
+                    ),
+                  },
+                  {
+                    name: "youtube",
+                    icon: (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.51 3.5 12 3.5 12 3.5s-7.51 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.87.55 9.38.55 9.38.55s7.51 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.81z"
+                          fill="#FF0000"
+                        />
+                        <path d="M9.6 15.6V8.4L15.8 12l-6.2 3.6z" fill="#fff" />
+                      </svg>
+                    ),
+                  },
+                  {
+                    name: "tiktok",
+                    icon: (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path
+                          d="M16.6 5.82a4.28 4.28 0 0 1-3.15-1.4V4.4h-3.1v13.62a2.6 2.6 0 1 1-1.83-2.48v-3.16a5.75 5.75 0 1 0 4.9 5.68V9.7a7.36 7.36 0 0 0 4.3 1.38V8a4.28 4.28 0 0 1-1.12-.14V5.82h-.0z"
+                          fill="#000"
+                        />
+                        <path
+                          d="M16.6 5.82a4.28 4.28 0 0 0 3.9 2.32v2.94a7.36 7.36 0 0 1-4.3-1.38v6.36a5.75 5.75 0 1 1-4.9-5.68v3.16a2.6 2.6 0 1 0 1.83 2.48V4.4h3.1v.02a4.28 4.28 0 0 0 .37 1.4z"
+                          fill="#EE1D52"
+                          opacity="0.85"
+                        />
+                        <path
+                          d="M13.45 4.4h3.1v1.42a4.28 4.28 0 0 1-.37-1.4V4.4z"
+                          fill="#69C9D0"
+                          opacity="0.7"
+                        />
+                      </svg>
+                    ),
+                  },
+                ].map((social) => (
                   <a
-                    key={idx}
-                    href={`#${social}`}
-                    className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center font-bold text-xs uppercase shadow-md transition"
+                    key={social.name}
+                    href={`#${social.name}`}
+                    className="w-10 h-10 rounded-full flex items-center justify-center shadow-md transition"
                   >
-                    {social}
+                    {social.icon}
                   </a>
                 ))}
               </div>
