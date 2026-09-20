@@ -14,45 +14,33 @@ class AttendanceController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. ដំណើរការ Query មូលដ្ឋាន
+     
         $query = Attendance::with(['student', 'classRoom']);
-
-        // 2. Filter តាម Date (ថ្ងៃខែ)
         if ($request->filled('date')) {
             $query->whereDate('date', $request->input('date'));
         }
-
-        // 3. Filter តាម Grade (ថ្នាក់ទី...)
         if ($request->filled('grade') && $request->input('grade') !== 'all') {
             $grade = $request->input('grade');
             $query->whereHas('classRoom', function ($q) use ($grade) {
                 $q->where('grade', $grade);
             });
         }
-
-        // 4. Filter តាម Section (ផ្នែក A, B...)
         if ($request->filled('section') && $request->input('section') !== 'all') {
             $section = $request->input('section');
             $query->whereHas('classRoom', function ($q) use ($section) {
                 $q->where('section', $section);
             });
         }
-
-        // 5. Filter តាម Student Name (ឈ្មោះសិស្ស)
         if ($request->filled('student_name')) {
             $studentName = $request->input('student_name');
             $query->whereHas('student', function ($q) use ($studentName) {
                 $q->where('name', 'like', '%' . $studentName . '%');
             });
         }
-
-        // 6. Filter តាម Block Status (is_blocked)
         if ($request->filled('is_blocked') && $request->input('is_blocked') !== 'all') {
             $isBlocked = $request->input('is_blocked') === 'true' || $request->input('is_blocked') == 1;
             $query->where('is_blocked', $isBlocked);
         }
-
-        // 7. ទាញយកទិន្នន័យចុងក្រោយ
         $attendances = $query->paginate(30);
         return AttendanceResource::collection($attendances)->additional([
             'message' => 'Attendance records retrieved successfully!'
@@ -112,7 +100,6 @@ class AttendanceController extends Controller
                 'message' => 'Student not found!'
             ], 404);
         }
-        // use for summard data attendance student 
         $summary = [
             'total_absent' => $student->attendances->where('status', 'absent')->count(),
             'total_permission' => $student->attendances->where('status', 'permission')->count(),

@@ -129,7 +129,7 @@ export default function Navbar() {
           {/* Search, Theme Toggle & Auth Actions / Profile Dropdown (Desktop/Tablet) */}
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             {/* Responsive Search Input */}
-            <div className="relative hidden xl:block">
+            {/* <div className="relative hidden xl:block">
               <input
                 type="text"
                 placeholder="Search courses..."
@@ -138,7 +138,7 @@ export default function Navbar() {
               <button className="absolute right-3 top-2.5 text-gray-400 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
                 <FaSearch className="w-3.5 h-3.5" />
               </button>
-            </div>
+            </div> */}
 
             {/* Theme Toggle Button */}
             <button
@@ -158,7 +158,7 @@ export default function Navbar() {
                 {currentDashboard && (
                   <Link
                     to={currentDashboard}
-                    className="bg-slate-900 dark:bg-slate-800 text-white text-xs lg:text-sm font-medium px-3 lg:px-4 py-2 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-700 transition shadow-sm flex items-center gap-1.5 shrink-0"
+                    className="bg-gray-500 dark:bg-slate-900 text-white text-xs lg:text-sm font-medium px-3 lg:px-4 py-2 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-700 transition  flex items-center gap-1.5 shrink-0"
                   >
                     <FaGauge className="w-3.5 h-3.5 text-blue-400" />
                     <span className="hidden lg:inline">Dashboard</span>
@@ -290,7 +290,7 @@ export default function Navbar() {
                   <Link
                     to={currentDashboard}
                     onClick={() => setIsOpen(false)}
-                    className="block py-2 px-3 text-blue-600 dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-lg transition"
+                    className="block py-2 px-3 text-blue-600  dark:text-blue-400 font-semibold hover:bg-blue-50 dark:hover:bg-blue-950/60 rounded-lg transition"
                   >
                     Dashboard
                   </Link>

@@ -60,24 +60,24 @@ export default function CourseView() {
     : [];
 
   return (
-    <div className="space-y-6 lg:min-w-160 mx-auto p-6 text-slate-900 dark:text-slate-100 transition-colors">
+    <div className="space-y-6 lg:min-w-160 mx-auto text-slate-900 dark:text-slate-100 transition-colors">
       {/* Header Actions */}
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium transition-colors cursor-pointer border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors cursor-pointer border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300"
         >
           <ArrowLeft size={16} /> Back to Courses
         </button>
         <Link
           to={`/admin/course/add/${course.id}`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-blue-500 dark:hover:bg-indigo-500 transition shadow-xs"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-blue-500 dark:hover:bg-indigo-500 transition shadow-xs"
         >
           <Edit size={16} /> Edit Course
         </Link>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs transition-colors">
+      <div className="bg-white dark:bg-slate-900  border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
         {/* Thumbnail Banner */}
         {course.thumbnail && (
           <div className="w-full h-64 sm:h-80 overflow-hidden bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800">

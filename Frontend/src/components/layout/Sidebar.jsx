@@ -78,9 +78,9 @@ function Sidebar() {
               </span>
             </div>
           )}
-          <p className="text-gray-500 text-sm font-medium">
+          {/* <p className="text-gray-500 text-sm font-medium">
             school management system
-          </p>
+          </p> */}
         </span>
         <div className="flex items-center gap-x-1">
           {/* Mobile Theme Toggle Button */}
@@ -136,9 +136,7 @@ function Sidebar() {
                 </span>
               </div>
             )}
-            <p className="text-gray-500 text-sm font-medium">
-              school management system
-            </p>
+            
           </span>
           <div className="flex items-center gap-x-1">
             <button

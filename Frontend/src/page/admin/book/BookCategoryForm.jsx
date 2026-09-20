@@ -89,7 +89,7 @@ export default function BookCategoryForm() {
   }
 
   return (
-    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8  border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
       <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <h2 className="text-lg font-bold tracking-tight text-gray-900 dark:text-slate-100">
           {isEditMode ? "Edit Book Category" : "Add New Book Category"}

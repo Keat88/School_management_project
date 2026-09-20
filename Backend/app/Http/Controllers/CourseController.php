@@ -79,7 +79,6 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        // Fixed: Use route model binding instead of .get() so it fetches the exact course with relations
         $course->load(['category', 'instructor']);
 
         return response()->json([

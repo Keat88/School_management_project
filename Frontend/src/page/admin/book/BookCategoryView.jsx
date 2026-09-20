@@ -66,16 +66,16 @@ export default function BookCategoryView() {
   }
 
   return (
-    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40 space-y-6">
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8  border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40 space-y-6">
       <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-slate-800">
-        <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 text-gray-900 dark:text-slate-100">
-          <BookOpen className="text-indigo-600 dark:text-indigo-400" size={24} />
+        <h2 className="text-lg font-bold tracking-tight flex items-center gap-2 text-gray-900 dark:text-slate-100">
+        
           Category View
         </h2>
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded-xl text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center gap-1.5"
+          className="px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700 flex items-center gap-1.5"
         >
           <ArrowLeft size={16} />
           Back
@@ -90,7 +90,7 @@ export default function BookCategoryView() {
       )}
 
       {/* Category Info Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 sm:p-5 rounded-2xl border transition-colors bg-gray-50/60 border-gray-200/60 dark:bg-slate-800/50 dark:border-slate-800">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 sm:p-5 rounded-lg border transition-colors bg-gray-50/60 border-gray-200/60 dark:bg-slate-800/50 dark:border-slate-800">
         <div>
           <span className="block text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-slate-500">
             Category Name
@@ -120,7 +120,7 @@ export default function BookCategoryView() {
       {/* Books Table Section */}
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-blue-500 dark:text-blue-400">
             Books in this Category
           </h3>
           <div className="relative w-full md:w-72">
@@ -136,7 +136,7 @@ export default function BookCategoryView() {
         </div>
 
         {/* Scrollable Container with Sticky Header */}
-        <div className="overflow-x-auto border rounded-2xl max-h-[450px] overflow-y-auto border-gray-200/80 dark:border-slate-800">
+        <div className="overflow-x-auto border rounded-lg max-h-[450px] overflow-y-auto border-gray-200/80 dark:border-slate-800">
           <table className="w-full text-left border-collapse">
             <thead className="sticky top-0 text-xs font-semibold uppercase tracking-wider z-10 shadow-sm bg-gray-50/90 text-gray-500 border-b border-gray-200/80 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">
               <tr>
@@ -145,7 +145,7 @@ export default function BookCategoryView() {
                 <th className="py-3 px-4">Author</th>
                 <th className="py-3 px-4">ISBN</th>
                 <th className="py-3 px-4 text-center">Copies</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+            
               </tr>
             </thead>
             <tbody className="divide-y text-sm divide-gray-100 bg-white dark:divide-slate-800 dark:bg-slate-900">
@@ -179,15 +179,7 @@ export default function BookCategoryView() {
                         {book.available_copies} / {book.total_copies}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
-                      <button
-                        onClick={() => navigate(`/admin/books/view/${book.id}`)}
-                        className="p-2 rounded-xl transition-all cursor-pointer text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200 inline-block"
-                        title="View Book"
-                      >
-                        <Eye size={16} />
-                      </button>
-                    </td>
+                   
                   </tr>
                 ))
               )}

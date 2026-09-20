@@ -180,7 +180,6 @@ export default function AcademicYearManager() {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-5 border-b border-slate-100 dark:border-slate-800 gap-4">
         <div className="flex items-center gap-3">
-         
           <div>
             <h2 className="text-lg font-bold tracking-tight text-slate-900 dark:text-slate-100">
               Academic Years Management
@@ -235,7 +234,7 @@ export default function AcademicYearManager() {
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="w-full overflow-x-auto border border-slate-200/80 dark:border-slate-800 ">
             <table className="w-full text-left border-collapse min-w-[650px]">
               <thead>
                 <tr className="border-b text-xs font-bold uppercase tracking-wider border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 bg-slate-50/70 dark:bg-slate-800/50">

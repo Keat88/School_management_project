@@ -23,7 +23,6 @@ class DashboardController extends Controller
 {
     public function getRatePublic()
     {
-        // ប្រើ Cache រយៈពេល ៥ នាទី (300 វិនាទី) ព្រោះទិន្នន័យទាំងនេះមិនបាច់ដូររាល់វិនាទីទេ
         $stats = Cache::remember('public_rate_stats', 300, function () {
             return [
                 'total_student' => Students::count(),
@@ -41,7 +40,7 @@ class DashboardController extends Controller
         $startOfDay = now()->startOfDay();
         $endOfDay = now()->endOfDay();
 
-        // 1. Calculate Overall Attendance Rate for Today (Fixed to match 'P')
+   
         $totalRecordsToday = Attendance::whereBetween('date', [$startOfDay, $endOfDay])->count();
         $presentRecordsToday = Attendance::whereBetween('date', [$startOfDay, $endOfDay])->where('status', 'P')->count();
 
@@ -49,7 +48,7 @@ class DashboardController extends Controller
             ? round(($presentRecordsToday / $totalRecordsToday) * 100)
             : 0;
 
-        // 2. Calculate Attendance Rate By Class for Today
+     
         $classes = ClassRoom::with(['attendances' => function ($query) use ($startOfDay, $endOfDay) {
             $query->whereBetween('date', [$startOfDay, $endOfDay]);
         }])->get();
@@ -68,7 +67,6 @@ class DashboardController extends Controller
             ];
         });
 
-        // 3. Fetch real-time daily data for notices and activity logs
         $notice = Notice::whereBetween('publish_date', [$startOfDay, $endOfDay])->get();
 
         $activityLog = ActivityLog::with(['user:id,name,email'])
@@ -77,7 +75,6 @@ class DashboardController extends Controller
             ->take(20)
             ->get();
 
-        // 4. Cache heavy statistics/counts for 5 minutes (300 seconds)
         $stats = Cache::remember('admin_dashboard_stats', 300, function () {
             return [
                 'total_students' => Students::count(),
@@ -90,8 +87,6 @@ class DashboardController extends Controller
                 'total_studentassignments' => Hostel_assignments::count(),
             ];
         });
-
-        // 5. Combine everything into a single, comprehensive JSON response
         return response()->json([
             'message' => 'Dashboard statistics retrieved successfully',
             'data'    => array_merge($stats, [
@@ -105,7 +100,6 @@ class DashboardController extends Controller
 
     public function getDataForSchedult()
     {
-        // ទាញយកតែ Column ណាដែលត្រូវការប្រើប្រាស់ (Select specific columns) ដើម្បីកាត់បន្ថយទំហំ Memory
         $teachers = Teachers::with('user:id,name')->select('id', 'user_id')->get();
         $classes = ClassRoom::select('id', 'grade', 'section')->get();
         $subjects = Subjects::select('id', 'subject_name')->get();
@@ -137,12 +131,9 @@ class DashboardController extends Controller
 
     public function getRecently()
     {
-        // ប្រើប្រាស់ Date Range (`whereBetween`) ជំនួញឱ្យ `whereDate` ដើម្បីឱ្យ Database អាចប្រើ Index បានលឿន
         $startOfDay = now()->startOfDay();
         $endOfDay = now()->endOfDay();
         $notice = Notice::whereBetween('publish_date', [$startOfDay, $endOfDay])->get();
-
-        // កំណត់យកត្រឹម ២០ ចុងក្រោយ (take(20)) ដើម្បីការពារកុំឱ្យទាញយកទិន្នន័យច្រើនពេកបើ Activity Log ច្រើន
         $activityLog = ActivityLog::with(['user:id,name,email'])
             ->whereBetween('created_at', [$startOfDay, $endOfDay])
             ->latest()

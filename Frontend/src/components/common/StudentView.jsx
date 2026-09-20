@@ -83,7 +83,7 @@ export default function StudentView() {
   };
 
   return (
-    <div className="lg:min-w-160 mx-auto p-6 rounded-lg border space-y-6 transition-colors bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-100">
+    <div className="lg:min-w-160 mx-auto p-6 border space-y-6 transition-colors bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 text-gray-800 dark:text-slate-100">
       <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-slate-800">
         <h2 className="text-xl font-bold text-gray-800 dark:text-slate-100">
           Student Details

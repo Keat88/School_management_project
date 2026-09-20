@@ -75,13 +75,13 @@ function ClassroomCard({
   };
 
   return (
-    <div className="group relative rounded-xl border bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800 p-5 shadow-2xs hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 flex flex-col justify-between overflow-hidden">
+    <div className="group relative rounded-lg border bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800 p-5 shadow-2xs hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 flex flex-col justify-between overflow-hidden">
       
       <div>
         {/* Header Title & Academic Year Badge */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate tracking-tight group-hover:text-gray-400 dark:group-hover:text-blue-400 transition-colors">
               {name}
             </h3>
             {section && (

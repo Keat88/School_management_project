@@ -42,17 +42,17 @@ class ClassController extends Controller
             'attendance_date' => 'required|date',
             'attendances' => 'required|array',
             'attendances.*.student_id' => 'required|exists:students,id',
-            'attendances.*.status' => 'required|in:P,A,PM', // Changed from nullable to required
+            'attendances.*.status' => 'required|in:P,A,PM', 
             'attendances.*.reason' => 'nullable|string',
         ]);
 
         foreach ($request->attendances as $attData) {
             $existing = Attendance::where('class_id', $classId)
                 ->where('student_id', $attData['student_id'])
-                ->where('date', $request->attendance_date) // 💡 ដូរពី attendance_date មក date
+                ->where('date', $request->attendance_date) 
                 ->first();
 
-            // 💡 ពិនិត្យ is_blocked ជំនួស is_locked
+          
             if ($existing && $existing->is_blocked == 1) {
                 continue;
             }
@@ -211,12 +211,9 @@ class ClassController extends Controller
             if (!$class) {
                 return $this->error('Class not found!', null, 404);
             }
-
-            // Check for related records before deleting
             if ($class->students()->exists()) {
                 return $this->error('Cannot delete class because it has active students assigned.', null, 400);
             }
-
             $class->delete();
             return $this->success('Class deleted successfully!', null, 200);
         } catch (\Exception $e) {

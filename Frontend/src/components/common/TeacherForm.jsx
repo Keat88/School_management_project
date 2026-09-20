@@ -175,10 +175,10 @@ export default function TeacherForm({
 
   if (fetching) {
     return (
-      <div className="flex justify-center items-center min-h-[400px] bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-        <div className="flex items-center gap-2.5 text-slate-500 dark:text-slate-400 text-sm font-medium">
-          <Loader2 className="animate-spin text-blue-600 dark:text-blue-400" size={20} />
-          Loading teacher details...
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
+        <div className="flex flex-col items-center justify-center gap-3">
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading teacher detail ...</span>
         </div>
       </div>
     );
@@ -186,11 +186,9 @@ export default function TeacherForm({
 
   return (
     <div className="lg:min-w-160 mx-auto space-y-6 p-6 sm:p-8  border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs transition-colors">
-      
       {/* Header */}
       <div className="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center gap-3.5">
-        
           <div>
             <h2 className="text-lg font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
               <Users className="text-blue-500 dark:text-blue-400" size={22} />
@@ -213,13 +211,20 @@ export default function TeacherForm({
               : "bg-red-50 dark:bg-rose-500/10 text-red-700 dark:text-rose-400 border-red-200 dark:border-rose-500/20"
           }`}
         >
-          {feedback.type === "success" ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
+          {feedback.type === "success" ? (
+            <CheckCircle size={16} />
+          ) : (
+            <AlertCircle size={16} />
+          )}
           {feedback.text}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8" encType="multipart/form-data">
-        
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8"
+        encType="multipart/form-data"
+      >
         {/* Section: Teacher Information */}
         <div className="space-y-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
@@ -351,7 +356,7 @@ export default function TeacherForm({
                     )}
                   </div>
                 )}
-                
+
                 <label className="flex-1 w-full flex flex-col items-center justify-center px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-slate-50 dark:bg-slate-950/40 transition-colors">
                   <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
                     <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />

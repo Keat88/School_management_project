@@ -14,7 +14,7 @@ const accentStyles = {
 
 function StatTile({ label, value, icon: Icon, accent, loading }) {
   return (
-    <div className="group relative rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 overflow-hidden shadow-2xs">
+    <div className="group relative rounded-lg border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 flex items-center gap-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-700 overflow-hidden shadow-2xs">
       {/* Decorative background circle effect on hover */}
       <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-slate-50 dark:bg-slate-800/40 rounded-full group-hover:scale-150 transition-transform duration-500 pointer-events-none" />
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Library;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Library\BookCategoryResource;
+use App\Http\Resources\Library\BookCategoryView;
 use App\Models\BookCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -79,13 +80,11 @@ class BookCategoryController extends Controller
             if (!$bookCategory) {
                 return $this->error('Book category not found!', null, 404);
             }
-
-            return $this->success('Book category found!', new BookCategoryResource($bookCategory), 200);
+            return $this->success('Book category found!', new BookCategoryView($bookCategory) , 200);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while fetching the book category', $e->getMessage(), 500);
         }
     }
-
     /**
      * Update the specified resource in storage.
      */
@@ -115,7 +114,6 @@ class BookCategoryController extends Controller
             return $this->error('Something went wrong while updating the book category', $e->getMessage(), 500);
         }
     }
-
     /**
      * Remove the specified resource from storage.
      */

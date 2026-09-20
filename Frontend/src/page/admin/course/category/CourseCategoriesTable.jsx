@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Layers, Search, Plus, Loader2 } from "lucide-react";
+import { Layers, Search, Plus, Loader2, Trash, Edit } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../../data/api";
 import Pagination from "../../../../hooks/Pagination";
@@ -164,14 +164,16 @@ export default function CourseCategoriesTable() {
                   <td className="py-3 px-4 text-right space-x-3">
                     <button
                       onClick={() => handleEdit(category.id)}
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-500 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 border border-slate-500 dark:border-slate-700 shadow-2xs"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
                     >
+                      <Edit size={16}/>
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(category.id)}
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-500 text-white hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 border border-red-600 dark:border-red-600 shadow-xs"
+                       className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
                     >
+                      <Trash size={16}/>
                       Delete
                     </button>
                   </td>

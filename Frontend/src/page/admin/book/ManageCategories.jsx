@@ -5,15 +5,6 @@ import { BookCategoryApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
 
 export default function ManageCategories() {
-  const [isDark, setIsDark] = useState(() => {
-    const savedTheme =
-      localStorage.getItem("theme") || localStorage.getItem("darkMode");
-    if (savedTheme !== null) {
-      return savedTheme === "dark" || savedTheme === "true";
-    }
-    return document.documentElement.classList.contains("dark");
-  });
-
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
@@ -27,20 +18,6 @@ export default function ManageCategories() {
   // Delete Modal States
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState(null);
-
-  // Sync with localStorage changes across components/tabs if theme toggles elsewhere
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const savedTheme =
-        localStorage.getItem("theme") || localStorage.getItem("darkMode");
-      if (savedTheme !== null) {
-        setIsDark(savedTheme === "dark" || savedTheme === "true");
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
 
   const fetchCategories = async (page = 1, searchTerm = search) => {
     setLoading(true);
@@ -118,9 +95,7 @@ export default function ManageCategories() {
   };
 
   return (
-    <div
-      className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6  text-slate-900 dark:text-slate-100 transition-colors duration-200`}
-    >
+    <div className="w-full lg:min-w-160 mx-auto space-y-6 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
         <div>
@@ -156,7 +131,7 @@ export default function ManageCategories() {
       {/* Search & Filter Form */}
       <form
         onSubmit={handleSearchSubmit}
-        className="p-4 rounded-xl border flex flex-col md:flex-row gap-3 transition-colors shadow-2xs bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+        className="p-4 rounded-lg border flex flex-col md:flex-row gap-3 transition-colors  bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-900 dark:text-slate-100"
       >
         <div className="relative flex-1">
           <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-400">
@@ -188,8 +163,8 @@ export default function ManageCategories() {
         </div>
       </form>
 
-      {/* Table Container */}
-      <div className="border space-y-4 transition-colors shadow-2xs bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100">
+      {/* Desktop Table View */}
+      <div className="hidden md:block border space-y-4 transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
@@ -274,13 +249,65 @@ export default function ManageCategories() {
         </div>
       </div>
 
+      {/* Mobile Card Layout */}
+      <div className="block md:hidden space-y-3.5">
+        {loading ? (
+          <div className="py-16 text-center rounded-2xl border p-6 bg-white border-gray-200 text-gray-400 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 shadow-xs">
+            <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin mx-auto mb-2.5 border-blue-600 dark:border-indigo-400"></div>
+            <span className="text-sm">Loading categories...</span>
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="py-16 text-center rounded-2xl border p-6 bg-white border-gray-200 text-gray-400 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 shadow-xs">
+            <span className="text-sm font-medium">No categories found.</span>
+          </div>
+        ) : (
+          categories.map((cat) => (
+            <div
+              key={cat.id}
+              className="border rounded-2xl p-4 shadow-2xs flex flex-col gap-3 transition-colors bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100"
+            >
+              <div className="flex justify-between items-start gap-2">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-base leading-snug truncate text-gray-900 dark:text-slate-100">
+                    {cat.book_category}
+                  </h3>
+                  <p className="text-xs mt-1 text-gray-500 dark:text-slate-400 font-mono">
+                    Created: {cat.created_at ? new Date(cat.created_at).toLocaleDateString() : "-"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end pt-3 border-t text-xs gap-2 border-gray-100 dark:border-slate-800/80">
+                <button
+                  onClick={() => navigate(`/admin/library/category/view/${cat.id}`)}
+                  className="border border-gray-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 font-medium transition-colors cursor-pointer bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => navigate(`/admin/library/category/add/${cat.id}`)}
+                  className="px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-700 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(cat.id)}
+                  className="px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
       {/* Pagination Footer */}
       <div className="pt-2">
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={(page) => setCurrentPage(page)}
-          isDark={isDark}
         />
       </div>
 

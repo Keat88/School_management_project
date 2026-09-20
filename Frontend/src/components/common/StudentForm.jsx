@@ -232,7 +232,7 @@ export default function StudentForm({ onSuccess }) {
         </div>
       )}
 
-      <div className="mx-auto p-6 sm:p-8 rounded-lg border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
+      <div className="mx-auto p-6 sm:p-8  border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
         <h2 className="text-xl font-bold mb-6 tracking-tight text-gray-900 dark:text-slate-100">
           {isEdit ? "Edit Student" : "Add New Student"}
         </h2>

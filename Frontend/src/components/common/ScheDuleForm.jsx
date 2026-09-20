@@ -122,7 +122,7 @@ export default function ScheduleForm() {
   ];
 
   return (
-    <div className="lg:min-w-160 mx-auto rounded-lg p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800  text-gray-800 dark:text-slate-100 font-sans my-8 transition-all">
+    <div className="lg:min-w-160 mx-auto  p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800  text-gray-800 dark:text-slate-100 font-sans my-8 transition-all">
       <div className="flex items-center justify-between mb-8 pb-5 border-b border-gray-100 dark:border-slate-800">
         <div>
           
@@ -286,7 +286,7 @@ export default function ScheduleForm() {
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
           >
             <Save size={15} /> {loading ? "Saving..." : IsEdit ? "Update Schedule" : "Save Schedule"}
           </button>

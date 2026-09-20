@@ -7,6 +7,7 @@ import {
   Search,
   RotateCcw,
   AlertTriangle,
+  Trash,
 } from "lucide-react";
 import { subjectApi } from "../../../data/classrooms";
 import Pagination from "../../../hooks/Pagination";
@@ -134,7 +135,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
   };
 
   return (
-    <div className="space-y-6 w-full lg:min-w-260 mx-auto transition-colors text-slate-900 dark:text-slate-100">
+    <div className="space-y-6 w-full lg:min-w-260 mx-auto transition-colors text-slate-900 dark:text-slate-100 ">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
         <div>
@@ -146,7 +147,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
           </p>
         </div>
         <div className="self-start sm:self-auto">
-          <span className="inline-flex items-center text-xs font-semibold px-3 py-1  dark:bg-blue-500/10 text-gray-500 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20 shadow-2xs">
+          <span className="inline-flex items-center text-xs font-semibold px-3 py-1 dark:bg-blue-500/10 text-gray-500 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20 shadow-2xs">
             {totalItems} subjects found
           </span>
         </div>
@@ -167,7 +168,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
       {/* Search Bar & Actions */}
       <form
         onSubmit={handleSearchSubmit}
-        className="p-4 rounded-lg border flex flex-col md:flex-row gap-3 transition-colors shadow-2xs bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+        className="p-4 rounded-xl border flex flex-col md:flex-row gap-3 transition-colors shadow-2xs bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-900 dark:text-slate-100"
       >
         <div className="relative flex-1">
           <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-400">
@@ -198,7 +199,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
           </button>
           <Link
             to="/admin/subjects/add"
-            className="flex-1 sm:flex-initial px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs active:scale-98"
+            className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs active:scale-98"
           >
             <Plus size={16} />
             Add Subject
@@ -206,74 +207,113 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
         </div>
       </form>
 
-      {/* Subject List Table Container */}
-      <div className="border p-4 sm:p-5 space-y-4 transition-colors shadow-2xs bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[640px]">
-            <thead>
-              <tr className="border-b text-xs font-semibold uppercase tracking-wider border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-400">
-                <th className="px-4 py-3.5">Subject Name</th>
-                <th className="px-4 py-3.5">Code</th>
-                <th className="px-4 py-3.5 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y text-sm divide-slate-100 dark:divide-slate-700/80">
-              {loading ? (
-                <tr>
-                  <td colSpan="3" className="py-12 text-center text-slate-400 dark:text-slate-400">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-500 dark:border-blue-400"></div>
-                      <span className="text-slate-500 dark:text-slate-400">
-                        Loading subjects...
-                      </span>
+      {/* Subject List Container */}
+      <div className="border p-3 sm:p-5 space-y-4 transition-colors  bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100">
+        {/* Loading / Empty / Content States */}
+        {loading ? (
+          <div className="py-12 text-center text-slate-400 dark:text-slate-400">
+            <div className="flex flex-col items-center justify-center gap-2">
+              <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-500 dark:border-blue-400"></div>
+              <span className="text-slate-500 dark:text-slate-400 text-sm">
+                Loading subjects...
+              </span>
+            </div>
+          </div>
+        ) : subjects.length === 0 ? (
+          <div className="py-12 text-center text-slate-400 dark:text-slate-400 text-sm">
+            No subjects found.
+          </div>
+        ) : (
+          <>
+            {/* MOBILE VIEW: Card List Layout (Visible on mobile only) */}
+            <div className="grid grid-cols-1 gap-3 md:hidden">
+              {subjects.map((sub) => (
+                <div
+                  key={sub.id}
+                  className="bg-slate-50/60 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700/80 rounded-xl p-4 shadow-2xs space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                        {sub.subject_name}
+                      </h3>
                     </div>
-                  </td>
-                </tr>
-              ) : subjects.length === 0 ? (
-                <tr>
-                  <td colSpan={3} className="px-4 py-12 text-center text-slate-400 dark:text-slate-400">
-                    No subjects found.
-                  </td>
-                </tr>
-              ) : (
-                subjects.map((sub) => (
-                  <tr
-                    key={sub.id}
-                    className="transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-700/40"
-                  >
-                    <td className="px-4 py-3.5 font-medium whitespace-nowrap text-slate-800 dark:text-slate-200">
-                      {sub.subject_name}
-                    </td>
-                    <td className="px-4 py-3.5 whitespace-nowrap">
-                      <span className="px-2.5 py-1 rounded-md text-xs font-mono font-medium border bg-slate-100 border-slate-200 text-slate-700 dark:bg-slate-900/80 dark:border-slate-700 dark:text-slate-300">
-                        {sub.code}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          to={`/admin/subjects/add/${sub.id}`}
-                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-500 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
-                          title="Edit"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteClick(sub.id)}
-                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-500 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
-                          title="Delete"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
+                    <span className="px-2.5 py-1 rounded-md text-xs font-mono font-medium border bg-slate-100 border-slate-200 text-slate-700 dark:bg-slate-900/80 dark:border-slate-700 dark:text-slate-300 shrink-0">
+                      {sub.code}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                    <Link
+                      to={`/admin/subjects/add/${sub.id}`}
+                       className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                    ><Edit size={16}/>
+
+                      Edit
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteClick(sub.id)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
+                    >
+                      <Trash size={16}/>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* DESKTOP VIEW: Table Layout (Hidden on mobile) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b text-xs font-semibold uppercase tracking-wider border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-400">
+                    <th className="px-4 py-3.5">Subject Name</th>
+                    <th className="px-4 py-3.5">Code</th>
+                    <th className="px-4 py-3.5 text-right">Actions</th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody className="divide-y text-sm divide-slate-100 dark:divide-slate-700/80">
+                  {subjects.map((sub) => (
+                    <tr
+                      key={sub.id}
+                      className="transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-700/40"
+                    >
+                      <td className="px-4 py-3.5 font-medium whitespace-nowrap text-slate-800 dark:text-slate-200">
+                        {sub.subject_name}
+                      </td>
+                      <td className="px-4 py-3.5 whitespace-nowrap">
+                        <span className="px-2.5 py-1 rounded-md text-xs font-mono font-medium border bg-slate-100 border-slate-200 text-slate-700 dark:bg-slate-900/80 dark:border-slate-700 dark:text-slate-300">
+                          {sub.code}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            to={`/admin/subjects/add/${sub.id}`}
+                            className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-500 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
+                            title="Edit"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteClick(sub.id)}
+                            className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-500 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
+                            title="Delete"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Pagination Component */}
@@ -295,7 +335,8 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
             </div>
             <h3 className="text-lg font-bold">Delete Subject</h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Are you sure you want to delete this subject? This action cannot be undone.
+              Are you sure you want to delete this subject? This action cannot
+              be undone.
             </p>
             <div className="flex justify-center gap-3 pt-2">
               <button

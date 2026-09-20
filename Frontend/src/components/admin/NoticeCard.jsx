@@ -27,14 +27,14 @@ function NoticeCard({ notice, onEdit, onDelete }) {
   const fileName = getFileName(attachmentUrl);
 
   return (
-    <div className="group relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-6 flex flex-col justify-between shadow-xs hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 overflow-hidden">
+    <div className="group relative bg-white dark:bg-slate-900 rounded-lg border border-slate-200/80 dark:border-slate-800 p-6 flex flex-col justify-between shadow-xs hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 overflow-hidden">
       {/* Decorative Top Accent Bar on Hover */}
       <div className="absolute top-0 left-0 right-0 h-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       <div>
         {/* Header Section */}
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white line-clamp-1 tracking-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white line-clamp-1 tracking-tight group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">
             {notice.title}
           </h3>
           {notice.audience && <AudienceBadge audience={notice.audience} />}
@@ -96,8 +96,8 @@ function NoticeCard({ notice, onEdit, onDelete }) {
         <button
           type="button"
           onClick={() => onEdit(notice)}
-          className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700
-            text-xs font-semibold text-slate-700 dark:text-slate-200 py-2.5 hover:bg-blue-600 hover:text-white hover:border-blue-600 dark:hover:bg-blue-600 dark:hover:text-white dark:hover:border-blue-600 transition-all duration-200 shadow-2xl cursor-pointer"
+          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700
+            text-xs font-semibold text-slate-700 dark:text-slate-200 py-2.5 hover:bg-blue-500 hover:text-white hover:border-blue-500 dark:hover:bg-blue-500 dark:hover:text-white dark:hover:border-blue-500 transition-all duration-200 shadow-2xl cursor-pointer"
         >
           <Pencil size={13} />
           Edit Notice
@@ -105,8 +105,8 @@ function NoticeCard({ notice, onEdit, onDelete }) {
         <button
           type="button"
           onClick={() => onDelete(notice)}
-          className="flex items-center justify-center gap-1.5 px-3.5 rounded-xl bg-rose-50/60 dark:bg-rose-950/50 border border-rose-100 dark:border-rose-900/50
-            text-rose-600 dark:text-rose-400 py-2.5 hover:bg-rose-600 hover:text-white hover:border-rose-600 dark:hover:bg-rose-600 dark:hover:text-white dark:hover:border-rose-600 transition-all duration-200 shadow-2xl cursor-pointer"
+          className="flex items-center justify-center gap-1.5 px-3.5 rounded-lg bg-rose-50/60 dark:bg-rose-950/50 border border-rose-100 dark:border-rose-900/50
+            text-rose-600 dark:text-rose-400 py-2.5 hover:bg-rose-500 hover:text-white hover:border-rose-500 dark:hover:bg-rose-500 dark:hover:text-white dark:hover:border-rose-500 transition-all duration-200 shadow-2xl cursor-pointer"
           title="Delete Notice"
         >
           <Trash2 size={14} />
