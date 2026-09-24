@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Plus, Search, Building2, Home, Users } from "lucide-react";
 import { hostelRoomApi } from "../../../data/Hostel";
 import Pagination from "../../../hooks/Pagination";
+import { colorbtn } from "../../../data/datafeature";
 
 export default function ManageHostel() {
   const [hostels, setHostels] = useState([]);
@@ -104,7 +105,7 @@ export default function ManageHostel() {
         </div>
         <Link
           to="/admin/hostels/add"
-          className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+          className={colorbtn.btnadd}
         >
           <Plus size={16} />
           <span>Add Building</span>
@@ -209,7 +210,7 @@ export default function ManageHostel() {
       </form>
 
       {/* Table Container */}
-      <div className="bg-white dark:bg-slate-900 rounded-lg overflow-hidden relative border border-slate-200/80 dark:border-slate-800 shadow-xs">
+      <div className="bg-white rounded-lg dark:bg-slate-900 rounded-lg overflow-hidden relative border border-slate-200/80 dark:border-slate-800 shadow-xs">
         {loading && (
           <div className="absolute inset-0 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xs z-10 flex flex-col items-center justify-center">
             <div className="w-7 h-7 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -263,13 +264,13 @@ export default function ManageHostel() {
                       <div className="flex items-center justify-end gap-2">
                         <Link
                           to={`/admin/hostels/edit/${hostel.id}`}
-                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-semibold transition-colors"
+                          className={colorbtn.btnedit}
                         >
                           Edit
                         </Link>
                         <button
                           onClick={() => handleDelete(hostel.id)}
-                          className="px-3 py-1.5 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+                          className={colorbtn.delete}
                         >
                           Delete
                         </button>

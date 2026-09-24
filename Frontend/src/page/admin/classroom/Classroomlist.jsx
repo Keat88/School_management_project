@@ -5,6 +5,7 @@ import ClassroomCard from "../../../components/admin/ClassroomCard";
 import ClassFilter from "../../../components/admin/ClassFilter";
 import { useCallback, useEffect, useState } from "react";
 import Pagination from "../../../hooks/Pagination";
+import HeaderPage from "../../../hooks/HeaderPage";
 
 function ClassroomList() {
   const { currentUser } = useAuth();
@@ -197,20 +198,12 @@ function ClassroomList() {
     <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen  transition-colors duration-300">
       <div className="lg:min-w-160 mx-auto space-y-6">
         {/* Header Section */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              Classes
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Manage and view classroom records
-            </p>
-          </div>
-          <span className="text-xs font-semibold px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20">
-            Total: {totalItems} classes
-          </span>
-        </div>
-
+        <HeaderPage
+          title={"Classes"}
+          description={"Manage and view classroom records"}
+          totalItems={totalItems}
+          titlefound={"classes"}
+        />
         {/* Filter Component */}
         <ClassFilter
           searchValue={searchValue}
@@ -226,8 +219,6 @@ function ClassroomList() {
           classOptions={classOptions}
           onResetFilters={handleResetFilters}
         />
-
-        {/* Error Banner */}
         {errorMessage && (
           <div className="p-4 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-xs font-medium text-rose-700 dark:text-rose-400">
             {errorMessage}
@@ -240,7 +231,7 @@ function ClassroomList() {
             <div className="py-16 flex flex-col items-center justify-center gap-2 text-slate-500 dark:text-slate-400">
               <div className="w-8 h-8 border-3 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin" />
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2">
-               Loading...
+                Loading...
               </span>
             </div>
           ) : Array.isArray(classRoom) && classRoom.length > 0 ? (

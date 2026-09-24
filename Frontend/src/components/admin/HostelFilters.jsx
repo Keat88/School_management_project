@@ -1,4 +1,5 @@
 import { Search, Plus } from "lucide-react";
+import { colorbtn } from "../../data/datafeature";
 
 const typeOptions = [
   { value: "all", label: "All Types" },
@@ -49,8 +50,7 @@ function HostelFilters({
       <button
         type="button"
         onClick={onAddResident}
-        className="flex items-center justify-center gap-2 rounded-lg bg-[#2563EB] text-white text-sm
-          font-medium px-4 py-2 hover:bg-blue-700 active:bg-blue-800 transition-colors shrink-0"
+        className={colorbtn.btnadd}
       >
         <Plus size={16} />
         Add Resident

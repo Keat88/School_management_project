@@ -3,6 +3,7 @@ import { Layers, Search, Plus, Loader2, Trash, Edit } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../../../data/api";
 import Pagination from "../../../../hooks/Pagination";
+import { colorbtn } from "../../../../data/datafeature";
 
 export default function CourseCategoriesTable() {
   const [categories, setCategories] = useState([]);
@@ -110,7 +111,7 @@ export default function CourseCategoriesTable() {
 
           <Link
             to={"/admin/course/category/add"}
-            className="flex items-center gap-1.5 bg-slate-900 dark:bg-slate-100 hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 text-xs rounded-lg px-3.5 py-2 font-medium transition-colors cursor-pointer shrink-0 shadow-2xs"
+            className={colorbtn.btnadd}
           >
             <Plus size={14} /> Add Category
           </Link>
@@ -164,14 +165,14 @@ export default function CourseCategoriesTable() {
                   <td className="py-3 px-4 text-right space-x-3">
                     <button
                       onClick={() => handleEdit(category.id)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                      className={colorbtn.btnedit}
                     >
                       <Edit size={16}/>
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(category.id)}
-                       className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
+                       className={colorbtn.btndelete}
                     >
                       <Trash size={16}/>
                       Delete

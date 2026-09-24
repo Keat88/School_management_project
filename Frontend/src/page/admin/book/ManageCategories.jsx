@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Plus, Search, RotateCcw, AlertTriangle } from "lucide-react";
 import { BookCategoryApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
+import { colorbtn } from "../../../data/datafeature";
 
 export default function ManageCategories() {
   const navigate = useNavigate();
@@ -108,7 +109,7 @@ export default function ManageCategories() {
         </div>
         <NavLink
           to="/admin/library/category/add"
-          className="self-start sm:self-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs active:scale-98"
+          className={colorbtn.btnadd}
         >
           <Plus size={16} />
           <span>Add Category</span>
@@ -164,7 +165,7 @@ export default function ManageCategories() {
       </form>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block border space-y-4 transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100 overflow-hidden">
+      <div className="hidden md:block rounded-lg border space-y-4 transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
@@ -218,7 +219,7 @@ export default function ManageCategories() {
                           onClick={() =>
                             navigate(`/admin/library/category/view/${cat.id}`)
                           }
-                          className="text-xs border border-gray-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 font-medium transition-colors cursor-pointer bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+                          className={colorbtn.btnview}
                           title="View"
                         >
                           View
@@ -227,14 +228,14 @@ export default function ManageCategories() {
                           onClick={() =>
                             navigate(`/admin/library/category/add/${cat.id}`)
                           }
-                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-700 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
+                          className={colorbtn.btnedit}
                           title="Edit"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteClick(cat.id)}
-                          className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
+                          className={colorbtn.btndelete}
                           title="Delete"
                         >
                           Delete

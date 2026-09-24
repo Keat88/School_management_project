@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload, AlertCircle } from "lucide-react";
+import { Upload, AlertCircle, Save } from "lucide-react";
 import { BookApi, BookCategoryApi } from "../../../data/library";
+import { colorbtn, colorform } from "../../../data/datafeature";
 
 export default function BookForm() {
   const { id } = useParams();
@@ -23,6 +24,7 @@ export default function BookForm() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
   const [feedback, setFeedback] = useState(null);
+
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -142,179 +144,191 @@ export default function BookForm() {
     }
   };
 
- if (fetching) {
+  if (fetching) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
-        <div className="flex flex-col items-center justify-center gap-2">
-          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
-          <span className="text-sm font-medium">Loading data...</span>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3 dark:text-slate-100">
+        <div className="w-8 h-8 border-2 border-indigo-600 dark:border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+          Loading book details...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 rounded-lg border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40 space-y-6">
-      <div className="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-slate-800">
-        <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-slate-100">
-          {isEditMode ? "Edit Book" : "Add New Book"}
-        </h2>
-        
+    <div className="lg:min-w-160 w-full mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+            {isEditMode ? "Edit Book" : "Add New Book"}
+          </h2>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+            {isEditMode
+              ? "Modify book details, stock counts, and cover image"
+              : "Register a new library book record"}
+          </p>
+        </div>
       </div>
 
+      {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 rounded-xl text-sm font-medium border flex items-center gap-2.5 shadow-sm transition-all ${
+          className={`p-4 rounded-xl text-sm font-medium border flex items-center gap-3 transition-all ${
             feedback.type === "success"
-              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40"
-              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800"
+              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800"
           }`}
         >
-          {feedback.type === "error" && <AlertCircle size={18} className="shrink-0" />}
+          {feedback.type === "error" && (
+            <AlertCircle
+              size={18}
+              className="shrink-0 text-rose-600 dark:text-rose-400"
+            />
+          )}
           <span>{feedback.text}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-              Book Title *
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-              placeholder="Enter book title"
-              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-              Author *
-            </label>
-            <input
-              type="text"
-              name="author"
-              value={formData.author}
-              onChange={handleChange}
-              required
-              placeholder="Enter author name"
-              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-            />
-          </div>
-        </div>
+      {/* Form Container */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-xl border border-gray-200 dark:border-slate-800 shadow-xs space-y-6"
+      >
+        <div className="space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 pb-2 border-b border-gray-100 dark:border-slate-800">
+            Book Information
+          </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-              ISBN
-            </label>
-            <input
-              type="text"
-              name="isbn"
-              value={formData.isbn}
-              onChange={handleChange}
-              placeholder="Enter ISBN number"
-              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-              Category *
-            </label>
-            <select
-              name="book_category_id"
-              value={formData.book_category_id}
-              onChange={handleChange}
-              required
-              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
-            >
-              <option value="">Select Category</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.book_category || cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-              Total Copies *
-            </label>
-            <input
-              type="number"
-              name="total_copies"
-              value={formData.total_copies}
-              onChange={handleChange}
-              required
-              min="1"
-              placeholder="0"
-              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-              Available Copies *
-            </label>
-            <input
-              type="number"
-              name="available_copies"
-              value={formData.available_copies}
-              onChange={handleChange}
-              required
-              min="0"
-              placeholder="0"
-              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-            Book Image
-          </label>
-          <div className="flex items-center gap-4">
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-16 h-20 object-cover rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm"
-              />
-            )}
-            <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-4 cursor-pointer transition-colors border-gray-300 hover:border-indigo-400 bg-gray-50/50 dark:bg-slate-800/50 dark:border-slate-700 dark:hover:border-indigo-400">
-              <Upload className="text-gray-400 dark:text-slate-400 mb-1" size={20} />
-              <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">
-                Click to upload image
-              </span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className={colorform.color_label}>Book Title *</label>
               <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                required
+                placeholder="Enter book title"
+                className={colorform.color_input}
               />
-            </label>
+            </div>
+            <div>
+              <label className={colorform.color_label}>Author *</label>
+              <input
+                type="text"
+                name="author"
+                value={formData.author}
+                onChange={handleChange}
+                required
+                placeholder="Enter author name"
+                className={colorform.color_input}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className={colorform.color_label}>ISBN</label>
+              <input
+                type="text"
+                name="isbn"
+                value={formData.isbn}
+                onChange={handleChange}
+                placeholder="Enter ISBN number"
+                className={colorform.color_input}
+              />
+            </div>
+            <div>
+              <label className={colorform.color_label}>Category *</label>
+              <select
+                name="book_category_id"
+                value={formData.book_category_id}
+                onChange={handleChange}
+                required
+                className={colorform.color_input}
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.book_category || cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className={colorform.color_label}>Total Copies *</label>
+              <input
+                type="number"
+                name="total_copies"
+                value={formData.total_copies}
+                onChange={handleChange}
+                required
+                min="1"
+                placeholder="0"
+                className={colorform.color_input}
+              />
+            </div>
+            <div>
+              <label className={colorform.color_label}>
+                Available Copies *
+              </label>
+              <input
+                type="number"
+                name="available_copies"
+                value={formData.available_copies}
+                onChange={handleChange}
+                required
+                min="0"
+                placeholder="0"
+                className={colorform.color_input}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={colorform.color_label}>Book Image</label>
+            <div className="flex items-center gap-4 mt-1.5">
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-16 h-20 object-cover rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm"
+                />
+              )}
+              <label className="flex-1 flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-4 cursor-pointer transition-colors border-gray-300 hover:border-indigo-400 bg-gray-50/50 dark:bg-slate-800/50 dark:border-slate-700 dark:hover:border-indigo-400">
+                <Upload
+                  className="text-gray-400 dark:text-slate-400 mb-1"
+                  size={20}
+                />
+                <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">
+                  Click to upload image
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-end pt-6 border-t border-gray-100 dark:border-slate-800 space-x-3">
+        {/* Action Buttons */}
+        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-200 dark:border-slate-800">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
+            className={colorbtn.btncancel}
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-blue-500 hover:bg-blue-700 shadow-indigo-100 dark:hover:bg-blue-500 dark:shadow-indigo-950/50"
-          >
+          <button type="submit" disabled={loading} className={colorbtn.btnsave}>
+            <Save size={16} />
             {loading ? "Saving..." : isEditMode ? "Update Book" : "Save Book"}
           </button>
         </div>

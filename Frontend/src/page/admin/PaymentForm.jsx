@@ -4,6 +4,7 @@ import { ArrowLeft, Save, DollarSign } from "lucide-react";
 
 import { studentData } from "../../data/StudentsApi";
 import { paymentApi } from "../../data/Payment";
+import { colorbtn } from "../../data/datafeature";
 
 export default function PaymentForm() {
   const { id } = useParams();
@@ -114,13 +115,13 @@ export default function PaymentForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto rounded-2xl p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-xs text-slate-800 dark:text-slate-100 font-sans my-6">
+    <div className="max-w-2xl  mx-auto rounded-2xl p-6 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 shadow-xs text-slate-800 dark:text-slate-100 font-sans my-6">
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 text-gray-600 dark:text-slate-300 text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 transition-all cursor-pointer border border-gray-200 dark:border-slate-700 mb-2"
+            className={colorbtn.btncancel}
           >
             <ArrowLeft size={14} /> Back
           </button>

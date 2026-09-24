@@ -60,8 +60,6 @@ class TeacherController extends Controller
                     'logged_in_teacher_id' => $teacher->id
                 ], 403);
             }
-
-            // 4. Return response using ClassRoomResource (since $classroom is a ClassRoom object)
             return response()->json([
                 'status' => 'success',
                 'data' => new ScoresResource($classroom)
@@ -78,8 +76,6 @@ class TeacherController extends Controller
     {
         try {
             $user = $request->user();
-
-            // ទាញយក Profile របស់គ្រូ រួមទាំង Relation ផ្សេងៗបើត្រូវការ (ឧទាហរណ៍: user)
             $teacherProfile = $user->teacher;
 
             if (!$teacherProfile) {
@@ -108,19 +104,15 @@ class TeacherController extends Controller
             $classes = ClassRoom::whereIn('id', $classIds)
                 ->withCount('students')
                 ->get();
-
-            // 1. Calculate Real Attendance Rate
             $totalAttendance = Attendance::whereIn('class_id', $classIds)->count();
 
             $presentCount = Attendance::whereIn('class_id', $classIds)
-                ->where('status', 'P') // Change 'present' to match your DB value (e.g., 'Present', 1, etc.)
+                ->where('status', 'P')
                 ->count();
 
             $attendanceRate = $totalAttendance > 0
                 ? round(($presentCount / $totalAttendance) * 100, 1) . '%'
                 : '0%';
-
-            // 2. Format Schedules
             $schedules = $teacherProfile->timeTables()
                 ->with(['classRoom', 'subject'])
                 ->get()
@@ -143,7 +135,7 @@ class TeacherController extends Controller
                 'stats' => [
                     'totalClasses' => $classes->count(),
                     'totalStudents' => $classes->sum('students_count'),
-                    'attendanceRate' => $attendanceRate, // 💡 Real calculated rate here
+                    'attendanceRate' => $attendanceRate,
                     'pendingGrades' => 0,
                 ],
                 'todaySchedule' => $schedules,
@@ -253,7 +245,6 @@ class TeacherController extends Controller
             if ($notices->isEmpty()) {
                 return $this->error('No notices found for this teacher', null, 404);
             }
-
             $formattedNotices = $notices->map(function ($notice) {
                 return [
                     'id' => $notice->id,
@@ -266,7 +257,6 @@ class TeacherController extends Controller
                     'content' => $notice->content,
                 ];
             });
-
             return $this->success('Teacher notices retrieved successfully', $formattedNotices);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving teacher notices', $e->getMessage(), 500);
@@ -280,8 +270,6 @@ class TeacherController extends Controller
     {
         try {
             $query = User::where('role', 'teacher')->with('teacher');
-
-            // 1. Search Filter (Name, Teacher Code, Gender search)
             if ($request->has('search') && !empty($request->search)) {
                 $search = $request->search;
                 $query->where(function ($q) use ($search) {
@@ -294,29 +282,23 @@ class TeacherController extends Controller
                         });
                 });
             }
-
-            // 💡 2. ADD THIS: Gender Dropdown Filter
             if ($request->filled('gender') && $request->input('gender') !== 'all' && $request->input('gender') !== '') {
                 $gender = $request->input('gender');
                 $query->whereHas('teacher', function ($q) use ($gender) {
                     $q->where('gender', $gender);
                 });
             }
-
             $perPage = $request->get('per_page', 10);
             $teachers = $query->orderBy('created_at', 'desc')->paginate($perPage);
             $teacher = TeacherResource::collection($teachers)->response()->getData(true);
-
             if ($teachers->isEmpty()) {
                 return $this->success('No teachers found', [], 200);
             }
-
             return $this->success('Teacher have been accessed succesfully!', $teacher, 200);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while retrieving teachers', $e->getMessage(), 500);
         }
     }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -334,7 +316,6 @@ class TeacherController extends Controller
         if ($validator->fails()) {
             return $this->error('Invalid data', $validator->errors(), 422);
         }
-
         try {
             $user = DB::transaction(function () use ($request) {
                 $image_name = null;
@@ -366,7 +347,6 @@ class TeacherController extends Controller
                 return $user;
             });
             $user->load('teacher');
-
             return $this->success('Teacher added successfully!', new TeacherResource($user), 201);
         } catch (\Exception $e) {
             return $this->error('Something went wrong while storing the teacher', $e->getMessage(), 500);

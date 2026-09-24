@@ -177,7 +177,7 @@ export default function LoginForm() {
         setCooldown(30); // 20 seconds cooldown lockout
         setFeedback({
           type: "error",
-          text: "Too many login attempts. Please wait 20 seconds before trying again.",
+          text: "Too many login attempts. Please wait 30 seconds before trying again.",
         });
       } else {
         setFeedback({

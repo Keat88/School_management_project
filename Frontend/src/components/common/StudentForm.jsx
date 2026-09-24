@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
 import { studentData } from "../../data/StudentsApi";
 import { useNavigate, useParams } from "react-router-dom";
-import { ImageIcon, AlertCircle } from "lucide-react";
+import { ImageIcon, AlertCircle, User, Users, Save } from "lucide-react";
 import { api } from "../../data/api";
+import { colorbtn, colorform } from "../../data/datafeature";
 
 const INITIAL_FORM_STATE = {
   mother_name: "",
@@ -18,7 +19,9 @@ const INITIAL_FORM_STATE = {
   date_of_birth: "",
   student_phone: "",
 };
+
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
 export default function StudentForm({ onSuccess }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -31,6 +34,8 @@ export default function StudentForm({ onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [currentStudent, setCurrentStudent] = useState([]);
+  const [classFilter, setClassFilter] = useState([]);
+
   useEffect(() => {
     return () => {
       if (imagePreviewStudent?.startsWith("blob:"))
@@ -40,22 +45,6 @@ export default function StudentForm({ onSuccess }) {
     };
   }, [imagePreviewStudent, imagePreviewParent]);
 
-  // const fetchClass = useCallback(async () => {
-  //   try {
-  //     const response = await classRoomApi.getAll();
-  //     console.log("Classroom response:", response);
-  //     const payload = response?.data || response;
-  //     const classData = payload?.data || payload?.classrooms || payload || [];
-  //     if (isMounted.current) {
-  //       setClassRoom(Array.isArray(classData) ? classData : []);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching classes:", error);
-  //     if (isMounted.current) {
-  //       setClassRoom([]);
-  //     }
-  //   }
-  // }, []);
   useEffect(() => {
     if (isEdit) {
       const fetchCurrentStudent = async () => {
@@ -65,14 +54,28 @@ export default function StudentForm({ onSuccess }) {
           const data = res?.data || res?.data?.data || res;
           setCurrentStudent(data);
         } catch (error) {
-          console.log("Error", error);
+          console.error("Error fetching student", error);
         } finally {
           setLoading(false);
         }
       };
       fetchCurrentStudent();
     }
-  }, [id]);
+  }, [id, isEdit]);
+
+  useEffect(() => {
+    const fetchClassFilter = async () => {
+      try {
+        const res = await api.get("/class-activeform");
+        const data = res?.data?.data || res?.data || res;
+        setClassFilter(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error fetching classes", err);
+      }
+    };
+    fetchClassFilter();
+  }, []);
+
   useEffect(() => {
     if (currentStudent) {
       setFormData({
@@ -116,6 +119,7 @@ export default function StudentForm({ onSuccess }) {
       setImagePreviewParent(null);
     }
   }, [currentStudent]);
+
   const handleImageValidation = (file, setImage, setPreview) => {
     if (!file) return;
 
@@ -135,6 +139,7 @@ export default function StudentForm({ onSuccess }) {
     });
     setFeedback(null);
   };
+
   const handleImageChange = (e) => {
     handleImageValidation(
       e.target.files[0],
@@ -142,6 +147,7 @@ export default function StudentForm({ onSuccess }) {
       setImagePreviewStudent,
     );
   };
+
   const handleImageParentChange = (e) => {
     handleImageValidation(
       e.target.files[0],
@@ -149,10 +155,12 @@ export default function StudentForm({ onSuccess }) {
       setImagePreviewParent,
     );
   };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -180,14 +188,17 @@ export default function StudentForm({ onSuccess }) {
         if (responseData) {
           setFeedback({
             type: "success",
-            text: responseData.message,
+            text: responseData.message || "Student updated successfully!",
           });
         }
       } else {
         const res = await studentData.addNew(formDataObj);
         const responseData = res?.data || res?.data?.data || res;
         if (responseData) {
-          setFeedback({ type: "success", text: responseData.message });
+          setFeedback({
+            type: "success",
+            text: responseData.message || "Student created successfully!",
+          });
         }
       }
       if (onSuccess) {
@@ -208,353 +219,325 @@ export default function StudentForm({ onSuccess }) {
       setLoading(false);
     }
   };
-  const [classFilter, setClassFilter] = useState([]);
-  useEffect(() => {
-    const fetchClassFilter = async () => {
-      try {
-        const res = await api.get("/class-activeform");
-        const data = res?.data?.data || res?.data || res;
-        setClassFilter(data);
-      } catch (err) {
-        console.log("Error", err);
-      }
-    };
-    fetchClassFilter();
-  }, []);
+
+  if (loading && !currentStudent.student_name && isEdit) {
+    return (
+      <div className="py-12 min-h-screen flex justify-center items-center text-center text-gray-500 dark:text-slate-400">
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
+          <span>Loading student...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {loading && (
-        <div className="py-12 min-h-screen flex justify-center items-center text-center text-gray-500 dark:text-slate-400">
-          <div className="flex flex-col items-center justify-center gap-2">
-            <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
-            <span>Loading student...</span>
-          </div>
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-xs text-gray-900 dark:text-slate-100 font-sans my-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-slate-800">
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400">
+              <User size={20} />
+            </div>
+            {isEdit ? "Edit Student Profile" : "Add New Student"}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {isEdit
+              ? "Modify existing student and parent credentials."
+              : "Register a new student into the system."}
+          </p>
+        </div>
+      </div>
+
+      {feedback && (
+        <div
+          className={`p-4 rounded-xl text-sm font-medium border flex items-center gap-2.5 shadow-xs ${
+            feedback.type === "success"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800"
+              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800"
+          }`}
+        >
+          {feedback.type === "error" && (
+            <AlertCircle size={18} className="shrink-0" />
+          )}
+          <span>{feedback.text}</span>
         </div>
       )}
 
-      <div className="mx-auto p-6 sm:p-8  border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
-        <h2 className="text-xl font-bold mb-6 tracking-tight text-gray-900 dark:text-slate-100">
-          {isEdit ? "Edit Student" : "Add New Student"}
-        </h2>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6"
+        encType="multipart/form-data"
+      >
+        {/* Student Information Section */}
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800 flex items-center gap-2">
+            <User size={15} className="text-blue-500 dark:text-blue-400" />{" "}
+            Student Information
+          </h3>
 
-        {feedback && (
-          <div
-            className={`p-4 mb-6 rounded-xl text-sm font-medium border flex items-center gap-2.5 shadow-sm transition-all ${
-              feedback.type === "success"
-                ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40"
-                : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40"
-            }`}
-          >
-            {feedback.type === "error" && (
-              <AlertCircle size={18} className="shrink-0" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={colorform.color_label}>Student Name *</label>
+              <input
+                type="text"
+                name="student_name"
+                value={formData.student_name}
+                onChange={handleChange}
+                required
+                placeholder="Enter full name"
+                className={colorform.color_input}
+              />
+            </div>
+
+            {isEdit && currentStudent?.roll_number && (
+              <div>
+                <label className={colorform.color_label}>Roll Number</label>
+                <input
+                  type="text"
+                  value={currentStudent.roll_number}
+                  disabled
+                  className={`${colorform.color_input} cursor-not-allowed bg-gray-100 dark:bg-slate-800/40 opacity-70`}
+                />
+              </div>
             )}
-            <span>{feedback.text}</span>
-          </div>
-        )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-8"
-          encType="multipart/form-data"
-        >
-          {/* Student Information Section */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold  tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
-              Student Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Student Name
-                </label>
-                <input
-                  type="text"
-                  name="student_name"
-                  value={formData.student_name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter full name"
-                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
+            <div>
+              <label className={colorform.color_label}>Date of Birth *</label>
+              <input
+                type="date"
+                name="date_of_birth"
+                value={formData.date_of_birth}
+                onChange={handleChange}
+                required
+                className={`${colorform.color_input} dark:[color-scheme:dark]`}
+              />
+            </div>
 
-              {isEdit && currentStudent?.roll_number && (
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                    Roll Number
-                  </label>
-                  <input
-                    type="text"
-                    value={currentStudent.roll_number}
-                    disabled
-                    className="w-full px-3.5 py-2.5 border rounded-lg text-sm cursor-not-allowed bg-gray-100 border-gray-200 text-gray-500 dark:bg-slate-800/40 dark:border-slate-800 dark:text-slate-400"
+            <div>
+              <label className={colorform.color_label}>Gender *</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className={colorform.color_input}
+              >
+                <option value="male" className="dark:bg-slate-800">
+                  Male
+                </option>
+                <option value="female" className="dark:bg-slate-800">
+                  Female
+                </option>
+                <option value="other" className="dark:bg-slate-800">
+                  Other
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label className={colorform.color_label}>Class Room *</label>
+              <select
+                name="class_id"
+                value={formData.class_id}
+                onChange={handleChange}
+                required
+                className={colorform.color_input}
+              >
+                <option value="" className="dark:bg-slate-800">
+                  -- Select Class --
+                </option>
+                {classFilter.map((item) => (
+                  <option
+                    key={item.id}
+                    value={item.id}
+                    className="dark:bg-slate-800"
+                  >
+                    {item.grade && item.section
+                      ? `${item.grade}-${item.section}`
+                      : item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className={colorform.color_label}>
+                Student Phone{" "}
+                <span className="font-normal opacity-70">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                name="student_phone"
+                value={formData.student_phone}
+                onChange={handleChange}
+                placeholder="e.g. +123456789"
+                className={colorform.color_input}
+              />
+            </div>
+
+            <div>
+              <label className={colorform.color_label}>Student Email *</label>
+              <input
+                type="email"
+                name="email_student"
+                value={formData.email_student}
+                onChange={handleChange}
+                required
+                placeholder="student@example.com"
+                className={colorform.color_input}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className={colorform.color_label}>Address *</label>
+              <textarea
+                name="address"
+                rows="2"
+                value={formData.address}
+                onChange={handleChange}
+                required
+                placeholder="Enter full address"
+                className={colorform.color_input}
+              ></textarea>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className={colorform.color_label}>Student Image</label>
+              <div className="flex items-center gap-4 mt-2">
+                {imagePreviewStudent ? (
+                  <img
+                    src={imagePreviewStudent}
+                    alt="Student Preview"
+                    className="w-16 h-16 rounded-xl object-cover border shadow-xs shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
                   />
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Date of Birth
-                </label>
+                ) : (
+                  <div className="w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 shadow-xs bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
+                    <ImageIcon size={24} />
+                  </div>
+                )}
                 <input
-                  type="date"
-                  name="date_of_birth"
-                  value={formData.date_of_birth}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:[color-scheme:dark]"
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={handleImageChange}
+                  className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
                 />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Gender
-                </label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
-                >
-                  <option value="male" className="dark:bg-slate-800">
-                    Male
-                  </option>
-                  <option value="female" className="dark:bg-slate-800">
-                    Female
-                  </option>
-                  <option value="other" className="dark:bg-slate-800">
-                    Other
-                  </option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Class Room
-                </label>
-                <select
-                  name="class_id"
-                  value={formData.class_id}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100"
-                >
-                  <option value="" className="dark:bg-slate-800">
-                    --Select class--
-                  </option>
-                  {classFilter.map((item) => (
-                    <option
-                      key={item.id}
-                      value={item.id}
-                      className="dark:bg-slate-800"
-                    >
-                      {item.grade && item.section
-                        ? `${item.grade}-${item.section}`
-                        : item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Student Phone{" "}
-                  <span className="font-normal opacity-70">(Optional)</span>
-                </label>
-                <input
-                  type="text"
-                  name="student_phone"
-                  value={formData.student_phone}
-                  onChange={handleChange}
-                  placeholder="e.g. +123456789"
-                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Student Email
-                </label>
-                <input
-                  type="email"
-                  name="email_student"
-                  value={formData.email_student}
-                  onChange={handleChange}
-                  required
-                  placeholder="student@example.com"
-                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Address
-                </label>
-                <textarea
-                  name="address"
-                  rows="2"
-                  value={formData.address}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter full address"
-                  className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                ></textarea>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Student Image
-                </label>
-                <div className="flex items-center gap-4 mt-2">
-                  {imagePreviewStudent ? (
-                    <img
-                      src={imagePreviewStudent}
-                      alt="Student Preview"
-                      className="w-16 h-16 rounded-lg object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 shadow-sm bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
-                      <ImageIcon size={24} />
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/png, image/jpeg"
-                    onChange={handleImageChange}
-                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
-                  />
-                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Parent Information Section */}
-          <div className="space-y-4 pt-4">
-            <h3 className="text-sm font-semibold  tracking-wider pb-2 border-b text-gray-500 border-gray-100 dark:text-indigo-400 dark:border-slate-800">
-              Parent Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Father Name
-                </label>
-                <input
-                  type="text"
-                  name="father_name"
-                  value={formData.father_name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Father's full name"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Mother Name
-                </label>
-                <input
-                  type="text"
-                  name="mother_name"
-                  value={formData.mother_name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Mother's full name"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
+        {/* Parent Information Section */}
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800 flex items-center gap-2">
+            <Users size={15} className="text-blue-500 dark:text-blue-400" />{" "}
+            Parent Information
+          </h3>
 
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Parent Email
-                </label>
-                <input
-                  type="email"
-                  name="email_parent"
-                  value={formData.email_parent}
-                  onChange={handleChange}
-                  placeholder="parent@example.com"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={colorform.color_label}>Father Name *</label>
+              <input
+                type="text"
+                name="father_name"
+                value={formData.father_name}
+                onChange={handleChange}
+                required
+                placeholder="Father's full name"
+                className={colorform.color_input}
+              />
+            </div>
 
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Parent Phone
-                </label>
-                <input
-                  type="text"
-                  name="parent_phone"
-                  value={formData.parent_phone}
-                  onChange={handleChange}
-                  required
-                  placeholder="e.g. +123456789"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
+            <div>
+              <label className={colorform.color_label}>Mother Name *</label>
+              <input
+                type="text"
+                name="mother_name"
+                value={formData.mother_name}
+                onChange={handleChange}
+                required
+                placeholder="Mother's full name"
+                className={colorform.color_input}
+              />
+            </div>
 
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Occupation
-                </label>
-                <input
-                  type="text"
-                  name="occupation"
-                  value={formData.occupation}
-                  onChange={handleChange}
-                  placeholder="Parent's occupation"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400  dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
-                />
-              </div>
+            <div>
+              <label className={colorform.color_label}>Parent Email</label>
+              <input
+                type="email"
+                name="email_parent"
+                value={formData.email_parent}
+                onChange={handleChange}
+                placeholder="parent@example.com"
+                className={colorform.color_input}
+              />
+            </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-                  Parent Image
-                </label>
-                <div className="flex items-center gap-4 mt-2">
-                  {imagePreviewParent ? (
-                    <img
-                      src={imagePreviewParent}
-                      alt="Parent Preview"
-                      className="w-16 h-16 rounded-lg object-cover border shadow-sm shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-lg border flex items-center justify-center shrink-0 shadow-sm bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
-                      <ImageIcon size={24} />
-                    </div>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/png, image/jpeg"
-                    onChange={handleImageParentChange}
-                    className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
+            <div>
+              <label className={colorform.color_label}>Parent Phone *</label>
+              <input
+                type="text"
+                name="parent_phone"
+                value={formData.parent_phone}
+                onChange={handleChange}
+                required
+                placeholder="e.g. +123456789"
+                className={colorform.color_input}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className={colorform.color_label}>Occupation</label>
+              <input
+                type="text"
+                name="occupation"
+                value={formData.occupation}
+                onChange={handleChange}
+                placeholder="Parent's occupation"
+                className={colorform.color_input}
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className={colorform.color_label}>Parent Image</label>
+              <div className="flex items-center gap-4 mt-2">
+                {imagePreviewParent ? (
+                  <img
+                    src={imagePreviewParent}
+                    alt="Parent Preview"
+                    className="w-16 h-16 rounded-xl object-cover border shadow-xs shrink-0 border-gray-200 bg-gray-50 dark:border-slate-700 dark:bg-slate-800"
                   />
-                </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-xl border flex items-center justify-center shrink-0 shadow-xs bg-gray-50 border-gray-200 text-gray-400 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-500">
+                    <ImageIcon size={24} />
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={handleImageParentChange}
+                  className="w-full text-sm cursor-pointer text-gray-600 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:uppercase file:tracking-wider file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-500/20 dark:file:text-blue-300 dark:hover:file:bg-blue-500/30 file:transition-colors"
+                />
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-100 dark:border-slate-800">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-blue-500 hover:bg-blue-700 shadow-indigo-100 dark:hover:bg-indigo-500 dark:shadow-indigo-950/50"
-            >
-              {loading
-                ? "Saving..."
-                : isEdit
-                  ? "Update Student"
-                  : "Save Student"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </>
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className={colorbtn.btncancel}
+          >
+            Cancel
+          </button>
+          <button type="submit" disabled={loading} className={colorbtn.btnsave}>
+            <Save size={16} />
+            {loading ? "Saving..." : isEdit ? "Update Student" : "Save Student"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

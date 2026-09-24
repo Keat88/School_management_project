@@ -196,7 +196,7 @@ export default function StudentLibraryActivity({ isDark: propIsDark = true }) {
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block border  overflow-hidden transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700">
+      <div className="hidden md:block border rounded-lg overflow-hidden transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>

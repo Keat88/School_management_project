@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { api } from "../../data/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Calendar, Clock, BookOpen, User, GraduationCap } from "lucide-react";
+import { Save, Calendar, GraduationCap } from "lucide-react";
+import { colorbtn, colorform } from "../../data/datafeature";
 
 export default function ScheduleForm() {
   const { id } = useParams();
@@ -84,6 +85,9 @@ export default function ScheduleForm() {
           type: "success",
           text: response.data.message || "Schedule updated successfully!",
         });
+        setTimeout(() => {
+          navigate(-1);
+        }, 1200);
       } else {
         const response = await api.post("/timetable/store", formData);
         setFeedback({
@@ -122,54 +126,55 @@ export default function ScheduleForm() {
   ];
 
   return (
-    <div className="lg:min-w-160 mx-auto  p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800  text-gray-800 dark:text-slate-100 font-sans my-8 transition-all">
-      <div className="flex items-center justify-between mb-8 pb-5 border-b border-gray-100 dark:border-slate-800">
+    <div className="lg:min-w-160  mx-auto p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-xs text-gray-900 dark:text-slate-100 font-sans my-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
-          
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-600/20 border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400">
-              <Calendar size={22} />
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400">
+              <Calendar size={20} />
             </div>
-            {IsEdit ? "Edit Schedule" : "Add New Schedule"}
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-1">
+            {IsEdit ? "Edit Schedule Entry" : "Add New Schedule Entry"}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
             {IsEdit ? "Modify existing timetable entry parameters." : "Assign a new class timetable slot."}
           </p>
         </div>
       </div>
 
+      {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-2xl text-sm font-medium flex items-center gap-3 animate-fade-in ${
+          className={`p-4 rounded-xl text-sm font-medium border ${
             feedback.type === "success"
-              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 shadow-lg shadow-emerald-500/5"
-              : "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-lg shadow-rose-500/5"
+              ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+              : "bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"
           }`}
         >
-          <span>{feedback.text}</span>
+          {feedback.text}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-gray-50/60 dark:bg-slate-950/40 p-5 rounded-2xl border border-gray-100 dark:border-slate-800/80 space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800/80 flex items-center gap-2">
-            <GraduationCap size={15} className="text-blue-600 dark:text-blue-400" /> Timetable Parameters
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800 flex items-center gap-2">
+            <GraduationCap size={15} className="text-blue-500 dark:text-blue-400" /> Timetable Parameters
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Class Room Selection */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <GraduationCap size={13} className="text-blue-600 dark:text-blue-400" /> Class Room
+              <label className={colorform.color_label}>
+                Class Room *
               </label>
               <select
                 name="class_id"
                 value={formData.class_id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+                className={colorform.color_input}
               >
-                <option value="">Select Class Room</option>
+                <option value="">-- Choose Class Room --</option>
                 {dropdowns.classes.map((cls) => (
                   <option key={cls.id_class} value={cls.id_class}>
                     {cls.name_class}
@@ -180,17 +185,17 @@ export default function ScheduleForm() {
 
             {/* Subject Selection */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <BookOpen size={13} className="text-blue-500 dark:text-blue-400" /> Subject
+              <label className={colorform.color_label}>
+                Subject *
               </label>
               <select
                 name="subject_id"
                 value={formData.subject_id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+                className={colorform.color_input}
               >
-                <option value="">Select Subject</option>
+                <option value="">-- Choose Subject --</option>
                 {dropdowns.subjects.map((sub) => (
                   <option key={sub.id_subject} value={sub.id_subject}>
                     {sub.name_subject}
@@ -201,17 +206,17 @@ export default function ScheduleForm() {
 
             {/* Teacher Selection */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <User size={13} className="text-indigo-600 dark:text-indigo-400" /> Teacher
+              <label className={colorform.color_label}>
+                Teacher *
               </label>
               <select
                 name="teacher_id"
                 value={formData.teacher_id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-blue-500 cursor-pointer transition-all"
+                className={colorform.color_input}
               >
-                <option value="">Select Teacher</option>
+                <option value="">-- Choose Teacher --</option>
                 {dropdowns.teachers.map((teacher) => (
                   <option key={teacher.id_teacher} value={teacher.id_teacher}>
                     {teacher.name_teacher}
@@ -222,17 +227,17 @@ export default function ScheduleForm() {
 
             {/* Day Selection */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Calendar size={13} className="text-blue-500 dark:text-blue-400" /> Day of the Week
+              <label className={colorform.color_label}>
+                Day of the Week *
               </label>
               <select
                 name="day"
                 value={formData.day}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer transition-all"
+                className={colorform.color_input}
               >
-                <option value="">Select Day</option>
+                <option value="">-- Choose Day --</option>
                 {daysOfWeek.map((d) => (
                   <option key={d} value={d}>
                     {d}
@@ -243,8 +248,8 @@ export default function ScheduleForm() {
 
             {/* Start Time */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Clock size={13} className="text-blue-500 dark:text-blue-400" /> Start Time
+              <label className={colorform.color_label}>
+                Start Time *
               </label>
               <input
                 type="time"
@@ -252,14 +257,14 @@ export default function ScheduleForm() {
                 value={formData.start_time}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
 
             {/* End Time */}
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Clock size={13} className="text-blue-500 dark:text-blue-400" /> End Time
+              <label className={colorform.color_label}>
+                End Time *
               </label>
               <input
                 type="time"
@@ -267,28 +272,28 @@ export default function ScheduleForm() {
                 value={formData.end_time}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
           </div>
         </div>
 
         {/* Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 dark:border-slate-800">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-3 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
+            className={colorbtn.btncancel}
           >
             Cancel
           </button>
-
           <button
             type="submit"
             disabled={loading}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-all cursor-pointer disabled:opacity-50 active:scale-95"
+            className={colorbtn.btnsave}
           >
-            <Save size={15} /> {loading ? "Saving..." : IsEdit ? "Update Schedule" : "Save Schedule"}
+            <Save size={16} /> 
+            {loading ? "Saving..." : IsEdit ? "Update Schedule" : "Save Schedule"}
           </button>
         </div>
       </form>

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { ArrowLeft, Image as ImageIcon, Save } from "lucide-react";
+import { Image as ImageIcon, Save } from "lucide-react";
 import { subjectApi } from "../../../data/classrooms";
+import { colorbtn, colorform } from "../../../data/datafeature";
 
 export default function SubjectForm({ isDark: propIsDark = false }) {
   const [isDark, setIsDark] = useState(() => {
@@ -128,16 +129,21 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
 
   return (
     <div
-      className={` mx-auto space-y-6 transition-colors ${isDark ? "text-slate-100" : "text-slate-900"}`}
+      className={`lg:min-w-160 mx-auto space-y-6 transition-colors ${
+        isDark ? "text-slate-100" : "text-slate-900"
+      }`}
     >
       {/* Header */}
       <div
-        className={`flex items-center justify-between pb-4 border-b ${isDark ? "border-slate-800" : "border-slate-200"}`}
+        className={`flex items-center justify-between pb-4 border-b ${
+          isDark ? "border-slate-800" : "border-slate-200"
+        }`}
       >
         <div className="flex items-center gap-3">
-      
           <h2
-            className={`text-lg font-bold tracking-tight ${isDark ? "text-white" : "text-slate-900"}`}
+            className={`text-lg font-bold tracking-tight ${
+              isDark ? "text-white" : "text-slate-900"
+            }`}
           >
             {isEditing ? "Edit Subject" : "Add New Subject"}
           </h2>
@@ -164,18 +170,14 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
       {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className={`p-6 sm:p-8 rounded-lg border shadow-inner space-y-6 transition-colors ${
+        className={`p-6 sm:p-8 rounded-xl border shadow-xs space-y-6 transition-colors ${
           isDark
-            ? "bg-slate-900/90 border-slate-800 text-slate-100"
+            ? "bg-slate-900 border-slate-800 text-slate-100"
             : "bg-white border-slate-200 text-slate-900"
         }`}
       >
         <div>
-          <label
-            className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}
-          >
-            Subject Name *
-          </label>
+          <label className={colorform.color_label}>Subject Name *</label>
           <input
             type="text"
             value={subjectName}
@@ -183,21 +185,17 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
             required
             maxLength={255}
             placeholder="e.g. Mathematics"
-            className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 transition-all ${
-              isDark
-                ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-blue-500"
-                : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-500"
-            }`}
+            className={colorform.color_input}
           />
         </div>
 
         <div>
-          <label
-            className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}
-          >
+          <label className={colorform.color_label}>
             Subject Code *{" "}
             <span
-              className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}
+              className={`text-xs font-normal lowercase ${
+                isDark ? "text-slate-500" : "text-slate-400"
+              }`}
             >
               (must be unique)
             </span>
@@ -208,21 +206,17 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
             onChange={(e) => setCode(e.target.value)}
             required
             placeholder="e.g. MATH101"
-            className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/25 font-mono transition-all ${
-              isDark
-                ? "bg-slate-950 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-blue-500"
-                : "bg-white border-slate-300 text-slate-900 placeholder-slate-400 focus:border-blue-500"
-            }`}
+            className={`${colorform.color_input} font-mono`}
           />
         </div>
 
         <div>
-          <label
-            className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}
-          >
+          <label className={colorform.color_label}>
             Subject Image{" "}
             <span
-              className={`text-xs font-normal lowercase ${isDark ? "text-slate-500" : "text-slate-400"}`}
+              className={`text-xs font-normal lowercase ${
+                isDark ? "text-slate-500" : "text-slate-400"
+              }`}
             >
               (PNG, JPG, max 2MB)
             </span>
@@ -261,23 +255,14 @@ export default function SubjectForm({ isDark: propIsDark = false }) {
         </div>
 
         <div
-          className={`flex items-center justify-end gap-3 pt-5 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}
+          className={`flex items-center justify-end gap-3 pt-5 border-t ${
+            isDark ? "border-slate-800" : "border-slate-200"
+          }`}
         >
-          <Link
-            to="/admin/subjects"
-            className={`px-5 py-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer border active:scale-95 ${
-              isDark
-                ? "bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white"
-                : "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200 hover:text-slate-900"
-            }`}
-          >
+          <Link to="/admin/subjects" className={colorbtn.btncancel}>
             Cancel
           </Link>
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center gap-1.5 px-6 py-2.5 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 shadow-lg shadow-blue-600/30 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
-          >
+          <button type="submit" disabled={loading} className={colorbtn.btnsave}>
             <Save size={15} />
             {loading
               ? "Saving..."

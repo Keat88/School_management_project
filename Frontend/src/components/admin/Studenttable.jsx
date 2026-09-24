@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  Eye,
-  Edit,
-  Trash2,
-  Users,
-  Trash,
-} from "lucide-react";
-
+import { Eye, Edit, Trash2, Users, Trash } from "lucide-react";
+import { colorbtn } from "../../data/datafeature";
 function initials(name = "") {
   return name ? name.charAt(0).toUpperCase() : "S";
 }
@@ -140,11 +134,11 @@ export default function StudentTable({
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex​ justify-between w-full items-center gap-2 pt-1">
                     <button
                       type="button"
                       onClick={() => onView && onView(student.id)}
-                      className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold text-xs transition-colors cursor-pointer shadow-xs"
+                      className={colorbtn.btnview}
                     >
                       <Eye size={13} />
                       <span>View</span>
@@ -152,7 +146,7 @@ export default function StudentTable({
                     <button
                       type="button"
                       onClick={() => onEdit && onEdit(student.id)}
-                      className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 bg-slate-500 hover:bg-slate-700 dark:bg-slate-600 dark:hover:bg-slate-500 text-white rounded-lg font-semibold text-xs transition-colors cursor-pointer shadow-xs"
+                      className={colorbtn.btnedit}
                     >
                       <Edit size={13} />
                       <span>Edit</span>
@@ -160,7 +154,7 @@ export default function StudentTable({
                     <button
                       type="button"
                       onClick={() => onDelete && onDelete(student.id)}
-                      className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold text-xs transition-colors cursor-pointer shadow-xs"
+                      className={colorbtn.btndelete}
                     >
                       <Trash2 size={13} />
                       <span>Delete</span>
@@ -172,7 +166,7 @@ export default function StudentTable({
           </div>
 
           {/* DESKTOP VIEW: Table Layout (hidden md:block) */}
-          <div className="hidden md:block border border-slate-200 dark:border-slate-800  p-5 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors">
+          <div className="hidden md:block border border-slate-200 dark:border-slate-800  p-5 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-lg transition-colors">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[700px] text-sm text-left">
                 <thead>
@@ -191,7 +185,8 @@ export default function StudentTable({
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {students.map((student) => {
                     const isActive = student.status !== "inactive";
-                    const studentName = student.student_name || "Unknown Student";
+                    const studentName =
+                      student.student_name || "Unknown Student";
 
                     return (
                       <tr
@@ -275,25 +270,25 @@ export default function StudentTable({
                           <button
                             type="button"
                             onClick={() => onView && onView(student.id)}
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                            className={colorbtn.btnview}
                           >
-                            <Eye size={16}/>
+                            <Eye size={16} />
                             View
                           </button>
                           <button
                             type="button"
                             onClick={() => onEdit && onEdit(student.id)}
-                             className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-600 text-white rounded-md text-xs font-medium hover:bg-gray-700 transition-colors shadow-xs dark:bg-slate-700 dark:hover:bg-slate-600"
+                            className={colorbtn.btnedit}
                           >
-                            <Edit size={16}/>
+                            <Edit size={16} />
                             Edit
                           </button>
                           <button
                             type="button"
                             onClick={() => onDelete && onDelete(student.id)}
-                             className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
-                          >  
-                          <Trash size={16}/>
+                            className={colorbtn.btndelete}
+                          >
+                            <Trash size={16} />
                             Delete
                           </button>
                         </td>

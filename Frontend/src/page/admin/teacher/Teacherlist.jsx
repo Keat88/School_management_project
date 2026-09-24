@@ -5,6 +5,7 @@ import { teacherApi } from "../../../data/TeacherApi";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../hooks/Pagination";
 import ModalDelete from "../../../hooks/ModalDelete";
+import HeaderPage from "../../../hooks/HeaderPage";
 
 function TeacherList() {
   const [searchValue, setSearchValue] = useState("");
@@ -92,8 +93,6 @@ function TeacherList() {
     setIsDeleteModalOpen(false);
     setClassToDeleteId(null);
   };
-
-  // FIXED: Utilizes classToDeleteId and closes the modal upon success
   const handleConfirmDelete = async () => {
     if (!classToDeleteId) return;
     try {
@@ -108,9 +107,11 @@ function TeacherList() {
       setLoading(false);
     }
   };
+
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
@@ -121,6 +122,7 @@ function TeacherList() {
       </div>
     );
   }
+
   return (
     <>
       {isDeleteModalOpen && (
@@ -128,25 +130,18 @@ function TeacherList() {
           <ModalDelete
             onConfirm={handleConfirmDelete}
             onCancel={handleCancelDelete}
+            title={'Delete Teacher'}
+            desciption={' Are you sure you want to delete this theacher? This action cannot be undone.'}
           />
         </div>
       )}
       <div className="space-y-6">
-        {/* Header Bar */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-gray-800 dark:text-slate-100">
-              Teachers
-            </h2>
-            <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">
-              Manage and view teacher records
-            </p>
-          </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-gray-400 dark:bg-blue-500/20 text-white dark:text-blue-300 border  dark:border-blue-500/30">
-            Total: {totalItems}
-          </span>
-        </div>
-
+        <HeaderPage 
+          title="Teachers" 
+          description="Manage and view teacher records" 
+          totalItems={totalItems} 
+          titlefound="Teacher found" 
+        />
         {/* Search Filter Component */}
         <TeacherFilters
           searchValue={searchValue}
@@ -154,10 +149,8 @@ function TeacherList() {
           onSearchChange={setSearchValue}
           onGenderChange={handleGenderChange}
         />
-
-        {/* Table Container with dynamic loading overlay/state */}
-        <div className="">
-          {/* Teacher Table */}
+        {/* Table Container */}
+        <div>
           <TeacherTable
             teachers={teachers}
             onDeleteId={openDeleteModal}

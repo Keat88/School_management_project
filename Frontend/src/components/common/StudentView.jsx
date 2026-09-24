@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { studentData } from "../../data/StudentsApi";
+import { colorbtn } from "../../data/datafeature";
 
 export default function StudentView() {
   const { id } = useParams();
@@ -90,7 +91,7 @@ export default function StudentView() {
         </h2>
         <button
           onClick={() => navigate(-1)}
-          className="px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-700 border border-transparent dark:border-slate-700"
+          className={colorbtn.btncancel}
         >
           Back
         </button>

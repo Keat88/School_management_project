@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { hostelRoomApi } from "../../../data/Hostel";
 import Pagination from "../../../hooks/Pagination";
+import { colorbtn } from "../../../data/datafeature";
 
 export default function ManageHostelRooms() {
   const [rooms, setRooms] = useState([]);
@@ -105,11 +106,11 @@ export default function ManageHostelRooms() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 font-sans text-gray-900 dark:text-slate-100 p-2 sm:p-4">
+    <div className="lg:min-w-160 mx-auto space-y-6 font-sans text-gray-900 dark:text-slate-100">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-200 dark:border-slate-800">
         <div>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-slate-100">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-slate-100">
             Manage Hostel Rooms
           </h2>
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-0.5">
@@ -254,7 +255,7 @@ export default function ManageHostelRooms() {
                   <div className="flex items-center justify-end gap-2 pt-1">
                     <Link
                       to={`/admin/hostel-rooms/add/${room.id}`}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-600 text-white rounded-lg text-xs font-medium hover:bg-gray-700 transition-colors dark:bg-slate-700 dark:hover:bg-slate-600"
+                      className={colorbtn.btnedit}
                     >
                       <Edit size={14} />
                       <span>Update</span>
@@ -262,7 +263,7 @@ export default function ManageHostelRooms() {
                     <button
                       type="button"
                       onClick={() => handleDelete(room.id)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700 transition-colors"
+                      className={colorbtn.btndelete}
                     >
                       <Trash2 size={14} />
                       <span>Delete</span>
@@ -351,7 +352,7 @@ export default function ManageHostelRooms() {
                           <div className="flex items-center justify-end gap-2">
                             <Link
                               to={`/admin/hostel-rooms/add/${room.id}`}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-600 text-white rounded-md text-xs font-medium hover:bg-gray-700 transition-colors shadow-xs dark:bg-slate-700 dark:hover:bg-slate-600"
+                              className={colorbtn.btnedit}
                               title="Update"
                             >
                               <Edit size={13} />
@@ -360,7 +361,7 @@ export default function ManageHostelRooms() {
                             <button
                               type="button"
                               onClick={() => handleDelete(room.id)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
+                              className={colorbtn.btndelete}
                               title="Delete"
                             >
                               <Trash2 size={13} />

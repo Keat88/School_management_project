@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { ArrowLeft, Image as ImageIcon, Save, Upload } from "lucide-react";
 import { hostelRoomApi, HotelCagegoryApi } from "../../../data/Hostel";
+import { colorbtn, colorform } from "../../../data/datafeature";
 
 export default function HostelRoomForm() {
   const { id } = useParams();
@@ -147,7 +148,6 @@ export default function HostelRoomForm() {
               : "Fill in details to register a new hostel room"}
           </p>
         </div>
-       
       </div>
 
       {/* Feedback Banner */}
@@ -175,14 +175,14 @@ export default function HostelRoomForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+              <label className={colorform.color_label}>
                 Hostel *
               </label>
               <select
                 value={hostelId}
                 onChange={(e) => setHostelId(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:bg-slate-900 dark:focus:border-blue-400 cursor-pointer"
+                className={colorform.color_select}
               >
                 <option value="">Select Hostel</option>
                 {hostels.map((h) => (
@@ -194,7 +194,7 @@ export default function HostelRoomForm() {
             </div>
 
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+              <label className={colorform.color_label}>
                 Room Number *
               </label>
               <input
@@ -203,14 +203,14 @@ export default function HostelRoomForm() {
                 onChange={(e) => setRoomNumber(e.target.value)}
                 required
                 placeholder="e.g. 102"
-                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-400 dark:focus:bg-slate-900 dark:focus:border-blue-400"
+                className={colorform.color_input}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+              <label className={colorform.color_label}>
                 Block Name
               </label>
               <input
@@ -218,19 +218,19 @@ export default function HostelRoomForm() {
                 value={blockName}
                 onChange={(e) => setBlockName(e.target.value)}
                 placeholder="e.g. Block A"
-                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-400 dark:focus:bg-slate-900 dark:focus:border-blue-400"
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+              <label className={colorform.color_label}>
                 Room Type *
               </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:bg-slate-900 dark:focus:border-blue-400 cursor-pointer"
+                className={colorform.color_select}
               >
                 <option value="standard">Standard</option>
                 <option value="deluxe">Deluxe</option>
@@ -251,13 +251,13 @@ export default function HostelRoomForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+              <label className={colorform.color_label}>
                 Gender *
               </label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all capitalize dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:bg-slate-900 dark:focus:border-blue-400 cursor-pointer"
+                className={colorform.color_select}
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -266,7 +266,7 @@ export default function HostelRoomForm() {
             </div>
 
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+              <label className={colorform.color_label}>
                 Number of Beds *
               </label>
               <input
@@ -276,12 +276,12 @@ export default function HostelRoomForm() {
                 onChange={(e) => setNumberOfBeds(e.target.value)}
                 required
                 placeholder="e.g. 2"
-                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-400 dark:focus:bg-slate-900 dark:focus:border-blue-400"
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+              <label className={colorform.color_label}>
                 Cost Per Bed ($) *
               </label>
               <input
@@ -292,19 +292,19 @@ export default function HostelRoomForm() {
                 onChange={(e) => setCostPerBed(e.target.value)}
                 required
                 placeholder="0.00"
-                className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-400 dark:focus:bg-slate-900 dark:focus:border-blue-400"
+                className={colorform.color_input}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1.5 dark:text-slate-300">
+            <label className={colorform.color_label}>
               Status *
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50/80 text-gray-900 focus:outline-none focus:bg-white focus:border-blue-500 transition-all capitalize dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100 dark:focus:bg-slate-900 dark:focus:border-blue-400 cursor-pointer"
+              className={colorform.color_select}
             >
               <option value="available">Available</option>
               <option value="full">Occupied (Full)</option>{" "}
@@ -318,7 +318,7 @@ export default function HostelRoomForm() {
 
         {/* Media Upload */}
         <div className="space-y-3">
-          <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-slate-300">
+          <label className={colorform.color_label}>
             Room Image
           </label>
           <div className="flex flex-col sm:flex-row items-center gap-4 p-4 border border-dashed border-gray-300 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-colors dark:border-slate-700 dark:bg-slate-800/40 dark:hover:bg-slate-800/60">
@@ -358,14 +358,14 @@ export default function HostelRoomForm() {
         <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-200 dark:border-slate-800">
           <Link
             to="/admin/hostel-rooms"
-            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-xs sm:text-sm font-medium hover:bg-gray-200 text-center transition-colors dark:bg-slate-800 dark:text-slate-300 dark:border dark:border-slate-700 dark:hover:bg-slate-700"
+            className={colorbtn.btncancel}
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-500 active:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs cursor-pointer"
+            className={colorbtn.btnsave}
           >
             <Save size={16} />
             {loading ? "Saving..." : isEditing ? "Update Room" : "Save Room"}

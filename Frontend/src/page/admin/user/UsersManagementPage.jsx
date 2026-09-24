@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../data/api";
-import { Plus, AlertTriangle, Edit3, Trash2 } from "lucide-react";
+import { Plus, AlertTriangle, Trash2, Edit } from "lucide-react";
 import Pagination from "../../../hooks/Pagination";
+import { colorbtn, colorform } from "../../../data/datafeature";
+import HeaderPage from "../../../hooks/HeaderPage";
+import ModalDelete from "../../../hooks/ModalDelete";
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -161,41 +164,43 @@ export default function UserManagement() {
             </p>
           </div>
         </div>
-
         {/* Filters & Actions */}
-        <div className="bg-white dark:bg-slate-900 rounded-lg p-3 sm:p-4 shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between">
+        <div className="bg-whith dark:bg-slate-900 rounded-lg p-3 sm:p-4 shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-3 w-full flex-1">
             <input
               type="text"
               placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-colors"
+              className={colorform.color_input}
             />
+          </div>
+          <div className="flex gap-x-3 sm:justify-between w-full">
+            {/* FIXED: Bound value to roleFilter and added onChange handler */}
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="w-full sm:w-auto bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600 transition-colors cursor-pointer"
+              className={colorform.color_select}
             >
-              <option value="All">All Roles</option>
+              <option value="All">All</option>
               <option value="admin">Admin</option>
               <option value="teacher">Teacher</option>
               <option value="user">User</option>
             </select>
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className={colorbtn.btnadd}
+            >
+              <Plus size={16} />
+              <span>Add User</span>
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={openCreateModal}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-blue-700 active:bg-blue-800 transition-colors shrink-0 cursor-pointer shadow-xs"
-          >
-            <Plus size={16} />
-            <span>Add User</span>
-          </button>
         </div>
 
         {/* Loading / Empty States Shared */}
         {loading ? (
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 py-16 text-center">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 py-16 text-center">
             <div className="flex flex-col items-center justify-center gap-2">
               <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
               <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -209,7 +214,7 @@ export default function UserManagement() {
           </div>
         ) : (
           <>
-            {/* MOBILE VIEW: Card List Layout (Visible on mobile only) */}
+            {/* MOBILE VIEW: Card List Layout */}
             <div className="grid grid-cols-1 gap-3 md:hidden">
               {users.map((user) => (
                 <div
@@ -227,7 +232,7 @@ export default function UserManagement() {
                     </div>
                     <span
                       className={`px-2.5 py-1 text-xs font-semibold rounded-lg capitalize shrink-0 ${getRoleBadgeClass(
-                        user.role
+                        user.role,
                       )}`}
                     >
                       {user.role}
@@ -241,14 +246,18 @@ export default function UserManagement() {
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => openEditModal(user)}
-                        className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg font-medium text-xs transition cursor-pointer"
+                        className={colorbtn.btnedit}
                       >
+                        <Edit size={16} />
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteClick(user.id)}
-                        className="px-3 py-1.5 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 text-rose-600 dark:text-rose-400 rounded-lg font-medium text-xs transition cursor-pointer"
+                        className={colorbtn.btndelete}
+                        title="Delete Record"
                       >
+                        {/* FIXED: Changed Edit to Trash2 icon */}
+                        <Trash2 size={16} />
                         Delete
                       </button>
                     </div>
@@ -257,7 +266,7 @@ export default function UserManagement() {
               ))}
             </div>
 
-            {/* DESKTOP VIEW: Table Layout (Hidden on mobile) */}
+            {/* DESKTOP VIEW: Table Layout */}
             <div className="hidden md:block bg-white dark:bg-slate-900  overflow-hidden border border-slate-200 dark:border-slate-800">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
@@ -295,7 +304,7 @@ export default function UserManagement() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-lg capitalize ${getRoleBadgeClass(
-                              user.role
+                              user.role,
                             )}`}
                           >
                             {user.role}
@@ -307,14 +316,18 @@ export default function UserManagement() {
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                           <button
                             onClick={() => openEditModal(user)}
-                            className="text-xs px-3 py-1.5 rounded-md font-semibold transition-colors cursor-pointer bg-slate-500 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white shadow-xs active:scale-95"
+                            className={colorbtn.btnedit}
                           >
+                            <Edit size={16} />
                             Edit
                           </button>
                           <button
                             onClick={() => handleDeleteClick(user.id)}
-                            className="text-xs px-3 py-1.5 rounded-md font-semibold transition-colors cursor-pointer bg-red-600 hover:bg-red-700 text-white shadow-xs active:scale-95"
+                            className={colorbtn.btndelete}
+                            title="Delete Record"
                           >
+                            {/* FIXED: Changed Edit to Trash2 icon */}
+                            <Trash2 size={16} />
                             Delete
                           </button>
                         </td>
@@ -376,7 +389,7 @@ export default function UserManagement() {
                         email: e.target.value,
                       })
                     }
-                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+                    className={colorform.color_input}
                   />
                 </div>
                 <div>
@@ -391,7 +404,7 @@ export default function UserManagement() {
                         role: e.target.value,
                       })
                     }
-                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600 cursor-pointer"
+                    className={colorform.color_select}
                   >
                     <option value="user">User</option>
                     <option value="teacher">Teacher</option>
@@ -415,7 +428,7 @@ export default function UserManagement() {
                         password: e.target.value,
                       })
                     }
-                    className="mt-1 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-blue-600"
+                    className={colorform.color_input}
                   />
                 </div>
 
@@ -439,36 +452,16 @@ export default function UserManagement() {
           </div>
         )}
 
-        {/* Delete Confirmation Modal */}
         {isDeleteModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-sm w-full p-5 sm:p-6 shadow-xl space-y-4 text-center my-auto">
-              <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-2">
-                <AlertTriangle size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                Delete User
-              </h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Are you sure you want to delete this user? This action cannot be undone.
-              </p>
-              <div className="flex justify-center gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={handleCancelDelete}
-                  className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-medium transition cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleConfirmDelete}
-                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition cursor-pointer shadow-xs"
-                >
-                  Confirm
-                </button>
-              </div>
-            </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+            <ModalDelete
+              onConfirm={handleConfirmDelete}
+              onCancel={handleCancelDelete}
+              title={"Delete User"}
+              desciption={
+                " Are you sure you want to delete this user? This action cannot be undone."
+              }
+            />
           </div>
         )}
       </div>

@@ -12,6 +12,7 @@ import {
   Home,
 } from "lucide-react";
 import { hostelApi } from "../../../data/Hostel";
+import { colorbtn } from "../../../data/datafeature";
 
 export default function HostelPage() {
   const navigate = useNavigate();
@@ -136,7 +137,7 @@ export default function HostelPage() {
         <button
           type="button"
           onClick={handleAddHostel}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-blue-500 active:bg-blue-700 shadow-xs transition-all cursor-pointer"
+          className={colorbtn.btnadd}
         >
           <Plus size={16} /> Add Building
         </button>
@@ -247,7 +248,7 @@ export default function HostelPage() {
         </div>
 
         {/* Desktop Table View */}
-        <div className="hidden md:block overflow-x-auto border border-gray-200 bg-white dark:bg-slate-900 dark:border-slate-800">
+        <div className="hidden md:block rounded-lg overflow-x-auto border border-gray-200 bg-white dark:bg-slate-900 dark:border-slate-800">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b text-xs font-semibold uppercase tracking-wider bg-gray-50/90 border-gray-200 text-gray-600 dark:bg-slate-800/80 dark:border-slate-800 dark:text-slate-300">
@@ -289,7 +290,7 @@ export default function HostelPage() {
                     <td className="py-3.5 px-4 text-right space-x-2 whitespace-nowrap">
                       <button
                         onClick={() => handleEdit(hostel)}
-                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-600 text-white rounded-md text-xs font-medium hover:bg-gray-700 transition-colors shadow-xs dark:bg-slate-700 dark:hover:bg-slate-600"
+                         className={colorbtn.btnedit}
                         title="Update"
                       >
                         <Edit size={13} />
@@ -298,7 +299,7 @@ export default function HostelPage() {
                       <button
                         type="button"
                         onClick={() => handleDelete(hostel)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
+                        className={colorbtn.btndelete}
                         title="Delete"
                       >
                         <Trash2 size={13} />
@@ -351,14 +352,14 @@ export default function HostelPage() {
                 <div className="flex items-center justify-end gap-2 pt-1">
                   <button
                     onClick={() => handleEdit(hostel)}
-                    className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                    className={colorbtn.btnedit}
                   >
                     <Edit size={14} />
                     Update
                   </button>
                   <button
                     onClick={() => handleDelete(hostel)}
-                     className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
+                     className={colorbtn.btndelete}
                   >
                     <Trash2 size={14} />
                     Delete

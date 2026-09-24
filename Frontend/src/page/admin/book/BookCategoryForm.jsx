@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { BookCategoryApi } from "../../../data/library";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Save, ArrowLeft } from "lucide-react";
+import { colorbtn, colorform } from "../../../data/datafeature";
 
 export default function BookCategoryForm() {
   const { id } = useParams();
@@ -79,45 +80,61 @@ export default function BookCategoryForm() {
 
   if (fetching) {
     return (
-      <div className="py-12 text-center text-gray-500 dark:text-slate-400">
-        <div className="flex flex-col items-center justify-center gap-2">
-          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-indigo-500 dark:border-indigo-400"></div>
-          <span>Loading book categories...</span>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3 dark:text-slate-100">
+        <div className="w-8 h-8 border-2 border-indigo-600 dark:border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+          Loading category details...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="lg:min-w-160 mx-auto p-6 sm:p-8  border transition-colors duration-200 bg-white border-gray-200/80 text-gray-900 shadow-gray-100 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 dark:shadow-slate-950/40">
-      <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
-        <h2 className="text-lg font-bold tracking-tight text-gray-900 dark:text-slate-100">
-          {isEditMode ? "Edit Book Category" : "Add New Book Category"}
-        </h2>
-        
+    <div className="lg:min-w-160 w-full mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+              {isEditMode ? "Edit Book Category" : "Add New Book Category"}
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              {isEditMode
+                ? "Modify existing book category name and details"
+                : "Create a new classification category for library books"}
+            </p>
+          </div>
+        </div>
       </div>
 
+      {/* Feedback Banner */}
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-xl text-sm font-medium border flex items-center gap-2.5 shadow-sm transition-all ${
+          className={`p-4 rounded-xl text-sm font-medium border flex items-center gap-3 transition-all ${
             feedback.type === "success"
-              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/40"
-              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/15 dark:text-rose-300 dark:border-rose-500/40"
+              ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800"
+              : "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800"
           }`}
         >
-          {feedback.type === "error" && <AlertCircle size={18} className="shrink-0" />}
+          {feedback.type === "error" && (
+            <AlertCircle size={18} className="shrink-0 text-rose-600 dark:text-rose-400" />
+          )}
           <span>{feedback.text}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Form Container */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-xl border border-gray-200 dark:border-slate-800 shadow-xs space-y-6"
+      >
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold tracking-wider pb-2 border-b text-blue-500 border-gray-100 dark:text-blue-400 dark:border-slate-800">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 pb-2 border-b border-gray-100 dark:border-slate-800">
             Category Information
           </h3>
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5 text-gray-700 dark:text-slate-300">
-              Category Name
+            <label className={colorform.color_label}>
+              Category Name *
             </label>
             <input
               type="text"
@@ -127,29 +144,31 @@ export default function BookCategoryForm() {
               required
               maxLength={255}
               placeholder="e.g., Science Fiction"
-              className="w-full px-3.5 py-2.5 border rounded-lg text-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 bg-gray-50/50 border-gray-300 text-gray-900 placeholder-gray-400 focus:bg-white dark:bg-slate-800/80 dark:border-slate-700/80 dark:text-slate-100 dark:placeholder-slate-500"
+              className={colorform.color_input}
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-end pt-6 border-t border-gray-100 dark:border-slate-800 space-x-3">
+        {/* Action Buttons */}
+        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-200 dark:border-slate-800">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-2.5 rounded-lg text-sm font-semibold transition-all cursor-pointer bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 dark:border-slate-700"
+            className={colorbtn.btncancel}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 rounded-lg text-sm font-semibold text-white transition-all shadow-sm cursor-pointer disabled:opacity-50 bg-blue-500 hover:bg-blue-600 shadow-indigo-100 dark:hover:bg-blue-500 dark:shadow-indigo-950/50"
+            className={colorbtn.btnsave}
           >
+            <Save size={16} />
             {loading
               ? "Saving..."
               : isEditMode
-                ? "Update Category"
-                : "Save Category"}
+              ? "Update Category"
+              : "Save Category"}
           </button>
         </div>
       </form>

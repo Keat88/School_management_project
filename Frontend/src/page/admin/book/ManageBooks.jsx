@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, RotateCcw, BookOpen, AlertTriangle, CheckCircle2, AlertCircle, X } from "lucide-react";
 import { BookApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
+import { colorbtn } from "../../../data/datafeature";
 
 export default function ManageBooks({ isDark: propIsDark = false }) {
   const [isDark, setIsDark] = useState(() => {
@@ -169,7 +170,7 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
         </div>
         <NavLink
           to="/admin/library/book/add"
-          className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-blue-500 text-white text-sm font-medium px-4.5 py-2.5 hover:bg-blue-700 transition-all shadow-sm hover:shadow active:scale-95 duration-150"
+          className={colorbtn.btnadd}
         >
           <Plus size={16} />
           <span>Add New Book</span>
@@ -281,7 +282,7 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
       </form>
 
       {/* Desktop & Tablet Table View */}
-      <div className="hidden md:block border overflow-hidden transition-colors bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-800">
+      <div className="hidden md:block rounded-lg border overflow-hidden transition-colors bg-white border-gray-200 dark:bg-slate-900 dark:border-slate-800">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b text-xs font-semibold uppercase tracking-wider bg-gray-50/70 border-gray-100 text-gray-500 dark:bg-slate-800/40 dark:border-slate-800 dark:text-slate-400">
@@ -352,14 +353,14 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
                   <td className="py-3.5 px-4 text-right space-x-2">
                     <button
                       onClick={() => navigate(`/admin/library/book/add/${book.id}`)}
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-700 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
+                      className={colorbtn.btnedit}
                       title="Update Book"
                     >
                       Update
                     </button>
                     <button
                       onClick={() => handleDeleteClick(book.id)}
-                      className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-500 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
+                      className={colorbtn.btndelete}
                       title="Delete Book"
                     >
                       Delete

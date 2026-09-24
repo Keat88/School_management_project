@@ -12,6 +12,7 @@ import { useAuth } from "../../context/AuthContext";
 
 import StudentTable from "./Studenttable";
 import { classRoomApi } from "../../data/classrooms";
+import { colorbtn } from "../../data/datafeature";
 
 function ClassroomDetail() {
   const { currentUser } = useAuth();
@@ -62,7 +63,7 @@ function ClassroomDetail() {
         <div className="max-w-3xl mx-auto space-y-4">
           <Link
             to="/admin/classes"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            className={colorbtn.btncancel}
           >
             <ArrowLeft size={14} />
             Back to Classes

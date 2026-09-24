@@ -11,7 +11,9 @@ import {
 } from "lucide-react";
 import { subjectApi } from "../../../data/classrooms";
 import Pagination from "../../../hooks/Pagination";
-
+import { colorbtn } from "../../../data/datafeature";
+import HeaderPage from "../../../hooks/HeaderPage";
+import ModalDelete from "../../../hooks/ModalDelete";
 export default function ManageSubject({ isDark: propIsDark = false }) {
   const [isDark, setIsDark] = useState(() => {
     const savedTheme =
@@ -137,22 +139,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
   return (
     <div className="space-y-6 w-full lg:min-w-260 mx-auto transition-colors text-slate-900 dark:text-slate-100 ">
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Manage Subjects
-          </h2>
-          <p className="text-xs sm:text-sm font-medium mt-1 text-slate-500 dark:text-slate-400">
-            Configure and manage school subjects and course codes.
-          </p>
-        </div>
-        <div className="self-start sm:self-auto">
-          <span className="inline-flex items-center text-xs font-semibold px-3 py-1 dark:bg-blue-500/10 text-gray-500 dark:text-blue-400 rounded-full border border-blue-100 dark:border-blue-500/20 shadow-2xs">
-            {totalItems} subjects found
-          </span>
-        </div>
-      </div>
-
+      <HeaderPage title={' Manage Subjects'} description={' Configure and manage school subjects and course codes.'} totalItems={totalItems} titlefound={'subject'}/>
       {feedback && (
         <div
           className={`p-4 rounded-xl text-sm font-medium border shadow-2xs ${
@@ -164,7 +151,6 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
           {feedback.text}
         </div>
       )}
-
       {/* Search Bar & Actions */}
       <form
         onSubmit={handleSearchSubmit}
@@ -199,7 +185,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
           </button>
           <Link
             to="/admin/subjects/add"
-            className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs active:scale-98"
+            className={colorbtn.btnadd}
           >
             <Plus size={16} />
             Add Subject
@@ -208,7 +194,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
       </form>
 
       {/* Subject List Container */}
-      <div className="border p-3 sm:p-5 space-y-4 transition-colors  bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100">
+      <div className="p-3 sm:p-5 space-y-4 transition-colors text-slate-800 dark:text-slate-100">
         {/* Loading / Empty / Content States */}
         {loading ? (
           <div className="py-12 text-center text-slate-400 dark:text-slate-400">
@@ -246,7 +232,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                   <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
                     <Link
                       to={`/admin/subjects/add/${sub.id}`}
-                       className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                       className={colorbtn.btnedit}
                     ><Edit size={16}/>
 
                       Edit
@@ -254,7 +240,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                     <button
                       type="button"
                       onClick={() => handleDeleteClick(sub.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
+                      className={colorbtn.btndelete}
                     >
                       <Trash size={16}/>
                       Delete
@@ -265,7 +251,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
             </div>
 
             {/* DESKTOP VIEW: Table Layout (Hidden on mobile) */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden rounded-lg md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b text-xs font-semibold uppercase tracking-wider border-slate-200 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-900/40 dark:text-slate-400">
@@ -292,7 +278,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             to={`/admin/subjects/add/${sub.id}`}
-                            className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-500 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
+                            className={colorbtn.btnedit}
                             title="Edit"
                           >
                             Edit
@@ -300,7 +286,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
                           <button
                             type="button"
                             onClick={() => handleDeleteClick(sub.id)}
-                            className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-red-500 text-white hover:bg-rose-700 dark:bg-rose-600 dark:hover:bg-rose-500 border border-rose-600 dark:border-rose-600 shadow-2xs"
+                            className={colorbtn.btndelete}
                             title="Delete"
                           >
                             Delete
@@ -326,35 +312,16 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
         isDark={isDark}
       />
 
-      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center my-auto border transition-all bg-white border-slate-200 text-slate-900 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100">
-            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-2">
-              <AlertTriangle size={24} />
-            </div>
-            <h3 className="text-lg font-bold">Delete Subject</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Are you sure you want to delete this subject? This action cannot
-              be undone.
-            </p>
-            <div className="flex justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleCancelDelete}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer border bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-sm shadow-rose-500/20 active:scale-95"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+          <ModalDelete
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+            title={"Delete Subject"}
+            desciption={
+              "              Are you sure you want to delete this subject? This action cannot  be undone."
+            }
+          />
         </div>
       )}
     </div>

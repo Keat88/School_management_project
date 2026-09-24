@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { api } from "../../../../data/api";
 import { Link } from "react-router-dom";
+import { colorbtn } from "../../../../data/datafeature";
 
 export default function CoursesTable() {
   const [courses, setCourses] = useState([]);
@@ -354,25 +355,26 @@ export default function CoursesTable() {
                   <td className="py-4 px-4 text-right space-x-1.5">
                     <Link
                       to={`/admin/course/view/${course.id}`}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-200 transition-colors dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                      className={colorbtn.btnview}
                       title="View Details"
                     >
-                      <Eye size={16}/>
+                      <Eye size={16} />
                       View
                     </Link>
                     <Link
                       to={`/admin/course/add/${course.id}`}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-gray-600 text-white rounded-md text-xs font-medium hover:bg-gray-700 transition-colors shadow-xs dark:bg-slate-700 dark:hover:bg-slate-600"
+                      className={colorbtn.btnedit}
                       title="Edit Course"
                     >
-                      <Edit size={16}/>
+                      <Edit size={16} />
                       Edit
                     </Link>
                     <button
                       onClick={() => handleDelete(course.id)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white rounded-md text-xs font-medium hover:bg-red-700 transition-colors shadow-xs cursor-pointer"
+                      className={colorbtn.btndelete}
                       title="Delete Course"
-                    ><Trash size={16}/>
+                    >
+                      <Trash size={16} />
                       Delete
                     </button>
                   </td>

@@ -12,6 +12,8 @@ import {
   X,
   Clock,
 } from "lucide-react";
+import { colorbtn, colorform } from "../../data/datafeature";
+import ModalDelete from "../../hooks/ModalDelete";
 
 export const academicYearApi = {
   getAll: () => api.get("/academic-years/index"),
@@ -189,10 +191,7 @@ export default function AcademicYearManager() {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => handleOpenModal()}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-white bg-blue-500 hover:bg-blue-500 shadow-sm shadow-blue-500/20 active:scale-95 shrink-0"
-        >
+        <button onClick={() => handleOpenModal()} className={colorbtn.btnadd}>
           <Plus size={16} strokeWidth={2.5} />
           Add Academic Year
         </button>
@@ -295,14 +294,14 @@ export default function AcademicYearManager() {
                       <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                         <button
                           onClick={() => handleOpenModal(year)}
-                          className="inline-flex items-center gap-1 text-xs px-3 py-2 rounded-lg font-semibold transition-all cursor-pointer bg-gray-500 hover:bg-gray-700 text-white shadow-sm active:scale-95"
+                          className={colorbtn.btnedit}
                         >
                           <Pencil size={12} />
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteClick(year.id)}
-                          className="inline-flex items-center gap-1 text-xs px-3 py-2 rounded-lg font-semibold transition-all cursor-pointer bg-red-500 hover:bg-red-700 text-white shadow-sm active:scale-95"
+                          className={colorbtn.btndelete}
                         >
                           <Trash2 size={12} />
                           Delete
@@ -360,7 +359,7 @@ export default function AcademicYearManager() {
                   onChange={handleChange}
                   required
                   placeholder="2026-2027"
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500"
+                  className={colorform.color_input}
                 />
               </div>
 
@@ -374,7 +373,7 @@ export default function AcademicYearManager() {
                   value={formData.start_date}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                  className={colorform.color_input}
                 />
               </div>
 
@@ -388,7 +387,7 @@ export default function AcademicYearManager() {
                   value={formData.end_date}
                   onChange={handleChange}
                   required
-                  className="w-full px-3.5 py-2.5 border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white dark:bg-slate-800/85 border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+                  className={colorform.color_input}
                 />
               </div>
 
@@ -411,14 +410,11 @@ export default function AcademicYearManager() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-3 rounded-lg text-xs font-bold transition-all cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+                  className={colorbtn.btncancel}
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="px-5 py-3 rounded-lg text-xs font-bold text-white transition-all cursor-pointer bg-blue-600 hover:bg-blue-500 shadow-sm shadow-blue-500/20 active:scale-95"
-                >
+                <button type="submit" className={colorbtn.btnsave}>
                   {editingId ? "Update Academic Year" : "Save Academic Year"}
                 </button>
               </div>
@@ -427,37 +423,16 @@ export default function AcademicYearManager() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center my-auto">
-            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-2">
-              <AlertTriangle size={24} />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-              Delete Academic Year
-            </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Are you sure you want to delete this academic year? This action
-              cannot be undone.
-            </p>
-            <div className="flex justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleCancelDelete}
-                className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition cursor-pointer border border-slate-200 dark:border-slate-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-sm shadow-red-500/20 active:scale-95"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+          <ModalDelete
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+            title={"Delete Academic Year"}
+            desciption={
+              " Are you sure you want to delete this academic year? This action cannot be undone."
+            }
+          />
         </div>
       )}
     </div>

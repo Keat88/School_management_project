@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { Plus, Search, X, ChevronDown, RotateCcw } from "lucide-react";
+import { colorbtn } from "../../data/datafeature";
 
 export default function ClassFilter({
   searchValue = "",
@@ -153,7 +154,7 @@ export default function ClassFilter({
       {/* Add Class Action */}
       <NavLink
         to="/admin/classes/add"
-        className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-500 hover:bg-blue-600 active:bg-indigo-600 text-white text-xs font-semibold px-4 py-2.5 transition-all duration-200 shadow-xs hover:shadow-md shrink-0 cursor-pointer"
+        className={colorbtn.btnadd}
       >
         <Plus size={15} />
         Add Class

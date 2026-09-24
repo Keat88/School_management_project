@@ -15,10 +15,12 @@ import {
   Hash,
   Phone,
   GraduationCap,
+  Trash,
 } from "lucide-react";
 import { api } from "../../../data/api";
 import { AddStudentHostelApi } from "../../../data/Hostel";
 import Pagination from "../../../hooks/Pagination";
+import { colorbtn } from "../../../data/datafeature";
 
 export default function ManageStudentStays() {
   const [stays, setStays] = useState([]);
@@ -134,7 +136,7 @@ export default function ManageStudentStays() {
   }, [stays]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100 space-y-6 p-2 sm:p-4">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100 space-y-6">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -146,10 +148,7 @@ export default function ManageStudentStays() {
             timelines.
           </p>
         </div>
-        <Link
-          to="/admin/hostel-stays/add"
-          className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition-all cursor-pointer w-full sm:w-auto shrink-0"
-        >
+        <Link to="/admin/hostel-stays/add" className={colorbtn.btnadd}>
           <Plus size={15} />
           <span>Assign Bed / Room</span>
         </Link>
@@ -442,7 +441,7 @@ export default function ManageStudentStays() {
                     <div className="flex items-center justify-end gap-2 pt-1">
                       <Link
                         to={`/admin/hostel-stays/add/${stay.id}`}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-600 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-lg transition-colors font-semibold text-xs shadow-xs"
+                        className={colorbtn.btnedit}
                       >
                         <Edit size={14} />
                         <span>Edit</span>
@@ -450,7 +449,7 @@ export default function ManageStudentStays() {
                       <button
                         type="button"
                         onClick={() => handleDelete(stay.id)}
-                        className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors font-semibold text-xs shadow-xs cursor-pointer"
+                        className={colorbtn.btndelete}
                       >
                         <Trash2 size={14} />
                         <span>Delete</span>
@@ -603,17 +602,19 @@ export default function ManageStudentStays() {
                             <div className="flex items-center justify-end gap-1.5">
                               <Link
                                 to={`/admin/hostel-stays/add/${stay.id}`}
-                                className="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-lg transition-colors font-semibold text-[11px] shadow-xs"
+                                className={colorbtn.btnedit}
                                 title="Edit Record"
                               >
+                                <Edit size={16} />
                                 Edit
                               </Link>
                               <button
                                 type="button"
                                 onClick={() => handleDelete(stay.id)}
-                                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors font-semibold text-[11px] shadow-xs cursor-pointer"
+                                className={colorbtn.btndelete}
                                 title="Delete Record"
                               >
+                                <Trash size={16} />
                                 Delete
                               </button>
                             </div>

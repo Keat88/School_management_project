@@ -42,14 +42,12 @@ class AcademicYearController extends Controller
         if (!empty($validated['is_current'])) {
             Academic_years::where('is_current', true)->update(['is_current' => false]);
         }
-
         $academicYear = Academic_years::create([
             'name'       => $validated['name'],
             'start_date' => $validated['start_date'],
             'end_date'   => $validated['end_date'],
             'is_current' => $validated['is_current'] ?? false,
         ]);
-
         return response()->json([
             'message' => 'Academic year created successfully!',
             'data'    => $academicYear

@@ -14,6 +14,7 @@ import {
 import { api } from "../../../data/api";
 import { AddStudentHostelApi, hostelRoomApi } from "../../../data/Hostel";
 import { studentData } from "../../../data/StudentsApi";
+import { colorbtn, colorform } from "../../../data/datafeature";
 
 export default function StudentStayForm() {
   const { id } = useParams();
@@ -143,7 +144,7 @@ export default function StudentStayForm() {
 
   if (fetching) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3 dark:text-slate-100">
         <div className="w-8 h-8 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin" />
         <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">
           Loading form details...
@@ -153,11 +154,10 @@ export default function StudentStayForm() {
   }
 
   return (
-    <div className="lg:min-w-160 w-full mx-auto  space-y-6">
+    <div className="lg:min-w-160 w-full mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
-          
           <div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
               {isEditing ? "Edit Stay Record" : "Assign Bed to Student"}
@@ -181,9 +181,15 @@ export default function StudentStayForm() {
           }`}
         >
           {feedback.type === "success" ? (
-            <CheckCircle2 size={18} className="shrink-0 text-green-600 dark:text-green-400" />
+            <CheckCircle2
+              size={18}
+              className="shrink-0 text-green-600 dark:text-green-400"
+            />
           ) : (
-            <AlertCircle size={18} className="shrink-0 text-red-600 dark:text-red-400" />
+            <AlertCircle
+              size={18}
+              className="shrink-0 text-red-600 dark:text-red-400"
+            />
           )}
           <span>{feedback.text}</span>
         </div>
@@ -192,7 +198,7 @@ export default function StudentStayForm() {
       {/* Form Container */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-800 p-5 sm:p-8 rounded-lg border border-gray-200 dark:border-gray-700  space-y-6"
+        className="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-xl border border-gray-200 dark:border-slate-800 shadow-xs space-y-6"
       >
         {/* Student Section */}
         <div className="space-y-4">
@@ -203,46 +209,45 @@ export default function StudentStayForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Select Student *
-              </label>
+              <label className={colorform.color_label}>Select Student *</label>
               <div className="relative">
                 <select
                   value={studentId}
                   onChange={handleStudentSelect}
                   required
-                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all appearance-none"
+                  className={colorform.color_select}
                 >
-                  <option value="" className="dark:bg-gray-900">Select Student</option>
+                  <option value="" className="dark:bg-slate-900">
+                    Select Student
+                  </option>
                   {students.map((st) => (
-                    <option key={st.id} value={st.id} className="dark:bg-gray-900">
+                    <option
+                      key={st.id}
+                      value={st.id}
+                      className="dark:bg-slate-900"
+                    >
                       {st.name || st.student_name} ({st.email || st.code})
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 dark:text-gray-500">
-                  ▼
-                </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Roll Number *
-              </label>
+              <label className={colorform.color_label}>Roll Number *</label>
               <input
                 type="text"
                 value={rollNumber}
                 onChange={(e) => setRollNumber(e.target.value)}
                 required
                 placeholder="e.g. R-101"
-                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
           </div>
         </div>
 
-        <hr className="border-gray-100 dark:border-gray-700" />
+        <hr className="border-gray-200 dark:border-slate-800" />
 
         {/* Accommodation Section */}
         <div className="space-y-4">
@@ -253,35 +258,36 @@ export default function StudentStayForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Hostel Room *
-              </label>
+              <label className={colorform.color_label}>Hostel Room *</label>
               <div className="relative">
                 <select
                   value={hostelRoomId}
                   onChange={(e) => setHostelRoomId(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all appearance-none"
+                  className={colorform.color_select}
                 >
-                  <option value="" className="dark:bg-gray-900">Select Room</option>
+                  <option value="" className="dark:bg-slate-900">
+                    Select Room
+                  </option>
                   {rooms.map((rm) => (
-                    <option key={rm.id} value={rm.id} className="dark:bg-gray-900">
+                    <option
+                      key={rm.id}
+                      value={rm.id}
+                      className="dark:bg-slate-900"
+                    >
                       Room #{rm.room_number} ({rm.block_name || rm.type})
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 dark:text-gray-500">
-                  ▼
-                </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label className={colorform.color_label}>
                 Bed Number / Identifier *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 dark:text-gray-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400 dark:text-gray-500 z-10">
                   <Hash size={16} />
                 </div>
                 <input
@@ -290,14 +296,14 @@ export default function StudentStayForm() {
                   onChange={(e) => setBedNumber(e.target.value)}
                   required
                   placeholder="e.g. B1 or Bed 02"
-                  className="w-full pl-10 pr-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
+                  className={`${colorform.color_input} pl-10`}
                 />
               </div>
             </div>
           </div>
         </div>
 
-        <hr className="border-gray-100 dark:border-gray-700" />
+        <hr className="border-gray-200 dark:border-slate-800" />
 
         {/* Duration & Status Section */}
         <div className="space-y-4">
@@ -308,20 +314,18 @@ export default function StudentStayForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                Start Date *
-              </label>
+              <label className={colorform.color_label}>Start Date *</label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+              <label className={colorform.color_label}>
                 End Date{" "}
                 <span className="text-xs text-gray-400 dark:text-gray-500 font-normal">
                   (Optional)
@@ -331,46 +335,43 @@ export default function StudentStayForm() {
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-              Stay Status *
-            </label>
+            <label className={colorform.color_label}>Stay Status *</label>
             <div className="relative">
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-3.5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 dark:focus:border-blue-500 transition-all capitalize appearance-none"
+                className={`${colorform.color_select} capitalize`}
               >
-                <option value="active" className="dark:bg-gray-900">Active</option>
-                <option value="completed" className="dark:bg-gray-900">Completed</option>
-                <option value="cancelled" className="dark:bg-gray-900">Cancelled</option>
+                <option value="active" className="dark:bg-slate-900">
+                  Active
+                </option>
+                <option value="completed" className="dark:bg-slate-900">
+                  Completed
+                </option>
+                <option value="cancelled" className="dark:bg-slate-900">
+                  Cancelled
+                </option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 dark:text-gray-500">
-                ▼
-              </div>
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-200 dark:border-slate-800">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="w-full sm:w-auto px-5 py-2.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 text-center transition-colors"
+            className={colorbtn.btncancel}
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-xs"
-          >
+          <button type="submit" disabled={loading} className={colorbtn.btnsave}>
             <Save size={16} />
             {loading ? "Saving..." : isEditing ? "Update Stay" : "Assign Bed"}
           </button>

@@ -276,7 +276,7 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
       </div>
 
       {/* Desktop Table View */}
-      <div className="hidden md:block border space-y-4 transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100 overflow-hidden">
+      <div className="hidden md:block rounded-lg border space-y-4 transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-800 dark:text-slate-100 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[750px]">
             <thead>

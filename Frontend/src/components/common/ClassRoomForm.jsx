@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { classRoomApi } from "../../data/classrooms";
+import { useNavigate } from "react-router-dom";
+import { GraduationCap, Calendar, Save, BookOpen } from "lucide-react";
+import { colorbtn, colorform } from "../../data/datafeature";
 
 export default function ClassRoomForm({ item = null, onSuccess }) {
   const isEdit = Boolean(item);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -51,7 +55,13 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
         setFeedback({ type: "success", text: "Class created successfully!" });
       }
 
-      if (onSuccess) onSuccess();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        setTimeout(() => {
+          navigate(-1);
+        }, 1200);
+      }
     } catch (error) {
       setFeedback({
         type: "error",
@@ -63,17 +73,28 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl border border-gray-200 shadow-sm">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">
-        {isEdit ? "Edit Class & Academic Year" : "Add New Class & Academic Year"}
-      </h2>
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-xs text-gray-900 dark:text-slate-100 font-sans my-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-slate-800">
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400">
+              <GraduationCap size={20} />
+            </div>
+            {isEdit ? "Edit Class & Academic Year" : "Add New Class & Academic Year"}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {isEdit ? "Modify existing classroom and academic year parameters." : "Configure a new academic year and classroom section."}
+          </p>
+        </div>
+      </div>
 
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-lg text-sm font-medium ${
+          className={`p-4 rounded-xl text-sm font-medium border ${
             feedback.type === "success"
-              ? "bg-green-50 text-green-600 border border-green-200"
-              : "bg-red-50 text-red-600 border border-red-200"
+              ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+              : "bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"
           }`}
         >
           {feedback.text}
@@ -82,13 +103,13 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Academic Year Section */}
-        <div>
-          <h3 className="text-md font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
-            Academic Year Details
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800 flex items-center gap-2">
+            <Calendar size={15} className="text-blue-500 dark:text-blue-400" /> Academic Year Details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-600 mb-1">Academic Year Name</label>
+              <label className={colorform.color_label}>Academic Year Name *</label>
               <input
                 type="text"
                 name="name"
@@ -96,31 +117,31 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
                 onChange={handleChange}
                 placeholder="e.g. 2025-2026"
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Start Date</label>
+              <label className={colorform.color_label}>Start Date *</label>
               <input
                 type="date"
                 name="start_date"
                 value={formData.start_date}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`${colorform.color_input} dark:[color-scheme:dark]`}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">End Date</label>
+              <label className={colorform.color_label}>End Date *</label>
               <input
                 type="date"
                 name="end_date"
                 value={formData.end_date}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`${colorform.color_input} dark:[color-scheme:dark]`}
               />
             </div>
 
@@ -131,9 +152,9 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
                 id="is_current"
                 checked={formData.is_current}
                 onChange={handleChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-blue-600 border-gray-300 dark:border-slate-700 rounded focus:ring-blue-500 bg-gray-50 dark:bg-slate-800"
               />
-              <label htmlFor="is_current" className="text-sm font-medium text-gray-700 select-none">
+              <label htmlFor="is_current" className="text-sm font-medium text-gray-700 dark:text-slate-300 select-none">
                 Set as Current Academic Year
               </label>
             </div>
@@ -141,13 +162,13 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
         </div>
 
         {/* Classroom Section */}
-        <div>
-          <h3 className="text-md font-semibold text-gray-700 mb-4 pb-2 border-b border-gray-100">
-            Classroom Details
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800 flex items-center gap-2">
+            <BookOpen size={15} className="text-blue-500 dark:text-blue-400" /> Classroom Details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Grade</label>
+              <label className={colorform.color_label}>Grade *</label>
               <input
                 type="number"
                 name="grade"
@@ -155,12 +176,12 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
                 onChange={handleChange}
                 placeholder="e.g. 10"
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">Section</label>
+              <label className={colorform.color_label}>Section *</label>
               <input
                 type="text"
                 name="section"
@@ -168,25 +189,27 @@ export default function ClassRoomForm({ item = null, onSuccess }) {
                 onChange={handleChange}
                 placeholder="e.g. A"
                 required
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={colorform.color_input}
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end pt-4">
+        {/* Buttons */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <button
-            type="submit"
-            
-            className="px-6 py-2 bg-gray-500 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+            type="button"
+            onClick={() => navigate(-1)}
+            className={colorbtn.btncancel}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className={colorbtn.btnsave}
           >
+            <Save size={16} />
             {loading ? "Saving..." : isEdit ? "Update Class" : "Save Class"}
           </button>
         </div>

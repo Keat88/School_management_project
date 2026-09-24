@@ -3,12 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { classRoomApi, Year } from "../../data/classrooms";
 import {
   GraduationCap,
-  ArrowLeft,
   Calendar,
   Layers,
   Hash,
   BookOpen,
+  Save,
 } from "lucide-react";
+import { colorbtn, colorform } from "../../data/datafeature";
 
 export default function ClassForm({ classItem: propClass = null, onSuccess }) {
   const { id } = useParams();
@@ -122,16 +123,17 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
   }
 
   return (
-    <div className="lg:min-w-160 mx-auto  p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800  text-gray-800 dark:text-slate-100 font-sans my-8 transition-all">
-      <div className="flex items-center justify-between mb-8 pb-5 border-b border-gray-100 dark:border-slate-800">
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-xs text-gray-900 dark:text-slate-100 font-sans my-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
-          <h2 className="text-lg font-extrabold text-gray-900 dark:text-white tracking-tight flex items-center gap-2.5">
-            <div className="p-2 rounded-lg bg-indigo-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400">
-              <GraduationCap size={22} />
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400">
+              <GraduationCap size={20} />
             </div>
             {isEditMode ? "Edit Class" : "Add New Class"}
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-1">
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
             {isEditMode
               ? "Modify existing classroom parameters."
               : "Register a new classroom into the system."}
@@ -141,28 +143,27 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
 
       {feedback && (
         <div
-          className={`p-4 mb-6 rounded-lg text-sm font-medium flex items-center gap-3 animate-fade-in ${
+          className={`p-4 rounded-xl text-sm font-medium border ${
             feedback.type === "success"
-              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 shadow-lg shadow-emerald-500/5"
-              : "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/30 shadow-lg shadow-rose-500/5"
+              ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+              : "bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"
           }`}
         >
-          <span>{feedback.text}</span>
+          {feedback.text}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-gray-50/60 dark:bg-slate-950/40 p-5 rounded-2xl border border-gray-100 dark:border-slate-800/80 space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800/80 flex items-center gap-2">
-            <BookOpen size={15} className="text-blue-600 dark:text-blue-400" />{" "}
+        {/* Class Information Section */}
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800 flex items-center gap-2">
+            <BookOpen size={15} className="text-blue-500 dark:text-blue-400" />{" "}
             Class Information
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5">
-                Class Name
-              </label>
+              <label className={colorform.color_label}>Class Name *</label>
               <input
                 type="text"
                 name="name"
@@ -171,29 +172,29 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
                 required
                 maxLength={255}
                 placeholder="e.g., Grade 10 A"
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Calendar
-                  size={13}
-                  className="text-blue-500 dark:text-blue-400"
-                />{" "}
-                Academic Year
-              </label>
+              <label className={colorform.color_label}>Academic Year *</label>
               <select
                 name="academic_year_id"
                 value={formData.academic_year_id}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer transition-all"
+                className={colorform.color_input}
               >
-                <option value="">Select Academic Year</option>
+                <option value="" className="dark:bg-slate-800">
+                  Select Academic Year
+                </option>
                 {Array.isArray(years) &&
                   years.map((y) => (
-                    <option key={y.id} value={y.id}>
+                    <option
+                      key={y.id}
+                      value={y.id}
+                      className="dark:bg-slate-800"
+                    >
                       {y.name}
                     </option>
                   ))}
@@ -201,10 +202,7 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Hash size={13} className="text-blue-600 dark:text-blue-400" />{" "}
-                Grade
-              </label>
+              <label className={colorform.color_label}>Grade *</label>
               <input
                 type="text"
                 name="grade"
@@ -212,18 +210,12 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
                 onChange={handleChange}
                 required
                 placeholder="e.g., 10"
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Layers
-                  size={13}
-                  className="text-blue-500 dark:text-blue-400"
-                />{" "}
-                Section
-              </label>
+              <label className={colorform.color_label}>Section *</label>
               <input
                 type="text"
                 name="section"
@@ -231,25 +223,23 @@ export default function ClassForm({ classItem: propClass = null, onSuccess }) {
                 onChange={handleChange}
                 required
                 placeholder="e.g., A"
-                className="w-full px-4 py-3 bg-gray-50/50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700/80 rounded-lg text-sm text-gray-800 dark:text-slate-200 focus:outline-none focus:bg-white dark:focus:bg-slate-900 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                className={colorform.color_input}
               />
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-100 dark:border-slate-800">
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="px-5 py-3 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 rounded-lg text-xs font-semibold hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-slate-700 transition-all cursor-pointer active:scale-95 shadow-xs"
+            className={colorbtn.btncancel}
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg text-xs font-semibold hover:bg-blue-700  transition-all cursor-pointer disabled:opacity-50 active:scale-95"
-          >
+          <button type="submit" disabled={loading} className={colorbtn.btnsave}>
+            <Save size={16} />
             {loading ? "Saving..." : isEditMode ? "Update Class" : "Save Class"}
           </button>
         </div>

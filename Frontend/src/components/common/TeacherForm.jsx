@@ -17,6 +17,7 @@ import {
   AlertCircle,
   Users,
 } from "lucide-react";
+import { colorbtn, colorform } from "../../data/datafeature";
 
 export default function TeacherForm({
   teacher: propTeacher = null,
@@ -167,48 +168,42 @@ export default function TeacherForm({
     }
   };
 
-  // Reusable Tailwind class styles to eliminate repetitive inline code
-  const inputClass =
-    "w-full px-3.5 py-2.5 rounded-lg border text-sm transition-colors bg-white dark:bg-slate-950/60 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/30 focus:border-blue-600 dark:focus:border-blue-500";
-  const labelClass =
-    "block text-xs font-semibold uppercase tracking-wider mb-1.5 text-slate-700 dark:text-slate-300";
-
   if (fetching) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-xs text-slate-500">
-        <div className="flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
-          <span className="text-sm font-medium">Loading teacher detail ...</span>
+        <div className="flex flex-col items-center justify-center gap-2">
+          <div className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-blue-400"></div>
+          <span className="text-sm font-medium">Loading teacher details...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="lg:min-w-160 mx-auto space-y-6 p-6 sm:p-8  border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 shadow-2xs transition-colors">
+    <div className="lg:min-w-160 mx-auto p-6 sm:p-8 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl shadow-xs text-gray-900 dark:text-slate-100 font-sans my-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between pb-5 border-b border-slate-100 dark:border-slate-800/80">
-        <div className="flex items-center gap-3.5">
-          <div>
-            <h2 className="text-lg font-bold tracking-tight flex items-center gap-2.5 text-slate-900 dark:text-slate-100">
-              <Users className="text-blue-500 dark:text-blue-400" size={22} />
-              {isEditMode ? "Edit Teacher" : "Add New Teacher"}
-            </h2>
-            <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
-              {isEditMode
-                ? "Update teacher account details, credentials, and profile info."
-                : "Enter the profile details below to register a new teacher."}
-            </p>
-          </div>
+      <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-slate-800">
+        <div>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/30 text-blue-600 dark:text-blue-400">
+              <Users size={20} />
+            </div>
+            {isEditMode ? "Edit Teacher" : "Add New Teacher"}
+          </h3>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {isEditMode
+              ? "Update teacher account details, credentials, and profile info."
+              : "Register a new teacher into the system."}
+          </p>
         </div>
       </div>
 
       {feedback && (
         <div
-          className={`flex items-center gap-2.5 p-3.5 rounded-xl border text-xs font-medium shadow-2xs ${
+          className={`flex items-center gap-2.5 p-4 rounded-xl text-sm font-medium border ${
             feedback.type === "success"
-              ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20"
-              : "bg-red-50 dark:bg-rose-500/10 text-red-700 dark:text-rose-400 border-red-200 dark:border-rose-500/20"
+              ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+              : "bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"
           }`}
         >
           {feedback.type === "success" ? (
@@ -222,18 +217,18 @@ export default function TeacherForm({
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-8"
+        className="space-y-6"
         encType="multipart/form-data"
       >
-        {/* Section: Teacher Information */}
-        <div className="space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
-            <User size={16} /> Teacher Credentials & Bio
+        {/* Teacher Information Section */}
+        <div className="bg-gray-50/60 dark:bg-slate-800/50 p-5 rounded-xl border border-gray-100 dark:border-slate-800 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-slate-400 pb-2 border-b border-gray-200 dark:border-slate-800 flex items-center gap-2">
+            <User size={15} className="text-blue-500 dark:text-blue-400" /> Teacher Credentials & Bio
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Full Name *</label>
+              <label className={colorform.color_label}>Full Name *</label>
               <input
                 type="text"
                 name="name"
@@ -241,12 +236,12 @@ export default function TeacherForm({
                 onChange={handleChange}
                 required
                 placeholder="e.g. John Doe"
-                className={inputClass}
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className={labelClass}>Email Address *</label>
+              <label className={colorform.color_label}>Email Address *</label>
               <input
                 type="email"
                 name="email"
@@ -254,15 +249,15 @@ export default function TeacherForm({
                 onChange={handleChange}
                 required
                 placeholder="teacher@example.com"
-                className={inputClass}
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className={labelClass}>
+              <label className={colorform.color_label}>
                 Password{" "}
                 {isEditMode && (
-                  <span className="font-normal text-slate-400 dark:text-slate-500 lowercase">
+                  <span className="font-normal text-gray-400 dark:text-slate-500 lowercase">
                     (leave blank to keep current)
                   </span>
                 )}
@@ -274,40 +269,40 @@ export default function TeacherForm({
                 onChange={handleChange}
                 required={!isEditMode}
                 placeholder={isEditMode ? "Optional" : "Min. 8 characters"}
-                className={inputClass}
+                className={colorform.color_input}
               />
             </div>
 
             {isEditMode && (
               <div>
-                <label className={labelClass}>Teacher Code</label>
+                <label className={colorform.color_label}>Teacher Code</label>
                 <input
                   type="text"
                   name="teacher_code"
                   value={formData.teacher_code}
                   readOnly
-                  className="w-full px-3.5 py-2.5 rounded-lg border text-sm bg-slate-100 dark:bg-slate-950/40 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border text-sm bg-gray-100 dark:bg-slate-950/40 border-gray-200 dark:border-slate-800 text-gray-500 dark:text-slate-400 cursor-not-allowed focus:outline-none"
                 />
               </div>
             )}
 
             <div>
-              <label className={labelClass}>Gender</label>
+              <label className={colorform.color_label}>Gender</label>
               <select
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className={inputClass}
+                className={colorform.color_input}
               >
-                <option value="">Select gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
+                <option value="" className="dark:bg-slate-800">Select gender</option>
+                <option value="male" className="dark:bg-slate-800">Male</option>
+                <option value="female" className="dark:bg-slate-800">Female</option>
+                <option value="other" className="dark:bg-slate-800">Other</option>
               </select>
             </div>
 
             <div>
-              <label className={labelClass}>Qualification *</label>
+              <label className={colorform.color_label}>Qualification *</label>
               <input
                 type="text"
                 name="qualification"
@@ -315,12 +310,12 @@ export default function TeacherForm({
                 onChange={handleChange}
                 required
                 placeholder="e.g., M.Sc. in Computer Science"
-                className={inputClass}
+                className={colorform.color_input}
               />
             </div>
 
             <div>
-              <label className={labelClass}>Phone Number *</label>
+              <label className={colorform.color_label}>Phone Number *</label>
               <input
                 type="text"
                 name="phone"
@@ -328,15 +323,15 @@ export default function TeacherForm({
                 onChange={handleChange}
                 required
                 placeholder="+855 12 345 678"
-                className={inputClass}
+                className={colorform.color_input}
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className={labelClass}>Profile Image</label>
+              <label className={colorform.color_label}>Profile Image</label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {(imagePreview || existingImage) && (
-                  <div className="relative w-14 h-14 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 bg-slate-100 dark:bg-slate-950 shadow-2xs">
+                  <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-gray-200 dark:border-slate-800 shrink-0 bg-gray-100 dark:bg-slate-950 shadow-xs">
                     <img
                       src={imagePreview || existingImage}
                       alt="Profile preview"
@@ -349,16 +344,16 @@ export default function TeacherForm({
                           setImagePreview(null);
                           setProfileImage(null);
                         }}
-                        className="absolute top-1 right-1 p-0.5 bg-slate-900/70 hover:bg-slate-900 text-white rounded-full transition cursor-pointer"
+                        className="absolute top-1 right-1 p-1 bg-gray-900/70 hover:bg-gray-900 text-white rounded-full transition cursor-pointer"
                       >
-                        <X size={10} />
+                        <X size={12} />
                       </button>
                     )}
                   </div>
                 )}
 
-                <label className="flex-1 w-full flex flex-col items-center justify-center px-4 py-3 border-2 border-dashed rounded-lg cursor-pointer border-slate-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-slate-50 dark:bg-slate-950/40 transition-colors">
-                  <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+                <label className="flex-1 w-full flex flex-col items-center justify-center px-4 py-3 border-2 border-dashed rounded-xl cursor-pointer border-gray-300 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-500 bg-white dark:bg-slate-900 transition-colors">
+                  <div className="flex items-center gap-2 text-xs font-medium text-gray-600 dark:text-slate-300">
                     <Upload className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     <span>Choose profile image file (JPG, PNG)</span>
                   </div>
@@ -374,20 +369,20 @@ export default function TeacherForm({
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="pt-6 border-t flex items-center justify-end gap-3 border-slate-100 dark:border-slate-800/80">
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
           <button
             type="button"
             onClick={() => navigate(-1)}
             disabled={loading}
-            className="px-5 py-2.5 rounded-lg text-xs font-semibold transition-colors shadow-2xs cursor-pointer disabled:opacity-50 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700"
+            className={colorbtn.btncancel}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-500 dark:bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 dark:hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20 cursor-pointer disabled:opacity-50"
+            className={colorbtn.btnsave}
           >
             {loading ? (
               <Loader2 size={16} className="animate-spin" />
@@ -397,8 +392,8 @@ export default function TeacherForm({
             {loading
               ? "Saving..."
               : isEditMode
-                ? "Update Teacher"
-                : "Save Teacher"}
+              ? "Update Teacher"
+              : "Save Teacher"}
           </button>
         </div>
       </form>
