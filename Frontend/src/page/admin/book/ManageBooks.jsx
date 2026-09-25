@@ -1,13 +1,25 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Plus, Search, Filter, RotateCcw, BookOpen, AlertTriangle, CheckCircle2, AlertCircle, X } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Filter,
+  RotateCcw,
+  BookOpen,
+  AlertTriangle,
+  CheckCircle2,
+  AlertCircle,
+  X,
+} from "lucide-react";
 import { BookApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
 import { colorbtn } from "../../../data/datafeature";
+import ModalDelete from "../../../hooks/ModalDelete";
 
 export default function ManageBooks({ isDark: propIsDark = false }) {
   const [isDark, setIsDark] = useState(() => {
-    const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+    const savedTheme =
+      localStorage.getItem("theme") || localStorage.getItem("darkMode");
     if (savedTheme !== null) {
       return savedTheme === "dark" || savedTheme === "true";
     }
@@ -35,7 +47,8 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
   // Sync with localStorage changes across components/tabs if theme toggles elsewhere
   useEffect(() => {
     const handleStorageChange = () => {
-      const savedTheme = localStorage.getItem("theme") || localStorage.getItem("darkMode");
+      const savedTheme =
+        localStorage.getItem("theme") || localStorage.getItem("darkMode");
       if (savedTheme !== null) {
         setIsDark(savedTheme === "dark" || savedTheme === "true");
       }
@@ -57,12 +70,10 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
 
       const res = await BookApi.getAll(activeFilters);
       const rawData = res?.data || res;
-
-      // Unpack Laravel paginated response structure
       const items = rawData?.data || (Array.isArray(rawData) ? rawData : []);
       const lastPage = rawData?.meta?.last_page || rawData?.last_page || 1;
-      const activePage = rawData?.meta?.current_page || rawData?.current_page || page;
-
+      const activePage =
+        rawData?.meta?.current_page || rawData?.current_page || page;
       setBooks(items);
       setTotalPages(lastPage);
       setCurrentPage(activePage);
@@ -127,7 +138,9 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
 
   // Computed Quick Stats from current page items
   const totalLoaded = books.length;
-  const lowStockCount = books.filter((b) => b.available_copies <= 2 && b.available_copies > 0).length;
+  const lowStockCount = books.filter(
+    (b) => b.available_copies <= 2 && b.available_copies > 0,
+  ).length;
   const outOfStockCount = books.filter((b) => b.available_copies === 0).length;
 
   const renderStockBadge = (available, total) => {
@@ -154,10 +167,23 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
       </span>
     );
   };
+  const handleAdd = () => {
+    const basePath = window.location.pathname.startsWith("/librarian")
+      ? "/librarian"
+      : "/admin";
+    navigate(`${basePath}/library/book/add`);
+  };
 
+  const handleUpdate = (id) => {
+    const basePath = window.location.pathname.startsWith("/librarian")
+      ? "/librarian"
+      : "/admin";
+    navigate(`${basePath}/book/add/${id}`);
+  };
   return (
-    <div className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors duration-200`}>
-      
+    <div
+      className={`${isDark ? "dark" : ""} w-full lg:min-w-160 mx-auto space-y-6 text-gray-900 dark:text-slate-100 transition-colors duration-200`}
+    >
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
@@ -165,16 +191,14 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
             Manage Books
           </h2>
           <p className="text-xs sm:text-sm mt-1 text-gray-500 dark:text-slate-400">
-            Browse, search, filter, and modify library catalog items efficiently.
+            Browse, search, filter, and modify library catalog items
+            efficiently.
           </p>
         </div>
-        <NavLink
-          to="/admin/library/book/add"
-          className={colorbtn.btnadd}
-        >
+        <button onClick={handleAdd} className={colorbtn.btnadd}>
           <Plus size={16} />
           <span>Add New Book</span>
-        </NavLink>
+        </button>
       </div>
 
       {/* Quick Summary Metrics Bar */}
@@ -184,8 +208,12 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
             <BookOpen size={18} />
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-slate-400">Loaded on Page</p>
-            <p className="text-base font-bold text-gray-800 dark:text-slate-100">{totalLoaded} Books</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">
+              Loaded on Page
+            </p>
+            <p className="text-base font-bold text-gray-800 dark:text-slate-100">
+              {totalLoaded} Books
+            </p>
           </div>
         </div>
         <div className="p-3.5 rounded-xl border bg-white border-gray-200/80 dark:bg-slate-900 dark:border-slate-800 flex items-center gap-3 shadow-2xs">
@@ -193,8 +221,12 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
             <AlertTriangle size={18} />
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-slate-400">Low Stock Alert</p>
-            <p className="text-base font-bold text-amber-600 dark:text-amber-400">{lowStockCount} Items</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">
+              Low Stock Alert
+            </p>
+            <p className="text-base font-bold text-amber-600 dark:text-amber-400">
+              {lowStockCount} Items
+            </p>
           </div>
         </div>
         <div className="p-3.5 rounded-xl border bg-white border-gray-200/80 dark:bg-slate-900 dark:border-slate-800 flex items-center gap-3 shadow-2xs">
@@ -202,8 +234,12 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
             <AlertCircle size={18} />
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-slate-400">Out of Stock</p>
-            <p className="text-base font-bold text-red-600 dark:text-red-400">{outOfStockCount} Items</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">
+              Out of Stock
+            </p>
+            <p className="text-base font-bold text-red-600 dark:text-red-400">
+              {outOfStockCount} Items
+            </p>
           </div>
         </div>
       </div>
@@ -218,10 +254,17 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
           }`}
         >
           <div className="flex items-center gap-2.5">
-            {feedback.type === "success" ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            {feedback.type === "success" ? (
+              <CheckCircle2 size={18} />
+            ) : (
+              <AlertCircle size={18} />
+            )}
             <span>{feedback.text}</span>
           </div>
-          <button onClick={() => setFeedback(null)} className="text-xs underline opacity-70 hover:opacity-100 cursor-pointer">
+          <button
+            onClick={() => setFeedback(null)}
+            className="text-xs underline opacity-70 hover:opacity-100 cursor-pointer"
+          >
             Dismiss
           </button>
         </div>
@@ -233,7 +276,10 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 rounded-lg border transition-colors bg-gray-50/70 border-gray-200/80 dark:bg-slate-900 dark:border-slate-800"
       >
         <div className="relative">
-          <Search className="absolute left-3.5 top-3 text-gray-400 dark:text-slate-500" size={16} />
+          <Search
+            className="absolute left-3.5 top-3 text-gray-400 dark:text-slate-500"
+            size={16}
+          />
           <input
             type="text"
             value={search}
@@ -297,19 +343,34 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
           <tbody className="divide-y text-sm divide-gray-100 text-gray-700 dark:divide-slate-800/80 dark:text-slate-300">
             {loading ? (
               <tr>
-                <td colSpan="6" className="py-16 text-center text-gray-400 dark:text-slate-400">
+                <td
+                  colSpan="6"
+                  className="py-16 text-center text-gray-400 dark:text-slate-400"
+                >
                   <div className="flex flex-col items-center justify-center gap-2.5">
                     <div className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin border-blue-600 dark:border-indigo-400"></div>
-                    <span className="text-sm font-medium">Loading books catalog...</span>
+                    <span className="text-sm font-medium">
+                      Loading books catalog...
+                    </span>
                   </div>
                 </td>
               </tr>
             ) : books.length === 0 ? (
               <tr>
-                <td colSpan="6" className="py-16 text-center text-gray-400 dark:text-slate-400">
-                  <BookOpen className="mx-auto mb-2 opacity-40 text-blue-500" size={36} />
-                  <p className="font-semibold text-gray-600 dark:text-slate-300">No books found</p>
-                  <p className="text-xs mt-1 text-gray-400">Try adjusting your search criteria or filters.</p>
+                <td
+                  colSpan="6"
+                  className="py-16 text-center text-gray-400 dark:text-slate-400"
+                >
+                  <BookOpen
+                    className="mx-auto mb-2 opacity-40 text-blue-500"
+                    size={36}
+                  />
+                  <p className="font-semibold text-gray-600 dark:text-slate-300">
+                    No books found
+                  </p>
+                  <p className="text-xs mt-1 text-gray-400">
+                    Try adjusting your search criteria or filters.
+                  </p>
                 </td>
               </tr>
             ) : (
@@ -352,7 +413,7 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
                   </td>
                   <td className="py-3.5 px-4 text-right space-x-2">
                     <button
-                      onClick={() => navigate(`/admin/library/book/add/${book.id}`)}
+                      onClick={() => handleUpdate(book.id)}
                       className={colorbtn.btnedit}
                       title="Update Book"
                     >
@@ -382,8 +443,13 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
           </div>
         ) : books.length === 0 ? (
           <div className="py-16 text-center rounded-2xl border p-6 bg-white border-gray-200 text-gray-400 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 shadow-xs">
-            <BookOpen className="mx-auto mb-2 opacity-50 text-blue-500" size={36} />
-            <span className="text-sm font-medium">No books found matching criteria.</span>
+            <BookOpen
+              className="mx-auto mb-2 opacity-50 text-blue-500"
+              size={36}
+            />
+            <span className="text-sm font-medium">
+              No books found matching criteria.
+            </span>
           </div>
         ) : (
           books.map((book) => (
@@ -407,7 +473,9 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
                   <h3 className="font-semibold text-base leading-snug truncate text-gray-900 dark:text-slate-100">
                     {book.title}
                   </h3>
-                  <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">{book.author}</p>
+                  <p className="text-xs mt-0.5 text-gray-500 dark:text-slate-400">
+                    {book.author}
+                  </p>
 
                   <div className="mt-2 flex flex-wrap gap-1.5 items-center">
                     <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-medium border bg-gray-100 border-gray-200 text-gray-700 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300">
@@ -427,7 +495,7 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => navigate(`/admin/library/book/add/${book.id}`)}
+                    onClick={() => handleUpdate(book.id)}
                     className="text-xs px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-700 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
                   >
                     Update
@@ -456,48 +524,17 @@ export default function ManageBooks({ isDark: propIsDark = false }) {
       </div>
 
       {/* Enhanced Delete Confirmation Modal */}
+
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-200">
-          <div className="relative rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-5 text-center my-auto border transition-all bg-white border-slate-200/80 text-slate-900 dark:bg-slate-900 dark:border-slate-800 dark:text-slate-100 animate-in zoom-in-95 duration-200">
-            
-            {/* Close Button */}
-            <button
-              type="button"
-              onClick={handleCancelDelete}
-              className="absolute top-4 right-4 p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
-            >
-              <X size={18} />
-            </button>
-
-            {/* Warning Icon with Glow Ring */}
-            <div className="mx-auto w-14 h-14 rounded-2xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 ring-8 ring-rose-50/80 dark:ring-rose-500/5 shadow-inner">
-              <AlertTriangle size={26} className="animate-bounce" style={{ animationDuration: '2s' }} />
-            </div>
-
-            <div className="space-y-1.5">
-              <h3 className="text-lg font-bold tracking-tight">Delete Book</h3>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                Are you sure you want to delete this book? This action is permanent and cannot be undone.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleCancelDelete}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer border bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:border-slate-700 active:scale-95"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-md shadow-rose-600/25 active:scale-95 flex items-center justify-center gap-1.5"
-              >
-                <span>Confirm Delete</span>
-              </button>
-            </div>
-          </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+          <ModalDelete
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+            title={"Delete Book"}
+            desciption={
+              "Are you sure you want to delete this book? This action is permanent and cannot be undone."
+            }
+          />
         </div>
       )}
     </div>

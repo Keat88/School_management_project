@@ -89,7 +89,7 @@ export default function HostelForm() {
   };
 
   return (
-    <div className ={colorform.body_form} >
+    <div className={colorform.body_form}>
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100 dark:border-slate-800">
         <div>
           <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 dark:text-slate-100">
@@ -112,9 +112,7 @@ export default function HostelForm() {
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className={colorform.color_label}>
-            Building Name
-          </label>
+          <label className={colorform.color_label}>Building Name</label>
           <input
             type="text"
             name="name"
@@ -126,9 +124,7 @@ export default function HostelForm() {
         </div>
 
         <div>
-          <label className={colorform.color_label}>
-            Building Type
-          </label>
+          <label className={colorform.color_label}>Building Type</label>
           <select
             name="type"
             className={colorform.color_select}
@@ -157,7 +153,11 @@ export default function HostelForm() {
         </div>
 
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-800">
-          <button type="button" className={colorbtn.btncancel}>
+          <button
+            onClick={() => navigate(-1)}
+            type="button"
+            className={colorbtn.btncancel}
+          >
             Cancel
           </button>
           <button type="submit" disabled={loading} className={colorbtn.btnsave}>

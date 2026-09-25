@@ -31,7 +31,7 @@ export const studentData = {
   },
   upDate: async (id, Student) => {
     try {
-      const response = await api.put(`/student/update/${id}`, Student, {
+      const response = await api.post(`/student/update/${id}`, Student, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       return response.data;

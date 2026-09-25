@@ -1,7 +1,12 @@
 import { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, ChevronDown, Sun, Moon } from "lucide-react";
-import { sidebarMenu, sidebarTeacherMenu } from "../../data/sideBar";
+import {
+  sidebarDorm,
+  sidebarLibrarian,
+  sidebarMenu,
+  sidebarTeacherMenu,
+} from "../../data/sideBar";
 import { AuthContext, useAuth } from "../../context/AuthContext";
 import { AuthApi } from "../../data/AuthApi";
 import LoadingModal from "../../hooks/LoadingModal";
@@ -33,7 +38,15 @@ function Sidebar() {
   }, [isDarkMode]);
   const toggleTheme = () => setIsDarkMode((prev) => !prev);
   const currentSidebar =
-    currentUser?.role === "admin" ? sidebarMenu : sidebarTeacherMenu;
+    currentUser?.role === "admin"
+      ? sidebarMenu
+      : currentUser?.role === "teacher"
+        ? sidebarTeacherMenu
+        : currentUser?.role === "librarian"
+          ? sidebarLibrarian
+          : currentUser?.role === "supervisor"
+            ? sidebarDorm
+            : "";
   const visibleMenu = currentSidebar.filter((menu) =>
     menu.roles?.includes(currentUser?.role),
   );
@@ -136,7 +149,6 @@ function Sidebar() {
                 </span>
               </div>
             )}
-            
           </span>
           <div className="flex items-center gap-x-1">
             <button

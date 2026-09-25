@@ -16,7 +16,11 @@ export default function GuestRoute() {
           ? "/admin/dashboard"
           : user?.role === "teacher"
             ? "/teacher/dashboard"
-            : "/";
+            : user?.role === "librarian"
+              ? "/librarian/library/dashboard"
+              : user?.role === "supervisor"
+                ? "/supervisor/dashboard"
+                : "/";
       return <Navigate to={destination} replace />;
     } catch (error) {
       console.error("Failed to parse user data:", error);
@@ -24,6 +28,5 @@ export default function GuestRoute() {
       localStorage.removeItem("user");
     }
   }
-
   return <Outlet />;
 }

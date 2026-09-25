@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Plus, Search, RotateCcw, AlertTriangle } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Plus, Search, RotateCcw } from "lucide-react";
 import { BookCategoryApi } from "../../../data/library";
 import Pagination from "../../../hooks/Pagination";
 import { colorbtn } from "../../../data/datafeature";
+import ModalDelete from "../../../hooks/ModalDelete";
 
 export default function ManageCategories() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith("/admin")
+    ? "/admin/library"
+    : "/librarian/library";
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -95,6 +100,18 @@ export default function ManageCategories() {
     setCategoryToDelete(null);
   };
 
+  const handleEdit = (id) => {
+    navigate(`${basePath}/category/add/${id}`);
+  };
+
+  const handleAdd = () => {
+    navigate(`${basePath}/category/add`);
+  };
+
+  const handleView = (id) => {
+    navigate(`${basePath}/category/view/${id}`);
+  };
+
   return (
     <div className="w-full lg:min-w-160 mx-auto space-y-6 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* Header Section */}
@@ -107,13 +124,10 @@ export default function ManageCategories() {
             Browse, search, and manage library categories.
           </p>
         </div>
-        <NavLink
-          to="/admin/library/category/add"
-          className={colorbtn.btnadd}
-        >
+        <button onClick={handleAdd} className={colorbtn.btnadd}>
           <Plus size={16} />
           <span>Add Category</span>
-        </NavLink>
+        </button>
       </div>
 
       {/* Feedback Alert */}
@@ -132,7 +146,7 @@ export default function ManageCategories() {
       {/* Search & Filter Form */}
       <form
         onSubmit={handleSearchSubmit}
-        className="p-4 rounded-lg border flex flex-col md:flex-row gap-3 transition-colors  bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-900 dark:text-slate-100"
+        className="p-4 rounded-lg border flex flex-col md:flex-row gap-3 transition-colors bg-white border-slate-200 dark:bg-slate-800/80 dark:border-slate-700 text-slate-900 dark:text-slate-100"
       >
         <div className="relative flex-1">
           <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-400">
@@ -216,24 +230,23 @@ export default function ManageCategories() {
                     <td className="py-3.5 px-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() =>
-                            navigate(`/admin/library/category/view/${cat.id}`)
-                          }
+                          type="button"
+                          onClick={() => handleView(cat.id)}
                           className={colorbtn.btnview}
                           title="View"
                         >
                           View
                         </button>
                         <button
-                          onClick={() =>
-                            navigate(`/admin/library/category/add/${cat.id}`)
-                          }
+                          type="button"
+                          onClick={() => handleEdit(cat.id)}
                           className={colorbtn.btnedit}
                           title="Edit"
                         >
                           Edit
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleDeleteClick(cat.id)}
                           className={colorbtn.btndelete}
                           title="Delete"
@@ -273,20 +286,23 @@ export default function ManageCategories() {
                     {cat.book_category}
                   </h3>
                   <p className="text-xs mt-1 text-gray-500 dark:text-slate-400 font-mono">
-                    Created: {cat.created_at ? new Date(cat.created_at).toLocaleDateString() : "-"}
+                    Created:{" "}
+                    {cat.created_at
+                      ? new Date(cat.created_at).toLocaleDateString()
+                      : "-"}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center justify-end pt-3 border-t text-xs gap-2 border-gray-100 dark:border-slate-800/80">
                 <button
-                  onClick={() => navigate(`/admin/library/category/view/${cat.id}`)}
+                  onClick={() => handleView(cat.id)}
                   className="border border-gray-200 dark:border-slate-700 rounded-md px-2.5 py-1.5 font-medium transition-colors cursor-pointer bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
                 >
                   View
                 </button>
                 <button
-                  onClick={() => navigate(`/admin/library/category/add/${cat.id}`)}
+                  onClick={() => handleEdit(cat.id)}
                   className="px-3 py-1.5 rounded-md font-medium transition-colors cursor-pointer bg-slate-700 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 border border-slate-600 dark:border-slate-600 shadow-2xs"
                 >
                   Edit
@@ -312,35 +328,16 @@ export default function ManageCategories() {
         />
       </div>
 
-      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center my-auto border transition-all bg-white border-slate-200 text-slate-900 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100">
-            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-2">
-              <AlertTriangle size={24} />
-            </div>
-            <h3 className="text-lg font-bold">Delete Category</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Are you sure you want to delete this category? This action cannot
-              be undone.
-            </p>
-            <div className="flex justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleCancelDelete}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer border bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-sm shadow-rose-500/20 active:scale-95"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+          <ModalDelete
+            onConfirm={handleConfirmDelete}
+            onCancel={handleCancelDelete}
+            title={"Delete Category"}
+            desciption={
+              "Are you sure you want to delete this category? This action cannot be undone."
+            }
+          />
         </div>
       )}
     </div>

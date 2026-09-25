@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Library\BookResource;
 use App\Models\Books;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Cloudinary\Cloudinary; // ប្រើប្រាស់ Cloudinary SDK
 
 class BookController extends Controller
 {
@@ -78,7 +78,9 @@ class BookController extends Controller
         try {
             $bookImage = null;
             if ($request->hasFile('book_image')) {
-                $bookImage = $request->file('book_image')->store('book', 'public');
+                $cloudinary = new Cloudinary();
+                $uploadedFile = $cloudinary->uploadApi()->upload($request->file('book_image')->getRealPath());
+                $bookImage = $uploadedFile['secure_url']; // ទទួលបាន Secure URL ពី Cloudinary
             }
 
             $book = Books::create([
@@ -129,7 +131,7 @@ class BookController extends Controller
             'isbn'             => 'nullable|string|max:255|unique:books,isbn,' . $id,
             'book_image'       => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'total_copies'     => 'required|integer|min:1',
-            'available_copies' => 'required|integer|min:0|lte:total_copies', 
+            'available_copies' => 'required|integer|min:0|lte:total_copies',
         ]);
 
         if ($validator->fails()) {
@@ -145,10 +147,9 @@ class BookController extends Controller
 
             $bookImage = $book->book_image;
             if ($request->hasFile('book_image')) {
-                if (!empty($book->book_image) && Storage::disk('public')->exists($book->book_image)) {
-                    Storage::disk('public')->delete($book->book_image);
-                }
-                $bookImage = $request->file('book_image')->store('book', 'public');
+                $cloudinary = new Cloudinary();
+                $uploadedFile = $cloudinary->uploadApi()->upload($request->file('book_image')->getRealPath());
+                $bookImage = $uploadedFile['secure_url'];
             }
 
             $book->update([
@@ -180,11 +181,6 @@ class BookController extends Controller
             if (!$book) {
                 return $this->error('Book not found', null, 404);
             }
-
-            if (!empty($book->book_image) && Storage::disk('public')->exists($book->book_image)) {
-                Storage::disk('public')->delete($book->book_image);
-            }
-
             $book->delete();
 
             return $this->success('Book deleted successfully', null, 200);

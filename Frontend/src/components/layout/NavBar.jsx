@@ -49,7 +49,15 @@ export default function Navbar({ title, notificationCount = 0 }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const currentSetting =
-    currentUser?.role === "admin" ? "/admin/settings" : "/teacher/setting";
+    currentUser?.role === "admin"
+      ? "/admin/settings"
+      : currentUser?.role === "teacher"
+        ? "/teacher/settings"
+        : currentUser?.role === "librarian"
+          ? "/librarian/library/settings"
+          : currentUser?.role === "supervisor"
+            ? "/supervisor/setting"
+            : "/";
   const handleLogout = async () => {
     try {
       setLoading(true);
@@ -67,7 +75,9 @@ export default function Navbar({ title, notificationCount = 0 }) {
     }
   };
   const WebsitePage =
-    currentUser?.role === "admin" || currentUser?.user === "teacher";
+    currentUser?.role === "admin" ||
+    currentUser?.user === "teacher" ||
+    currentUser?.role === "librarian";
   return (
     <>
       <LoadingModal

@@ -176,7 +176,7 @@ function StudentList({ isDark = false }) {
     setIsDeleteModalOpen(false);
     setStudentToDelete(null);
   };
-
+  console.log(students)
   return (
     <div className="space-y-6 w-full lg:min-w-160 mx-auto">
       {/* Header Section */}

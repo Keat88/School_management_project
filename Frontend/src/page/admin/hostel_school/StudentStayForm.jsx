@@ -27,8 +27,6 @@ export default function StudentStayForm() {
 
   const [students, setStudents] = useState([]);
   const [rooms, setRooms] = useState([]);
-
-  // Form states
   const [studentId, setStudentId] = useState("");
   const [rollNumber, setRollNumber] = useState("");
   const [hostelRoomId, setHostelRoomId] = useState("");
@@ -73,16 +71,12 @@ export default function StudentStayForm() {
     };
     loadDependencies();
   }, [id, isEditing]);
-
-  // Sync selected student ID and populate corresponding roll number
   const handleStudentSelect = (e) => {
     const selectedId = e.target.value;
     setStudentId(selectedId);
-
     const selectedStudent = students.find(
       (st) => String(st.id) === String(selectedId),
     );
-
     if (selectedStudent) {
       setRollNumber(
         selectedStudent.roll_number ||
@@ -94,13 +88,11 @@ export default function StudentStayForm() {
       setRollNumber("");
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setFeedback(null);
-
-    // Payload mapped to backend validation schema
     const payload = {
       student_id: studentId,
       roll_number: rollNumber,
@@ -141,7 +133,6 @@ export default function StudentStayForm() {
       setLoading(false);
     }
   };
-
   if (fetching) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 flex flex-col items-center justify-center space-y-3 dark:text-slate-100">
@@ -170,8 +161,6 @@ export default function StudentStayForm() {
           </div>
         </div>
       </div>
-
-      {/* Feedback Banner */}
       {feedback && (
         <div
           className={`p-4 rounded-xl text-sm font-medium border flex items-center gap-3 transition-all ${
@@ -194,8 +183,6 @@ export default function StudentStayForm() {
           <span>{feedback.text}</span>
         </div>
       )}
-
-      {/* Form Container */}
       <form
         onSubmit={handleSubmit}
         className="bg-white dark:bg-slate-900 p-5 sm:p-8 rounded-xl border border-gray-200 dark:border-slate-800 shadow-xs space-y-6"
@@ -248,8 +235,6 @@ export default function StudentStayForm() {
         </div>
 
         <hr className="border-gray-200 dark:border-slate-800" />
-
-        {/* Accommodation Section */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             <BedDouble size={16} />
@@ -304,8 +289,6 @@ export default function StudentStayForm() {
         </div>
 
         <hr className="border-gray-200 dark:border-slate-800" />
-
-        {/* Duration & Status Section */}
         <div className="space-y-4">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
             <Calendar size={16} />
@@ -361,8 +344,6 @@ export default function StudentStayForm() {
             </div>
           </div>
         </div>
-
-        {/* Action Buttons */}
         <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-200 dark:border-slate-800">
           <button
             type="button"

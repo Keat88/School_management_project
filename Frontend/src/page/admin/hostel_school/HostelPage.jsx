@@ -58,7 +58,7 @@ export default function HostelPage() {
   }, [hostels, searchValue, typeFilter]);
 
   const handleAddHostel = () => {
-    navigate("/admin/hostel/add");
+    navigate("/admin/hostel/add") ;
   };
 
   const handleEdit = (hostel) => {

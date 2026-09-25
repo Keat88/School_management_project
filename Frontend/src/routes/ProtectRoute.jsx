@@ -17,7 +17,6 @@ export default function ProtectRoute({ allowedRoles }) {
       const hasAccess = Array.isArray(allowedRoles)
         ? allowedRoles.includes(user?.role)
         : user?.role === allowedRoles;
-
       if (!hasAccess) {
         return <Navigate to="/unauthorized" replace />;
       }

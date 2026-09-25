@@ -31,7 +31,9 @@ class SubjectFactory extends Factory
                 'Earth and Environmental Science',
                 'English',
                 'Computer Science',
-                'Physical Education'
+                'Physical Education',
+                "AI",
+                "Basic of Internet"
             ]),
             'code' => fake()->unique()->bothify("SUB-####"),
             'image' => null,

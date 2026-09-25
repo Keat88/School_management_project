@@ -311,7 +311,6 @@ export default function StudentLibraryActivity({ isDark: propIsDark = true }) {
           ))
         )}
       </div>
-
       {/* Pagination Component */}
       <Pagination
         currentPage={currentPage}

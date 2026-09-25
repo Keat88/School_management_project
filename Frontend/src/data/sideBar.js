@@ -4,13 +4,11 @@ import {
   LuGraduationCap,
   LuSchool,
   LuCalendarDays,
-  LuMegaphone,
-  LuWallet,
-  LuBedDouble,
   LuFileSpreadsheet,
   LuSettings,
   LuSquareCheck,
   LuBookOpen,
+  LuBedDouble,
 } from "react-icons/lu";
 import {
   FaUser,
@@ -56,13 +54,89 @@ export const sidebarTeacherMenu = [
   },
 ];
 
+export const sidebarLibrarian = [
+  {
+    id: 1,
+    title: "Dashboard",
+    path: "/librarian/library/dashboard",
+    icon: LuLayoutDashboard,
+    roles: ["admin", "librarian"],
+  },
+  {
+    id: 2,
+    title: "Books",
+    path: "/librarian/library/books",
+    icon: LuBookOpen,
+    roles: ["admin", "librarian"],
+  },
+  {
+    id: 3,
+    title: "Book Category",
+    path: "/librarian/library/bookcategory",
+    icon: MdCategory,
+    roles: ["admin", "librarian"],
+  },
+  {
+    id: 4,
+    title: "Book Issue",
+    path: "/librarian/library/bookissue",
+    icon: MdAssignmentTurnedIn,
+    roles: ["admin", "librarian"],
+  },
+  {
+    id: 5,
+    title: "Student Activity",
+    path: "/librarian/library/student-activity",
+    icon: MdOutlineAssignmentReturn,
+    roles: ["admin", "librarian"],
+  },
+  {
+    id: 6,
+    title: "Setting",
+    path: "/librarian/library/setting",
+    icon: LuSettings,
+    roles: ["admin", "librarian"],
+  },
+];
+
+export const sidebarDorm = [
+  {
+    id: 1,
+    title: "Dashboard",
+    path: "/supervisor/dashboard",
+    icon: LuLayoutDashboard,
+    roles: ["admin", "supervisor"],
+  },
+  {
+    id: 2,
+    title: "Room",
+    path: "/supervisor/hostel-rooms",
+    icon: LuBedDouble,
+    roles: ["admin", "supervisor"],
+  },
+  {
+    id: 3,
+    title: "Student Stay",
+    path: "/supervisor/hostel-stays",
+    icon: LuUsers,
+    roles: ["admin", "supervisor"],
+  },
+  {
+    id: 4,
+    title: "Setting",
+    path: "/supervisor/setting",
+    icon: LuSettings,
+    roles: ["admin", "supervisor"],
+  },
+];
+
 export const sidebarMenu = [
   {
     id: 1,
     title: "Dashboard",
     path: "/admin/dashboard",
     icon: LuLayoutDashboard,
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
     id: 2,
@@ -82,7 +156,7 @@ export const sidebarMenu = [
         icon: FaUser,
       },
     ],
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
     id: 3,
@@ -102,35 +176,35 @@ export const sidebarMenu = [
         icon: LuSchool,
       },
     ],
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
     id: 4,
     title: "Students",
     path: "/admin/students",
     icon: LuUsers,
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
     id: 5,
     title: "Subjects",
     path: "/admin/subjects",
     icon: FaBookOpenFa6,
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
     id: 6,
     title: "Schedule",
     path: "/admin/schedule",
     icon: LuCalendarDays,
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
     id: 7,
     title: "Attendance",
     path: "/admin/attendance",
     icon: LuSquareCheck,
-    roles: ["admin", "teacher"],
+    roles: ["admin"],
   },
   {
     id: 8,
@@ -140,7 +214,7 @@ export const sidebarMenu = [
       {
         id: 1,
         title: "Book Category",
-        path: "/admin/library/category",
+        path: "/admin/library/bookcategory",
         icon: MdCategory,
       },
       {
@@ -207,12 +281,6 @@ export const sidebarMenu = [
         path: "/admin/course",
         icon: FaBookOpenFa6,
       },
-      // {
-      //   id: 3,
-      //   title: "Contact",
-      //   path: "/admin/course/contact",
-      //   icon: FaBookOpenFa6,
-      // },
     ],
     roles: ["admin"],
   },

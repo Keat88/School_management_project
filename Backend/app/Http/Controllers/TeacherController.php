@@ -13,6 +13,7 @@ use App\Models\Scores;
 use App\Models\Teachers;
 use App\Models\TimeTables;
 use App\Models\User;
+use Cloudinary\Cloudinary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -299,6 +300,7 @@ class TeacherController extends Controller
             return $this->error('Something went wrong while retrieving teachers', $e->getMessage(), 500);
         }
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -313,14 +315,19 @@ class TeacherController extends Controller
             'gender'        => 'nullable|string|max:20',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:4096'
         ]);
+
         if ($validator->fails()) {
             return $this->error('Invalid data', $validator->errors(), 422);
         }
+
         try {
             $user = DB::transaction(function () use ($request) {
-                $image_name = null;
+                $image_url = null;
                 if ($request->hasFile('profile_image')) {
-                    $image_name = $request->file('profile_image')->store('teacher', 'public');
+                    // Upload ទៅកាន់ Cloudinary ជំនួស Local Storage
+                    $cloudinary = new Cloudinary();
+                    $uploadedFile = $cloudinary->uploadApi()->upload($request->file('profile_image')->getRealPath());
+                    $image_url = $uploadedFile['secure_url']; // ទទួលបាន Secure URL ពី Cloudinary
                 }
 
                 // Auto-generate unique random teacher_code
@@ -341,11 +348,12 @@ class TeacherController extends Controller
                     'qualification' => $request->qualification,
                     'phone'         => $request->phone,
                     'gender'        => $request->gender,
-                    'profile_image' => $image_name
+                    'profile_image' => $image_url
                 ]);
 
                 return $user;
             });
+
             $user->load('teacher');
             return $this->success('Teacher added successfully!', new TeacherResource($user), 201);
         } catch (\Exception $e) {
@@ -377,12 +385,13 @@ class TeacherController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $image_name = null;
+            $image_url = null;
             $teacherUser = User::where('role', 'teacher')->with('teacher')->find($id);
 
             if (!$teacherUser) {
                 return $this->error('Teacher not found!', null, 404);
             }
+
             $validator = Validator::make($request->all(), [
                 'name'          => 'nullable|string|max:255',
                 'email'         => 'nullable|string|email|unique:users,email,' . $id,
@@ -393,15 +402,16 @@ class TeacherController extends Controller
                 'gender'        => 'nullable|string|max:20',
                 'profile_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
             ]);
+
             if ($validator->fails()) {
                 return $this->error('Invalid data', $validator->errors(), 422);
             }
 
             if ($request->hasFile('profile_image')) {
-                if ($teacherUser->teacher && $teacherUser->teacher->profile_image) {
-                    Storage::disk('public')->delete($teacherUser->teacher->profile_image);
-                }
-                $image_name = $request->file('profile_image')->store('teacher', 'public');
+                // មិនបាច់លុប File ចាស់ចេញពី local storage ទេ ព្រោះប្រើ Cloudinary
+                $cloudinary = new Cloudinary();
+                $uploadedFile = $cloudinary->uploadApi()->upload($request->file('profile_image')->getRealPath());
+                $image_url = $uploadedFile['secure_url'];
             }
 
             // Update User table fields
@@ -417,14 +427,16 @@ class TeacherController extends Controller
                 'qualification' => $request->qualification ? $request->qualification : optional($teacherUser->teacher)->qualification,
                 'phone'         => $request->phone ? $request->phone : optional($teacherUser->teacher)->phone,
                 'gender'        => $request->gender ? $request->gender : optional($teacherUser->teacher)->gender,
-                'profile_image' => $request->hasFile('profile_image') ? $image_name : optional($teacherUser->teacher)->profile_image
+                'profile_image' => $request->hasFile('profile_image') ? $image_url : optional($teacherUser->teacher)->profile_image
             ];
+
             if ($teacherUser->teacher) {
                 $teacherUser->teacher->update($teacherData);
             } else {
                 $teacherData['user_id'] = $teacherUser->id;
                 Teachers::create($teacherData);
             }
+
             $teacherUser->load('teacher');
 
             return $this->success('Teacher updated successfully', new TeacherResource($teacherUser), 200);
@@ -445,9 +457,7 @@ class TeacherController extends Controller
                 return $this->error('Teacher not found!', null, 404);
             }
 
-            if ($teacher->teacher && $teacher->teacher->profile_image) {
-                Storage::disk('public')->delete($teacher->teacher->profile_image);
-            }
+            // មិនបាច់ប្រើ Storage::disk('public')->delete() ទេ ព្រោះរូបភាពស្ថិតនៅលើ Cloudinary
 
             $teacher->delete();
 

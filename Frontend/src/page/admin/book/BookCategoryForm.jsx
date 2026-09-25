@@ -65,7 +65,7 @@ export default function BookCategoryForm() {
         });
       }
 
-      setTimeout(() => navigate("/admin/library/category"), 1000);
+      setTimeout(() => navigate(-1), 1000);
     } catch (error) {
       setFeedback({
         type: "error",
@@ -117,7 +117,10 @@ export default function BookCategoryForm() {
           }`}
         >
           {feedback.type === "error" && (
-            <AlertCircle size={18} className="shrink-0 text-rose-600 dark:text-rose-400" />
+            <AlertCircle
+              size={18}
+              className="shrink-0 text-rose-600 dark:text-rose-400"
+            />
           )}
           <span>{feedback.text}</span>
         </div>
@@ -133,9 +136,7 @@ export default function BookCategoryForm() {
             Category Information
           </h3>
           <div>
-            <label className={colorform.color_label}>
-              Category Name *
-            </label>
+            <label className={colorform.color_label}>Category Name *</label>
             <input
               type="text"
               name="book_category"
@@ -158,17 +159,13 @@ export default function BookCategoryForm() {
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            disabled={loading}
-            className={colorbtn.btnsave}
-          >
+          <button type="submit" disabled={loading} className={colorbtn.btnsave}>
             <Save size={16} />
             {loading
               ? "Saving..."
               : isEditMode
-              ? "Update Category"
-              : "Save Category"}
+                ? "Update Category"
+                : "Save Category"}
           </button>
         </div>
       </form>

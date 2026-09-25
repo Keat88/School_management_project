@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Hotel\HostelRoomResource;
 use App\Models\Hostel_rooms;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Cloudinary\Cloudinary; // នាំយក Cloudinary SDK មកប្រើប្រាស់
 
 class HostelsRoomController extends Controller
 {
@@ -93,7 +93,9 @@ class HostelsRoomController extends Controller
         try {
             $file = null;
             if ($request->hasFile('image')) {
-                $file = $request->file('image')->store('hostel', 'public');
+                $cloudinary = new Cloudinary();
+                $uploadedFile = $cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $file = $uploadedFile['secure_url']; // ទទួលបាន Secure URL ពី Cloudinary
             }
 
             $hostelroom = Hostel_rooms::create([
@@ -145,10 +147,10 @@ class HostelsRoomController extends Controller
             'block_name'     => 'nullable|string|max:255',
             'image'          => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'type'           => 'sometimes|required|in:standard,deluxe,vip,ac,non-ac',
-            'gender'         => 'sometimes|required|in:male,female,unisex,others', // បន្ថែម unisex
+            'gender'         => 'sometimes|required|in:male,female,unisex,others',
             'number_of_beds' => 'sometimes|required|integer|min:1',
             'cost_per_bed'   => 'sometimes|required|numeric|min:0',
-            'status'         => 'sometimes|required|in:available,occupied,full,maintenance', // បន្ថែម occupied
+            'status'         => 'sometimes|required|in:available,occupied,full,maintenance',
         ]);
 
         if ($validator->fails()) {
@@ -164,10 +166,10 @@ class HostelsRoomController extends Controller
 
             $file = $room->image;
             if ($request->hasFile('image')) {
-                if (!empty($room->image)) {
-                    Storage::disk('public')->delete($room->image);
-                }
-                $file = $request->file('image')->store('hostel', 'public');
+                // មិនចាំបាច់លុប File ចាស់ចេញពី local storage ទេ ព្រោះប្រើ Cloudinary
+                $cloudinary = new Cloudinary();
+                $uploadedFile = $cloudinary->uploadApi()->upload($request->file('image')->getRealPath());
+                $file = $uploadedFile['secure_url'];
             }
 
             $room->update([
@@ -201,11 +203,6 @@ class HostelsRoomController extends Controller
             if (!$room) {
                 return $this->error('Room not found', null, 404);
             }
-
-            if (!empty($room->image)) {
-                Storage::disk('public')->delete($room->image);
-            }
-
             $room->delete();
 
             return $this->success('Room deleted successfully', null, 200);

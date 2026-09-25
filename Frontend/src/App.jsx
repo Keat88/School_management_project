@@ -70,6 +70,8 @@ import TeacherClassManagement from "./page/teacher/TeacherClassManagement";
 import TeacherSettings from "./page/teacher/TeacherSettings";
 import UserProfile from "./page/public/UserProfile";
 import ManageTeacherReports from "./page/teacher/ManageTeacherReports";
+import LibrarianDashboard from "./page/teacher/LibrainDashboard";
+import DormitoryDashboard from "./page/public/dorminitory/DormitoryDashboard";
 
 function App() {
   return (
@@ -101,9 +103,53 @@ function App() {
             <Route path="class" element={<TeacherClassManagement />} />
             <Route path="report" element={<ManageTeacherReports />} />
             <Route path="setting" element={<TeacherSettings />} />{" "}
-            <Route path="score/:id" element={<ClassScoreTable/>} />
+            <Route path="score/:id" element={<ClassScoreTable />} />
             <Route path="attendance" element={<StudentAttendance />} />
             <Route path="attendance/:id" element={<StudentAttendance />} />
+          </Route>
+        </Route>
+        <Route element={<ProtectRoute allowedRoles={["librarian"]} />}>
+          <Route path="/librarian" element={<DashboardLayout />}>
+            <Route path="library/dashboard" element={<LibrarianDashboard />} />
+            <Route
+              path="library/bookcategory"
+              element={<ManageCategories />}
+            />
+            <Route
+              path="library/category/add"
+              element={<BookCategoryForm />}
+            />
+            <Route path="category/add/:id" element={<BookCategoryForm />} />
+            <Route
+              path="library/category/view/:id"
+              element={<BookCategoryView />}
+            />
+            <Route path="library/books" element={<ManageBooks />} />
+            <Route path="library/book/add" element={<BookForm />} />
+            <Route path="library/book/add/:id" element={<BookForm />} />
+            <Route path="library/bookissue" element={<BookIssueList />} />
+            <Route path="library/bookissue/add" element={<IssueBookForm />} />
+            <Route
+              path="library/bookissue/add/:id"
+              element={<IssueBookForm />}
+            />
+            <Route
+              path="library/student-activity"
+              element={<StudentLibraryActivity />}
+            />
+            <Route path="setting" element={<TeacherSettings />} />{" "}
+          </Route>
+        </Route>
+        <Route element={<ProtectRoute allowedRoles={["supervisor"]} />}>
+          <Route path="/supervisor" element={<DashboardLayout />}>
+            <Route path="dashboard" element={<DormitoryDashboard />} />
+            <Route path="hostel-rooms" element={<ManageHostelRooms />} />
+            <Route path="hostel-rooms/add" element={<HostelRoomForm />} />
+            <Route path="hostel-rooms/add/:id" element={<HostelRoomForm />} />
+            <Route path="hostel-stays" element={<ManageStudentStays />} />
+            <Route path="hostel-stays/add" element={<StudentStayForm />} />
+            <Route path="hostel-stays/add/:id" element={<StudentStayForm />} />
+            <Route path="setting" element={<TeacherSettings />} />{" "}
           </Route>
         </Route>
         {/* Protected Routes (Only accessible when logged in) */}
@@ -152,7 +198,7 @@ function App() {
             <Route path="subjects/add/:id" element={<SubjectForm />} />
 
             {/* Library Routes */}
-            <Route path="library/category" element={<ManageCategories />} />
+            <Route path="library/bookcategory" element={<ManageCategories />} />
             <Route path="library/category/add" element={<BookCategoryForm />} />
             <Route
               path="library/category/add/:id"
@@ -184,9 +230,9 @@ function App() {
             <Route path="hostel-stays" element={<ManageStudentStays />} />
             <Route path="hostel-stays/add" element={<StudentStayForm />} />
             <Route path="hostel-stays/add/:id" element={<StudentStayForm />} />
+            <Route path="finance" element={<PaymentsPage />} />
             {/* Finance & Reports */}
             {/* <Route path="finance" element={<PaymentPage />} /> */}
-            <Route path="finance" element={<PaymentsPage />} />
             <Route path="payments/add" element={<PaymentForm />} />
             <Route path="notices" element={<NoticePage />} />
             <Route path="notice/add" element={<NoticeForm />} />

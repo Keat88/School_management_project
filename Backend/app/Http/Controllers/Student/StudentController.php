@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Cloudinary\Cloudinary;
 
 class StudentController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      */
@@ -95,20 +95,27 @@ class StudentController extends Controller
 
         try {
             $response = DB::transaction(function () use ($request) {
-                $studentImageName = null;
+                $cloudinary = new Cloudinary();
+
+                $studentImageUrl = null;
                 if ($request->hasFile('student_image')) {
-                    $studentImageName = $request->file('student_image')->store('student', 'public');
+                    $uploadedFile = $cloudinary->uploadApi()->upload($request->file('student_image')->getRealPath());
+                    $studentImageUrl = $uploadedFile['secure_url'];
                 }
-                $parentImageName = null;
+
+                // សម្រាប់ parent_image
+                $parentImageUrl = null;
                 if ($request->hasFile('parent_image')) {
-                    $parentImageName = $request->file('parent_image')->store('student', 'public');
+                    $uploadedFile = $cloudinary->uploadApi()->upload($request->file('parent_image')->getRealPath());
+                    $parentImageUrl = $uploadedFile['secure_url'];
                 }
+
                 $parent = Parents::create([
                     'mother_name'  => $request->mother_name,
                     'father_name'  => $request->father_name,
                     'occupation'   => $request->occupation ?? null,
                     'parent_phone' => $request->parent_phone,
-                    'parent_image' => $parentImageName,
+                    'parent_image' => $parentImageUrl, // រក្សាទុក Link Cloudinary
                     'email'        => $request->email_parent ?? null,
                 ]);
 
@@ -125,8 +132,9 @@ class StudentController extends Controller
                     'date_of_birth' => $request->date_of_birth,
                     'roll_number'   => $rollNumber,
                     'student_phone' => $request->student_phone ?? null,
-                    'student_image' => $studentImageName
+                    'student_image' => $studentImageUrl // រក្សាទុក Link Cloudinary
                 ]);
+
                 $student->load('parent', 'classRoom');
 
                 return $this->success('Student add successfully', new StudentResource($student), 201);
@@ -190,13 +198,13 @@ class StudentController extends Controller
             }
 
             DB::transaction(function () use ($request, $student) {
-                // Update Parent Image
-                $parentImageName = $student->parent->parent_image;
+                // Update Parent Image on Cloudinary
+                $parentImageUrl = $student->parent->parent_image;
+                $cloudinary = new Cloudinary();
+                $parentImageUrl = null;
                 if ($request->hasFile('parent_image')) {
-                    if (!empty($student->parent->parent_image) && Storage::disk('public')->exists($student->parent->parent_image)) {
-                        Storage::disk('public')->delete($student->parent->parent_image);
-                    }
-                    $parentImageName = $request->file('parent_image')->store('student', 'public');
+                    $uploadedFile = $cloudinary->uploadApi()->upload($request->file('parent_image')->getRealPath());
+                    $parentImageUrl = $uploadedFile['secure_url'];
                 }
 
                 $student->parent->update([
@@ -204,17 +212,16 @@ class StudentController extends Controller
                     'father_name'  => $request->father_name ?? $student->parent->father_name,
                     'occupation'   => $request->occupation ?? $student->parent->occupation,
                     'parent_phone' => $request->parent_phone ?? $student->parent->parent_phone,
-                    'parent_image' => $parentImageName,
+                    'parent_image' => $parentImageUrl,
                     'email'        => $request->email_parent ?? $student->parent->email,
                 ]);
 
-                // Update Student Image
-                $studentImageName = $student->student_image;
+                // Update Student Image on Cloudinary
+                $studentImageUrl = $student->student_image;
+                $studentImageUrl = null;
                 if ($request->hasFile('student_image')) {
-                    if (!empty($student->student_image) && Storage::disk('public')->exists($student->student_image)) {
-                        Storage::disk('public')->delete($student->student_image);
-                    }
-                    $studentImageName = $request->file('student_image')->store('student', 'public');
+                    $uploadedFile = $cloudinary->uploadApi()->upload($request->file('student_image')->getRealPath());
+                    $studentImageUrl = $uploadedFile['secure_url'];
                 }
 
                 $student->update([
@@ -224,7 +231,7 @@ class StudentController extends Controller
                     'address'       => $request->address ?? $student->address,
                     'date_of_birth' => $request->date_of_birth ?? $student->date_of_birth,
                     'student_phone' => $request->student_phone ?? $student->student_phone,
-                    'student_image' => $studentImageName,
+                    'student_image' => $studentImageUrl,
                 ]);
             });
 
@@ -247,13 +254,7 @@ class StudentController extends Controller
                 return $this->error('Not found student', null, 404);
             }
 
-            if (!empty($student->student_image) && Storage::disk('public')->exists($student->student_image)) {
-                Storage::disk('public')->delete($student->student_image);
-            }
-
-            if ($student->parent && !empty($student->parent->parent_image) && Storage::disk('public')->exists($student->parent->parent_image)) {
-                Storage::disk('public')->delete($student->parent->parent_image);
-            }
+            // (ចំណាំ៖ សម្រាប់ Cloudinary យើងមិនបាច់លុប File តាម Storage disk ក្នុងเครื่องវិញទេ ព្រោះវាទុកនៅលើ Cloud ស្រាប់)
 
             if ($student->parent) {
                 $student->parent->delete();

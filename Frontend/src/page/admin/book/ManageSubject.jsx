@@ -319,7 +319,7 @@ export default function ManageSubject({ isDark: propIsDark = false }) {
             onCancel={handleCancelDelete}
             title={"Delete Subject"}
             desciption={
-              "              Are you sure you want to delete this subject? This action cannot  be undone."
+              "Are you sure you want to delete this subject? This action cannot  be undone."
             }
           />
         </div>

@@ -145,7 +145,6 @@ export default function BookCategoryView() {
                 <th className="py-3 px-4">Author</th>
                 <th className="py-3 px-4">ISBN</th>
                 <th className="py-3 px-4 text-center">Copies</th>
-            
               </tr>
             </thead>
             <tbody className="divide-y text-sm divide-gray-100 bg-white dark:divide-slate-800 dark:bg-slate-900">
@@ -178,8 +177,7 @@ export default function BookCategoryView() {
                       <span className="inline-block px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
                         {book.available_copies} / {book.total_copies}
                       </span>
-                    </td>
-                   
+                    </td> 
                   </tr>
                 ))
               )}

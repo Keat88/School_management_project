@@ -24,12 +24,10 @@ export default function HostelRoomForm() {
   const [status, setStatus] = useState("available");
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-
   useEffect(() => {
     const loadInitialData = async () => {
       try {
         setFetching(true);
-        // Fetch hostels dropdown options
         const hostelsRes = await HotelCagegoryApi.getAll();
         const hostelsData =
           hostelsRes?.data?.data || hostelsRes?.data || hostelsRes || [];
@@ -356,12 +354,13 @@ export default function HostelRoomForm() {
 
         {/* Action Buttons */}
         <div className="flex flex-col-reverse sm:flex-row justify-end items-center gap-3 pt-4 border-t border-gray-200 dark:border-slate-800">
-          <Link
-            to="/admin/hostel-rooms"
+          <button
+          type="button"
+          onClick={()=>navigate(-1)}
             className={colorbtn.btncancel}
           >
             Cancel
-          </Link>
+          </button>
           <button
             type="submit"
             disabled={loading}

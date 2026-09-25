@@ -6,7 +6,7 @@ use App\Http\Resources\Course\CourseResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
+use Cloudinary\Cloudinary; // នាំយក Cloudinary SDK មកប្រើប្រាស់
 
 class CourseController extends Controller
 {
@@ -57,13 +57,15 @@ class CourseController extends Controller
             'is_featured' => 'boolean',
         ]);
 
-        // Handle local file upload or fallback to text URL string
+        // Handle Cloudinary file upload or fallback to text URL string
         if ($request->hasFile('thumbnail')) {
-            $path = $request->file('thumbnail')->store('courses', 'public');
-            $validated['thumbnail'] = '/storage/' . $path;
+            $cloudinary = new Cloudinary();
+            $uploadedFile = $cloudinary->uploadApi()->upload($request->file('thumbnail')->getRealPath());
+            $validated['thumbnail'] = $uploadedFile['secure_url']; // ទទួលបាន Secure URL ពី Cloudinary
         } else {
             $validated['thumbnail'] = $request->input('thumbnail');
         }
+
         $validated['slug'] = Str::slug($validated['title']);
         $course = Course::create($validated);
 
@@ -110,13 +112,11 @@ class CourseController extends Controller
             'has_certificate' => 'boolean',
             'is_featured' => 'boolean',
         ]);
-
-        // Handle file upload or keep existing thumbnail/URL
         if ($request->hasFile('thumbnail')) {
-            $path = $request->file('thumbnail')->store('courses', 'public');
-            $validated['thumbnail'] = '/storage/' . $path;
+            $cloudinary = new Cloudinary();
+            $uploadedFile = $cloudinary->uploadApi()->upload($request->file('thumbnail')->getRealPath());
+            $validated['thumbnail'] = $uploadedFile['secure_url'];
         } else {
-            // If no new file is uploaded, retain the existing thumbnail value if not explicitly changed
             $validated['thumbnail'] = $request->input('thumbnail', $course->thumbnail);
         }
 

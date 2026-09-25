@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Plus,
   Trash2,
@@ -17,12 +17,12 @@ import {
   GraduationCap,
   Trash,
 } from "lucide-react";
-import { api } from "../../../data/api";
 import { AddStudentHostelApi } from "../../../data/Hostel";
 import Pagination from "../../../hooks/Pagination";
 import { colorbtn } from "../../../data/datafeature";
 
 export default function ManageStudentStays() {
+  const navigate = useNavigate();
   const [stays, setStays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
@@ -100,7 +100,6 @@ export default function ManageStudentStays() {
           "",
       ).toLowerCase();
       const query = search.toLowerCase().trim();
-
       const matchesSearch =
         !query ||
         studentName.includes(query) ||
@@ -108,11 +107,9 @@ export default function ManageStudentStays() {
         studentPhone.includes(query) ||
         bedNumber.includes(query) ||
         roomNumber.includes(query);
-
       const matchesStatus =
         selectedStatus === "all" ||
         stay.status?.toLowerCase() === selectedStatus;
-
       return matchesSearch && matchesStatus;
     });
   }, [stays, search, selectedStatus]);
@@ -135,6 +132,16 @@ export default function ManageStudentStays() {
     return { total, active, completed };
   }, [stays]);
 
+  const handleEdit = (id) => {
+    navigate(`/admin/hostel-stays/add/${id}`) ||
+      navigate(`/supervisor/hostel-stays/add/${id}`);
+  };
+
+  const handleAdd = () => {
+    navigate("/admin/hostel-stays/add") ||
+      navigate("/supervisor/hostel-stays/add");
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100 space-y-6">
       {/* Header Bar */}
@@ -148,10 +155,10 @@ export default function ManageStudentStays() {
             timelines.
           </p>
         </div>
-        <Link to="/admin/hostel-stays/add" className={colorbtn.btnadd}>
+        <button onClick={handleAdd} type="button" className={colorbtn.btnadd}>
           <Plus size={15} />
           <span>Assign Bed / Room</span>
-        </Link>
+        </button>
       </div>
 
       {/* Overview Stat Cards */}
@@ -183,7 +190,6 @@ export default function ManageStudentStays() {
             <CheckCircle2 size={20} />
           </div>
         </div>
-
         <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-xs flex items-center justify-between">
           <div>
             <p className="text-[10px] font-semibold tracking-wider uppercase text-slate-500 dark:text-slate-400">
@@ -284,7 +290,7 @@ export default function ManageStudentStays() {
         </div>
       </div>
 
-      {/* Main Data Section (Hybrid: Card stack for mobile, Table for desktop) */}
+      {/* Main Data Section */}
       <div className="relative min-h-[300px]">
         {loading ? (
           <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-12 text-center">
@@ -439,13 +445,13 @@ export default function ManageStudentStays() {
                     )}
 
                     <div className="flex items-center justify-end gap-2 pt-1">
-                      <Link
-                        to={`/admin/hostel-stays/add/${stay.id}`}
+                      <button
+                        onClick={() => handleEdit(stay.id)}
                         className={colorbtn.btnedit}
                       >
                         <Edit size={14} />
                         <span>Edit</span>
-                      </Link>
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleDelete(stay.id)}
@@ -600,14 +606,14 @@ export default function ManageStudentStays() {
 
                           <td className="px-5 py-3.5 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1.5">
-                              <Link
-                                to={`/admin/hostel-stays/add/${stay.id}`}
+                              <button
+                                onClick={() => handleEdit(stay.id)}
                                 className={colorbtn.btnedit}
                                 title="Edit Record"
                               >
                                 <Edit size={16} />
                                 Edit
-                              </Link>
+                              </button>
                               <button
                                 type="button"
                                 onClick={() => handleDelete(stay.id)}

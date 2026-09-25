@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { api } from "../../../data/api";
 import { BookIssureApi } from "../../../data/library";
+import ModalDelete from "../../../components/layout/ModalDelete";
 
 export default function BookIssueList({ isDark: propIsDark = true }) {
   const navigate = useNavigate();
@@ -37,7 +38,6 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
   // Delete Modal States
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [issueToDelete, setIssueToDelete] = useState(null);
-
   useEffect(() => {
     const handleStorageChange = () => {
       const savedTheme =
@@ -46,11 +46,9 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
         setIsDark(savedTheme === "dark" || savedTheme === "true");
       }
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
-
   const fetchIssues = useCallback(async () => {
     try {
       setLoading(true);
@@ -64,18 +62,15 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
       setLoading(false);
     }
   }, []);
-
   useEffect(() => {
     fetchIssues();
   }, [fetchIssues]);
-
   useEffect(() => {
     if (feedback) {
       const timer = setTimeout(() => setFeedback(null), 4000);
       return () => clearTimeout(timer);
     }
   }, [feedback]);
-
   const handleReturn = async (id) => {
     try {
       const today = new Date().toISOString().split("T")[0];
@@ -94,13 +89,11 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
       });
     }
   };
-
   const handleDeleteClick = (id) => {
     setIssueToDelete(id);
     setIsDeleteModalOpen(true);
     setFeedback(null);
   };
-
   const handleConfirmDelete = async () => {
     if (!issueToDelete) return;
     try {
@@ -117,7 +110,6 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
       setIssueToDelete(null);
     }
   };
-
   const handleCancelDelete = () => {
     setIsDeleteModalOpen(false);
     setIssueToDelete(null);
@@ -142,9 +134,7 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
         bookTitle.includes(query) ||
         studentIdStr.includes(query) ||
         bookIdStr.includes(query);
-
       const isOverdue = checkIsOverdue(item.status, item.due_date);
-
       let matchesStatus = true;
       if (statusFilter === "returned") {
         matchesStatus = item.status === "returned";
@@ -153,14 +143,18 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
       } else if (statusFilter === "issued") {
         matchesStatus = item.status !== "returned" && !isOverdue;
       }
-
       return matchesSearch && matchesStatus;
     });
   }, [issues, search, statusFilter]);
 
+  const handleAdd = () => {
+    const basePath = window.location.pathname.startsWith("/librarian")
+      ? "/librarian"
+      : "/admin";
+    navigate(`${basePath}/library/bookissue/add`);
+  };
   const getStatusBadge = (status, dueDate) => {
     const isOverdue = checkIsOverdue(status, dueDate);
-
     if (status === "returned") {
       return (
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800/60">
@@ -184,7 +178,6 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
         </span>
       );
     }
-
     return (
       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-800/60">
         <Clock size={12} className="text-blue-500 dark:text-cyan-400" />
@@ -192,7 +185,6 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
       </span>
     );
   };
-
   return (
     <div className="w-full lg:min-w-160 mx-auto space-y-6 text-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* Header Section */}
@@ -207,7 +199,7 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
         </div>
         <button
           type="button"
-          onClick={() => navigate("/admin/library/bookissue/add")}
+          onClick={handleAdd}
           className="self-start sm:self-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 shadow-xs active:scale-98 cursor-pointer"
         >
           <Plus size={16} />
@@ -453,37 +445,13 @@ export default function BookIssueList({ isDark: propIsDark = true }) {
           ))
         )}
       </div>
-
-      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-150">
-          <div className="rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4 text-center my-auto border transition-all bg-white border-slate-200 text-slate-900 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-100">
-            <div className="mx-auto w-12 h-12 rounded-full bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 mb-2">
-              <AlertTriangle size={24} />
-            </div>
-            <h3 className="text-lg font-bold">Delete Issue Record</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Are you sure you want to delete this issue record? This action
-              cannot be undone.
-            </p>
-            <div className="flex justify-center gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleCancelDelete}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer border bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 dark:border-slate-700"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="flex-1 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition cursor-pointer shadow-sm shadow-rose-500/20 active:scale-95"
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
+        <ModalDelete
+          title="Delete Issure book"
+          desciption={
+            " Are you sure you want to delete this issue record? This action cannot be undone."
+          }
+        />
       )}
     </div>
   );

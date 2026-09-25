@@ -72,6 +72,8 @@ export default function Navbar() {
   const getDashboardPath = () => {
     if (user?.role === "admin") return "/admin/dashboard";
     if (user?.role === "teacher") return "/teacher/dashboard";
+    if (user?.role === "librarian") return "/librarian/library/dashboard";
+    if (user?.role === "supervisor") return "/supervisor/dashboard";
     return null;
   };
   const currentDashboard = getDashboardPath();
@@ -101,7 +103,7 @@ export default function Navbar() {
             className="flex items-center space-x-3 focus:outline-none min-w-0"
           >
             <div className="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex items-center justify-center font-bold shadow-sm shrink-0">
-             <PiStudentFill/>
+              <PiStudentFill />
             </div>
             <div className="truncate">
               <span className="text-lg font-bold text-gray-900 dark:text-white tracking-tight leading-none block truncate">

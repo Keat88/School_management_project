@@ -21,7 +21,7 @@ class HostelRoomResource extends JsonResource
             'hostel_id'      => $this->hostel_id,
             'room_number'    => $this->room_number,
             'block_name'     => $this->block_name,
-            'image'          => $this->image ? url('storage/' . $this->image) : null,
+            'image'          => $this->image ? $this->image : null,
             'type'           => $this->type,
             'gender'         => $this->gender,
             'number_of_beds' => $this->number_of_beds,

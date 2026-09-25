@@ -27,7 +27,7 @@ class TeacherResource extends JsonResource
                     'qualification'     => $this->teacher->qualification ?? null,
                     'phone'             => $this->teacher->phone ?? null,
                     'profile_image' => $this->teacher && $this->teacher->profile_image
-                        ? url('storage/' . $this->teacher->profile_image)
+                        ?  $this->teacher->profile_image
                         : null,
                 ];
             }),

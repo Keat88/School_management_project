@@ -23,7 +23,7 @@ class StudentResource extends JsonResource
             'date_of_birth' => $this->date_of_birth,
             'roll_number'   => $this->roll_number,
             'student_phone' => $this->student_phone,
-            'student_image' => $this->student_image ? url('storage/' . $this->student_image) : null,
+            'student_image' => $this->student_image ? $this->student_image : null,
             'parent'        => new ParentResource($this->whenLoaded('parent')),
             'class_room'    => $this->whenLoaded('classRoom'),
             'latest_attendance' => $this->whenLoaded('attendances', function () {

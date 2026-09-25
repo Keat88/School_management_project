@@ -21,7 +21,7 @@ class ParentResource extends JsonResource
             'occupation'   => $this->occupation,
             'parent_phone' => $this->parent_phone,
             'email'        => $this->email,
-            'parent_image' => $this->parent_image ? url('storage/' . $this->parent_image) : null,
+            'parent_image' => $this->parent_image ? $this->parent_image : null,
         ];
     }
 }

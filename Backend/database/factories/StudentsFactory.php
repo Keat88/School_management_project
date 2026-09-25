@@ -21,7 +21,7 @@ class StudentsFactory extends Factory
 
         return [
             'student_name'  => $this->faker->name(),
-            'class_id'      => 1,
+            'class_id'      => 2,
             'parent_id'     => Parents::factory(),
             'roll_number'   => 'RN-' . $this->faker->unique()->numerify('#####'),
             'student_phone' => $this->faker->phoneNumber(),

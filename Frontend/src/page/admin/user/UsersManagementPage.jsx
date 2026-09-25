@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { api } from "../../../data/api";
-import { Plus, AlertTriangle, Trash2, Edit } from "lucide-react";
+import { Plus, AlertTriangle, Trash2, Edit, Search } from "lucide-react";
 import Pagination from "../../../hooks/Pagination";
 import { colorbtn, colorform } from "../../../data/datafeature";
 import HeaderPage from "../../../hooks/HeaderPage";
@@ -151,32 +151,36 @@ export default function UserManagement() {
   };
 
   return (
-    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-300 ">
+    <div className="bg-gray-50/50 dark:bg-slate-950 min-h-screen transition-colors duration-300">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h1 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              User Management
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
-              Manage user accounts, permissions, and system roles.
-            </p>
-          </div>
-        </div>
+        <HeaderPage
+          title="Users"
+          description="Manage user accounts, permissions, and system roles"
+          totalItems={pagination.last_page * 10} // Adjust based on total item count if available from API meta
+          titlefound="User found"
+        />
+
         {/* Filters & Actions */}
-        <div className="bg-whith dark:bg-slate-900 rounded-lg p-3 sm:p-4 shadow-xs border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-between">
-          <div className="flex flex-col sm:flex-row gap-3 w-full flex-1">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 border border-gray-200 dark:border-slate-800  dark:bg-slate-900 p-2 rounded-xl transition-colors">
+          {/* Search */}
+          <div className="relative flex-1 min-w-0 w-full">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500"
+            />
             <input
               type="text"
-              placeholder="Search by name or email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className={colorform.color_input}
+              placeholder="Search..."
+              className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 py-2 pl-9 pr-3 text-sm
+            text-gray-700 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500 outline-none
+            focus:bg-white dark:focus:bg-slate-800 focus:border-blue-400 dark:focus:border-indigo-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-indigo-950/40
+            transition-colors"
             />
           </div>
-          <div className="flex gap-x-3 sm:justify-between w-full">
-            {/* FIXED: Bound value to roleFilter and added onChange handler */}
+          <div className="flex gap-x-3 sm:justify-between w-full sm:w-auto">
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
@@ -256,7 +260,6 @@ export default function UserManagement() {
                         className={colorbtn.btndelete}
                         title="Delete Record"
                       >
-                        {/* FIXED: Changed Edit to Trash2 icon */}
                         <Trash2 size={16} />
                         Delete
                       </button>
@@ -267,7 +270,7 @@ export default function UserManagement() {
             </div>
 
             {/* DESKTOP VIEW: Table Layout */}
-            <div className="hidden md:block bg-white dark:bg-slate-900  overflow-hidden border border-slate-200 dark:border-slate-800">
+            <div className="hidden md:block bg-white dark:bg-slate-900 overflow-hidden border border-slate-200 dark:border-slate-800">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
                   <thead className="bg-slate-50 dark:bg-slate-950/50">
@@ -326,7 +329,6 @@ export default function UserManagement() {
                             className={colorbtn.btndelete}
                             title="Delete Record"
                           >
-                            {/* FIXED: Changed Edit to Trash2 icon */}
                             <Trash2 size={16} />
                             Delete
                           </button>
@@ -452,14 +454,15 @@ export default function UserManagement() {
           </div>
         )}
 
+        {/* Delete Confirmation Modal */}
         {isDeleteModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
             <ModalDelete
               onConfirm={handleConfirmDelete}
               onCancel={handleCancelDelete}
               title={"Delete User"}
-              desciption={
-                " Are you sure you want to delete this user? This action cannot be undone."
+              description={
+                "Are you sure you want to delete this user? This action cannot be undone."
               }
             />
           </div>

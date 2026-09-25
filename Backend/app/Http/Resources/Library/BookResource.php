@@ -20,11 +20,9 @@ class BookResource extends JsonResource
             'title'            => $this->title,
             'author'           => $this->author,
             'isbn'             => $this->isbn,
-            'book_image'       => $this->book_image ? url('storage/' . $this->book_image) : null,
+            'book_image'       => $this->book_image ? $this->book_image : null,
             'total_copies'     => $this->total_copies,
             'available_copies' => $this->available_copies,
-
-            // Include category relationship if loaded
             'category'         => new BookCategoryResource($this->whenLoaded('category')),
 
             'created_at'       => $this->created_at?->toIso8601String(),

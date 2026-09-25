@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Plus,
   Search,
@@ -15,6 +15,8 @@ import Pagination from "../../../hooks/Pagination";
 import { colorbtn } from "../../../data/datafeature";
 
 export default function ManageHostelRooms() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
@@ -25,6 +27,11 @@ export default function ManageHostelRooms() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const perPage = 10;
+
+  // Dynamically determine base path based on whether user is admin or supervisor
+  const basePath = location.pathname.startsWith("/supervisor")
+    ? "/supervisor/hostel-rooms"
+    : "/admin/hostel-rooms";
 
   const fetchRooms = useCallback(
     async (page = 1, searchQuery = "") => {
@@ -87,7 +94,12 @@ export default function ManageHostelRooms() {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
-
+  const handleAddRoom = () => {
+    navigate(`${basePath}/add`);
+  };
+  const handleEdit = (id) => {
+    navigate(`${basePath}/add/${id}`);
+  };
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this room?")) return;
     try {
@@ -117,13 +129,14 @@ export default function ManageHostelRooms() {
             View, search, and manage room allocations and details
           </p>
         </div>
-        <Link
-          to="/admin/hostel-rooms/add"
+        <button
+          type="button"
+          onClick={handleAddRoom}
           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm dark:bg-blue-600 dark:hover:bg-blue-500 w-full sm:w-auto"
         >
           <Plus size={16} />
           <span>Add Room</span>
-        </Link>
+        </button>
       </div>
 
       {/* Feedback Alert */}
@@ -174,7 +187,7 @@ export default function ManageHostelRooms() {
         </div>
       </form>
 
-      {/* Data Section (Hybrid: Cards for Mobile, Table for Desktop) */}
+      {/* Data Section */}
       <div className="relative min-h-[300px]">
         {loading && (
           <div className="absolute inset-0 bg-white/70 backdrop-blur-[1px] z-10 flex flex-col items-center justify-center transition-all dark:bg-slate-900/70 rounded-xl">
@@ -216,7 +229,8 @@ export default function ManageHostelRooms() {
                           Room #{room.room_number}
                         </h3>
                         <p className="text-xs text-gray-500 flex items-center gap-1 dark:text-slate-400">
-                          <Building2 size={12} /> {room.hostel?.name || "N/A"} (Block: {room.block_name || "-"})
+                          <Building2 size={12} /> {room.hostel?.name || "N/A"}{" "}
+                          (Block: {room.block_name || "-"})
                         </p>
                       </div>
                     </div>
@@ -233,19 +247,25 @@ export default function ManageHostelRooms() {
 
                   <div className="grid grid-cols-3 gap-2 py-2 border-y border-gray-100 text-xs dark:border-slate-800">
                     <div>
-                      <span className="text-gray-400 block dark:text-slate-500">Type & Gender</span>
+                      <span className="text-gray-400 block dark:text-slate-500">
+                        Type & Gender
+                      </span>
                       <span className="font-medium capitalize text-gray-700 dark:text-slate-300">
                         {room.type} • {room.gender}
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-400 block dark:text-slate-500">Capacity</span>
+                      <span className="text-gray-400 block dark:text-slate-500">
+                        Capacity
+                      </span>
                       <span className="font-medium text-gray-700 dark:text-slate-300 flex items-center gap-1">
                         <BedDouble size={12} /> {room.number_of_beds} Beds
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-400 block dark:text-slate-500">Rate</span>
+                      <span className="text-gray-400 block dark:text-slate-500">
+                        Rate
+                      </span>
                       <span className="font-medium text-emerald-600 dark:text-emerald-400">
                         ${room.cost_per_bed}/bed
                       </span>
@@ -253,13 +273,13 @@ export default function ManageHostelRooms() {
                   </div>
 
                   <div className="flex items-center justify-end gap-2 pt-1">
-                    <Link
-                      to={`/admin/hostel-rooms/add/${room.id}`}
+                    <button
+                      onClick={() => handleEdit(room.id)}
                       className={colorbtn.btnedit}
                     >
                       <Edit size={14} />
                       <span>Update</span>
-                    </Link>
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleDelete(room.id)}
@@ -273,7 +293,7 @@ export default function ManageHostelRooms() {
               ))}
             </div>
 
-            {/* DESKTOP VIEW: Table Layout (hidden md:block) */}
+            {/* DESKTOP VIEW: Table Layout */}
             <div className="hidden md:block bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden dark:bg-slate-900 dark:border-slate-800">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[700px]">
@@ -350,14 +370,14 @@ export default function ManageHostelRooms() {
                         </td>
                         <td className="px-4 py-3 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-2">
-                            <Link
-                              to={`/admin/hostel-rooms/add/${room.id}`}
+                            <button
+                              onClick={() => handleEdit(room.id)}
                               className={colorbtn.btnedit}
                               title="Update"
                             >
                               <Edit size={13} />
                               <span>Update</span>
-                            </Link>
+                            </button>
                             <button
                               type="button"
                               onClick={() => handleDelete(room.id)}
